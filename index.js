@@ -48,7 +48,7 @@
         container.appendChild(this.createSlotNode(src, text));
       }
       widthpx = this.width * (this.textureSize + this.borderSize * 2);
-      container.setAttribute('style', "border: 1px solid blackdisplay: inline;float: left;width: " + widthpx + "px;font-size: 5pt;");
+      container.setAttribute('style', "border: 1px solid black;display: inline;float: left;width: " + widthpx + "px;font-size: 5pt;transform: scale(5,5);-webkit-transform: scale(5,5);-moz-transform: scale(5,5);-ms-transform: scale(5,5);-o-transform: scale(5,5);");
       return container;
     };
 
