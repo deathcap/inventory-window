@@ -16,6 +16,7 @@ class InventoryWindow extends EventEmitter
 
     @slotNodes = []
     @dragNode = null
+    @dragSourceIndex = null
 
     @enable()
 
@@ -119,6 +120,7 @@ font-size: 5pt;
     @updateSlotNode index, undefined
 
     # create a new node, attached TODO: also include text
+    @dragSourceIndex = index
     @dragNode = @createSlotNode(pile)
     @dragNode.setAttribute 'style', @dragNode.getAttribute('style') + "
 position: absolute;
@@ -137,12 +139,15 @@ pointer-events: none;
     pile = @inventory.slot(index)
     console.log 'dropSlot',index,pile
 
-    div = @slotNodes[index]
+    console.log '  inventory before='+@inventory
+    @inventory.swap @dragSourceIndex, index
+    console.log '  inventory after= '+@inventory
+    @updateSlotNode @dragSourceIndex, @inventory.array[@dragSourceIndex]
+    @updateSlotNode index, @inventory.array[index]
 
     @dragNode.parentNode.removeChild(@dragNode)
-    div.style.backgroundImage = 'url(' + @dragNode.src + ')' # TODO: real item, not just image
-    
     @dragNode = null
+    @dragSourceIndex = null
 
     # TODO: if not empty, pick up this slot after dropped (swap)
     #pickUpSlot div, ev, src

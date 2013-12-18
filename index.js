@@ -36,6 +36,7 @@
       this.emptySlotImage = (_ref5 = opts.emptySlotImage) != null ? _ref5 : 'data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA';
       this.slotNodes = [];
       this.dragNode = null;
+      this.dragSourceIndex = null;
       this.enable();
     }
 
@@ -121,19 +122,24 @@
         return;
       }
       this.updateSlotNode(index, void 0);
+      this.dragSourceIndex = index;
       this.dragNode = this.createSlotNode(pile);
       this.dragNode.setAttribute('style', this.dragNode.getAttribute('style') + ("position: absolute;left: " + ev.x + "px;top: " + ev.y + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;-webkit-transform: scale(5,5); /* TODO: stop scaling */"));
       return document.body.appendChild(this.dragNode);
     };
 
     InventoryWindow.prototype.dropSlot = function(index, ev) {
-      var div, pile;
+      var pile;
       pile = this.inventory.slot(index);
       console.log('dropSlot', index, pile);
-      div = this.slotNodes[index];
+      console.log('  inventory before=' + this.inventory);
+      this.inventory.swap(this.dragSourceIndex, index);
+      console.log('  inventory after= ' + this.inventory);
+      this.updateSlotNode(this.dragSourceIndex, this.inventory.array[this.dragSourceIndex]);
+      this.updateSlotNode(index, this.inventory.array[index]);
       this.dragNode.parentNode.removeChild(this.dragNode);
-      div.style.backgroundImage = 'url(' + this.dragNode.src + ')';
       this.dragNode = null;
+      this.dragSourceIndex = null;
     };
 
     return InventoryWindow;

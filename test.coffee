@@ -29,3 +29,4 @@ container = w.createContainer()
 console.log container
 document.body.appendChild(container)
 
+window.w = w

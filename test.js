@@ -47,4 +47,6 @@
 
   document.body.appendChild(container);
 
+  window.w = w;
+
 }).call(this);
