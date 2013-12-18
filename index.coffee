@@ -1,6 +1,7 @@
 # vim: set shiftwidth=2 tabstop=2 softtabstop=2 expandtab:
 
 EventEmitter = (require 'events').EventEmitter
+ever = require 'ever'
 
 module.exports =
 class InventoryWindow extends EventEmitter
@@ -11,16 +12,23 @@ class InventoryWindow extends EventEmitter
     @width = opts.width ? 5
     @textureSize = opts.textureSize ? 16
     @borderSize = opts.borderSize ? 1
+    @emptySlotImage = opts.emptySlotImage ? 'data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA' # blank
 
   createContainer: () ->
     container = document.createElement 'div'
     #container.setAttribute 'class', 'inventory-window'  # .inventory-window { border: 1px dotted black; display: inline; float: left; }
     for i in [0...@inventory.size()]
-      src = @getTexture @inventory.slot(i)
-      #text = @getTextOverlay @inventory.slot
-      text = @inventory.slot(i)?.count
-      text = undefined if text == 1
-      text = '\u221e' if text == Infinity
+      slotItem = @inventory.slot(i)
+
+      if slotItem?
+        src = @getTexture slotItem
+        #text = @getTextOverlay @inventory.slot
+        text = slotItem.count
+        text = undefined if text == 1
+        text = '\u221e' if text == Infinity
+      else
+        src = @emptySlotImage
+        text = undefined
 
       container.appendChild @createSlotNode(src, text)
     widthpx = @width * (@textureSize + @borderSize * 2)
@@ -58,5 +66,8 @@ height: #{@textureSize}px;
     if text?
       textNode = document.createTextNode text
       div.appendChild textNode
+
+    ever(div).on 'mousedown', (ev) =>
+      console.log ev
 
     div
