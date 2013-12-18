@@ -90,7 +90,12 @@ height: #{@textureSize}px;
     div
 
   pickUpSlot: (index, ev) ->
-    console.log 'pickUpSlot',index
+    pile = @inventory.slot(index)
+    console.log 'pickUpSlot',index,pile
+
+    if not pile?
+      # not picking up anything
+      return
 
     div = @slotNodes[index]
     # clear slot
@@ -98,7 +103,7 @@ height: #{@textureSize}px;
 
     # create a new node, attached TODO: also include text
     @dragNode = document.createElement 'img'
-    src = @getTexture @inventory.slot(index)
+    src = @getTexture pile
     @dragNode.setAttribute 'src', src
     @dragNode.setAttribute 'style', "
 position: absolute;
@@ -112,7 +117,8 @@ pointer-events: none;
     document.body.appendChild @dragNode
 
   dropSlot: (index, ev) ->
-    console.log 'dropSlot',index
+    pile = @inventory.slot(index)
+    console.log 'dropSlot',index,pile
 
     div = @slotNodes[index]
 

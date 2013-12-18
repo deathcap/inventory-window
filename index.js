@@ -94,20 +94,25 @@
     };
 
     InventoryWindow.prototype.pickUpSlot = function(index, ev) {
-      var div, src;
-      console.log('pickUpSlot', index);
+      var div, pile, src;
+      pile = this.inventory.slot(index);
+      console.log('pickUpSlot', index, pile);
+      if (pile == null) {
+        return;
+      }
       div = this.slotNodes[index];
       div.style.backgroundImage = 'url(' + this.emptySlotImage + ')';
       this.dragNode = document.createElement('img');
-      src = this.getTexture(this.inventory.slot(index));
+      src = this.getTexture(pile);
       this.dragNode.setAttribute('src', src);
       this.dragNode.setAttribute('style', "position: absolute;left: " + ev.x + "px;top: " + ev.y + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;");
       return document.body.appendChild(this.dragNode);
     };
 
     InventoryWindow.prototype.dropSlot = function(index, ev) {
-      var div;
-      console.log('dropSlot', index);
+      var div, pile;
+      pile = this.inventory.slot(index);
+      console.log('dropSlot', index, pile);
       div = this.slotNodes[index];
       this.dragNode.parentNode.removeChild(this.dragNode);
       div.style.backgroundImage = 'url(' + this.dragNode.src + ')';
