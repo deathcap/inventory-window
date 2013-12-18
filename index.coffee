@@ -30,6 +30,10 @@ display: block;
 float: left;
 width: #{widthpx}px;
 font-size: 5pt;
+user-select: none;
+-moz-user-select: none;
+-webkit-user-select: none;
+
 transform: scale(5,5) translate(80px, 80px);
 -webkit-transform: scale(5,5) translate(80px, 80px);
 -moz-transform: scale(5,5) translate(80px, 80px);
