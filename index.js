@@ -34,6 +34,7 @@
       this.textureSize = (_ref3 = opts.textureSize) != null ? _ref3 : 16;
       this.borderSize = (_ref4 = opts.borderSize) != null ? _ref4 : 1;
       this.emptySlotImage = (_ref5 = opts.emptySlotImage) != null ? _ref5 : 'data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA';
+      this.dragNode = null;
     }
 
     InventoryWindow.prototype.createContainer = function() {
@@ -71,7 +72,26 @@
         div.appendChild(textNode);
       }
       ever(div).on('mousedown', function(ev) {
-        return console.log(ev);
+        div.style.backgroundImage = 'url(' + _this.emptySlotImage + ')';
+        console.log(ev);
+        console.log(div.style.backgroundImage);
+        _this.dragNode = document.createElement('img');
+        _this.dragNode.setAttribute('src', src);
+        _this.dragNode.setAttribute('style', "position: absolute;left: " + ev.x + "px;top: " + ev.y + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;");
+        return document.body.appendChild(_this.dragNode);
+      });
+      ever(div).on('mouseup', function(ev) {
+        return console.log('mouseup', ev);
+      });
+      ever(document).on('mouseup', function(ev) {
+        return _this.dragNode = null;
+      });
+      ever(document).on('mousemove', function(ev) {
+        if (!_this.dragNode) {
+          return;
+        }
+        _this.dragNode.style.left = ev.x + 'px';
+        return _this.dragNode.style.top = ev.y + 'px';
       });
       return div;
     };

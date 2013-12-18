@@ -14,6 +14,8 @@ class InventoryWindow extends EventEmitter
     @borderSize = opts.borderSize ? 1
     @emptySlotImage = opts.emptySlotImage ? 'data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA' # blank
 
+    @dragNode = null
+
   createContainer: () ->
     container = document.createElement 'div'
     #container.setAttribute 'class', 'inventory-window'  # .inventory-window { border: 1px dotted black; display: inline; float: left; }
@@ -68,6 +70,36 @@ height: #{@textureSize}px;
       div.appendChild textNode
 
     ever(div).on 'mousedown', (ev) =>
+      div.style.backgroundImage = 'url(' + @emptySlotImage + ')'
+
       console.log ev
+      console.log div.style.backgroundImage
+
+      @dragNode = document.createElement 'img'
+      @dragNode.setAttribute 'src', src
+      @dragNode.setAttribute 'style', "
+position: absolute;
+left: #{ev.x}px;
+top: #{ev.y}px;
+user-select: none;
+-moz-user-select: none;
+-webkit-user-select: none;
+"
+      document.body.appendChild @dragNode
+
+    ever(div).on 'mouseup', (ev) =>
+      console.log 'mouseup', ev
+
+    ever(document).on 'mouseup', (ev) =>
+      #@dragNode.parent.removeChild(@dragNode)
+      @dragNode = null
+
+    ever(document).on 'mousemove', (ev) =>
+      return if not @dragNode
+
+      @dragNode.style.left = ev.x + 'px'
+      @dragNode.style.top = ev.y + 'px'
 
     div
+
+
