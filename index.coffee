@@ -67,16 +67,6 @@ transform: scale(5,5) translate(80px, 80px);
         @pickUpSlot index, ev
 
   createSlotNode: (itemPile) ->
-    if itemPile?
-      src = @getTexture itemPile
-      #text = @getTextOverlay @inventory.slot
-      text = itemPile.count
-      text = undefined if text == 1
-      text = '\u221e' if text == Infinity
-    else
-      src = @emptySlotImage
-      text = undefined
-
     div = document.createElement 'div'
     div.setAttribute 'style', "
 border: #{@borderSize}px solid black;
@@ -84,29 +74,34 @@ display: block;
 float: inherit;
 margin: 0;
 padding: 0;
-background-image: url(#{src});
 width: #{@textureSize}px;
 height: #{@textureSize}px;
 font-size: 5pt;
 "
-    textNode = document.createTextNode(text ? ' ')
+    textNode = document.createTextNode()
     div.appendChild textNode
 
+    # set image and text
+    @populateSlotNode div, itemPile
 
     div
 
-  updateSlotNode: (index, newItemPile) ->
-    div = @slotNodes[index]
-
-    if newItemPile?
-      src = @getTexture newItemPile
-      text = ''+newItemPile.count
+  populateSlotNode: (div, itemPile) ->
+    if itemPile?
+      src = @getTexture itemPile
+      #text = @getTextOverlay @inventory.slot
+      text = itemPile.count
+      text = '' if text == 1
+      text = '\u221e' if text == Infinity
     else
       src = @emptySlotImage
       text = ''
 
     div.style.backgroundImage = 'url(' + src + ')'
     div.textContent = text
+
+  refreshSlotNode: (index) ->
+    @populateSlotNode @slotNodes[index], @inventory.array[index]
 
   pickUpSlot: (index, ev) ->
     pile = @inventory.slot(index)
@@ -117,7 +112,7 @@ font-size: 5pt;
       return
 
     # clear slot
-    @updateSlotNode index, undefined
+    @populateSlotNode @slotNodes[index], undefined
 
     # create a new node, attached TODO: also include text
     @dragSourceIndex = index
@@ -142,8 +137,8 @@ pointer-events: none;
     console.log '  inventory before='+@inventory
     @inventory.swap @dragSourceIndex, index
     console.log '  inventory after= '+@inventory
-    @updateSlotNode @dragSourceIndex, @inventory.array[@dragSourceIndex]
-    @updateSlotNode index, @inventory.array[index]
+    @refreshSlotNode @dragSourceIndex
+    @refreshSlotNode index
 
     @dragNode.parentNode.removeChild(@dragNode)
     @dragNode = null

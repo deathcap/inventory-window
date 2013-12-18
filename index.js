@@ -79,39 +79,36 @@
     };
 
     InventoryWindow.prototype.createSlotNode = function(itemPile) {
-      var div, src, text, textNode;
+      var div, textNode;
+      div = document.createElement('div');
+      div.setAttribute('style', "border: " + this.borderSize + "px solid black;display: block;float: inherit;margin: 0;padding: 0;width: " + this.textureSize + "px;height: " + this.textureSize + "px;font-size: 5pt;");
+      textNode = document.createTextNode();
+      div.appendChild(textNode);
+      this.populateSlotNode(div, itemPile);
+      return div;
+    };
+
+    InventoryWindow.prototype.populateSlotNode = function(div, itemPile) {
+      var src, text;
       if (itemPile != null) {
         src = this.getTexture(itemPile);
         text = itemPile.count;
         if (text === 1) {
-          text = void 0;
+          text = '';
         }
         if (text === Infinity) {
           text = '\u221e';
         }
       } else {
         src = this.emptySlotImage;
-        text = void 0;
-      }
-      div = document.createElement('div');
-      div.setAttribute('style', "border: " + this.borderSize + "px solid black;display: block;float: inherit;margin: 0;padding: 0;background-image: url(" + src + ");width: " + this.textureSize + "px;height: " + this.textureSize + "px;font-size: 5pt;");
-      textNode = document.createTextNode(text != null ? text : ' ');
-      div.appendChild(textNode);
-      return div;
-    };
-
-    InventoryWindow.prototype.updateSlotNode = function(index, newItemPile) {
-      var div, src, text;
-      div = this.slotNodes[index];
-      if (newItemPile != null) {
-        src = this.getTexture(newItemPile);
-        text = '' + newItemPile.count;
-      } else {
-        src = this.emptySlotImage;
         text = '';
       }
       div.style.backgroundImage = 'url(' + src + ')';
       return div.textContent = text;
+    };
+
+    InventoryWindow.prototype.refreshSlotNode = function(index) {
+      return this.populateSlotNode(this.slotNodes[index], this.inventory.array[index]);
     };
 
     InventoryWindow.prototype.pickUpSlot = function(index, ev) {
@@ -121,7 +118,7 @@
       if (pile == null) {
         return;
       }
-      this.updateSlotNode(index, void 0);
+      this.populateSlotNode(this.slotNodes[index], void 0);
       this.dragSourceIndex = index;
       this.dragNode = this.createSlotNode(pile);
       this.dragNode.setAttribute('style', this.dragNode.getAttribute('style') + ("position: absolute;left: " + ev.x + "px;top: " + ev.y + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;-webkit-transform: scale(5,5); /* TODO: stop scaling */"));
@@ -135,8 +132,8 @@
       console.log('  inventory before=' + this.inventory);
       this.inventory.swap(this.dragSourceIndex, index);
       console.log('  inventory after= ' + this.inventory);
-      this.updateSlotNode(this.dragSourceIndex, this.inventory.array[this.dragSourceIndex]);
-      this.updateSlotNode(index, this.inventory.array[index]);
+      this.refreshSlotNode(this.dragSourceIndex);
+      this.refreshSlotNode(index);
       this.dragNode.parentNode.removeChild(this.dragNode);
       this.dragNode = null;
       this.dragSourceIndex = null;
