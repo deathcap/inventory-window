@@ -70,29 +70,11 @@ height: #{@textureSize}px;
       div.appendChild textNode
 
     ever(div).on 'mousedown', (ev) =>
-      div.style.backgroundImage = 'url(' + @emptySlotImage + ')'
-
-      console.log ev
-      console.log div.style.backgroundImage
-
-      @dragNode = document.createElement 'img'
-      @dragNode.setAttribute 'src', src
-      @dragNode.setAttribute 'style', "
-position: absolute;
-left: #{ev.x}px;
-top: #{ev.y}px;
-user-select: none;
--moz-user-select: none;
--webkit-user-select: none;
-"
-      document.body.appendChild @dragNode
-
-    ever(div).on 'mouseup', (ev) =>
-      console.log 'mouseup', ev
-
-    ever(document).on 'mouseup', (ev) =>
-      #@dragNode.parent.removeChild(@dragNode)
-      @dragNode = null
+      console.log 'mousedown'
+      if @dragNode
+        @dropSlot div, ev, src
+      else
+        @pickUpSlot div, ev, src
 
     ever(document).on 'mousemove', (ev) =>
       return if not @dragNode
@@ -101,5 +83,36 @@ user-select: none;
       @dragNode.style.top = ev.y + 'px'
 
     div
+
+  pickUpSlot: (div, ev, src) ->
+    console.log 'pickUpSlot'
+
+    # clear slot
+    div.style.backgroundImage = 'url(' + @emptySlotImage + ')'
+
+    console.log ev
+    console.log div.style.backgroundImage
+
+    # create a new node, attached TODO: also include text
+    @dragNode = document.createElement 'img'
+    @dragNode.setAttribute 'src', src
+    @dragNode.setAttribute 'style', "
+position: absolute;
+left: #{ev.x}px;
+top: #{ev.y}px;
+user-select: none;
+-moz-user-select: none;
+-webkit-user-select: none;
+pointer-events: none;
+"
+    document.body.appendChild @dragNode
+
+  dropSlot: (div, ev, src) ->
+    console.log 'dropSlot'
+
+    @dragNode.parentNode.removeChild(@dragNode)
+    @dragNode = null
+
+    return
 
 

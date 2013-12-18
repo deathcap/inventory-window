@@ -72,19 +72,12 @@
         div.appendChild(textNode);
       }
       ever(div).on('mousedown', function(ev) {
-        div.style.backgroundImage = 'url(' + _this.emptySlotImage + ')';
-        console.log(ev);
-        console.log(div.style.backgroundImage);
-        _this.dragNode = document.createElement('img');
-        _this.dragNode.setAttribute('src', src);
-        _this.dragNode.setAttribute('style', "position: absolute;left: " + ev.x + "px;top: " + ev.y + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;");
-        return document.body.appendChild(_this.dragNode);
-      });
-      ever(div).on('mouseup', function(ev) {
-        return console.log('mouseup', ev);
-      });
-      ever(document).on('mouseup', function(ev) {
-        return _this.dragNode = null;
+        console.log('mousedown');
+        if (_this.dragNode) {
+          return _this.dropSlot(div, ev, src);
+        } else {
+          return _this.pickUpSlot(div, ev, src);
+        }
       });
       ever(document).on('mousemove', function(ev) {
         if (!_this.dragNode) {
@@ -94,6 +87,23 @@
         return _this.dragNode.style.top = ev.y + 'px';
       });
       return div;
+    };
+
+    InventoryWindow.prototype.pickUpSlot = function(div, ev, src) {
+      console.log('pickUpSlot');
+      div.style.backgroundImage = 'url(' + this.emptySlotImage + ')';
+      console.log(ev);
+      console.log(div.style.backgroundImage);
+      this.dragNode = document.createElement('img');
+      this.dragNode.setAttribute('src', src);
+      this.dragNode.setAttribute('style', "position: absolute;left: " + ev.x + "px;top: " + ev.y + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;");
+      return document.body.appendChild(this.dragNode);
+    };
+
+    InventoryWindow.prototype.dropSlot = function(div, ev, src) {
+      console.log('dropSlot');
+      this.dragNode.parentNode.removeChild(this.dragNode);
+      this.dragNode = null;
     };
 
     return InventoryWindow;
