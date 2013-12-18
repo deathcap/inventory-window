@@ -129,9 +129,7 @@
       var pile;
       pile = this.inventory.slot(index);
       console.log('dropSlot', index, pile);
-      console.log('  inventory before=' + this.inventory);
       this.inventory.swap(this.dragSourceIndex, index);
-      console.log('  inventory after= ' + this.inventory);
       this.refreshSlotNode(this.dragSourceIndex);
       this.refreshSlotNode(index);
       this.dragNode.parentNode.removeChild(this.dragNode);

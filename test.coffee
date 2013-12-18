@@ -1,6 +1,7 @@
 InventoryWindow = require './'
 Inventory = require 'inventory'
 ItemPile = require 'itempile'
+ever = require 'ever'
 
 inv = new Inventory(5*5)
 inv.give new ItemPile 'diamond', 1
@@ -28,5 +29,7 @@ w = new InventoryWindow {
 container = w.createContainer()
 console.log container
 document.body.appendChild(container)
+
+ever(document.body).on 'contextmenu', (ev) -> ev.preventDefault()
 
 window.w = w

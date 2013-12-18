@@ -134,9 +134,7 @@ pointer-events: none;
     pile = @inventory.slot(index)
     console.log 'dropSlot',index,pile
 
-    console.log '  inventory before='+@inventory
     @inventory.swap @dragSourceIndex, index
-    console.log '  inventory after= '+@inventory
     @refreshSlotNode @dragSourceIndex
     @refreshSlotNode index
 
