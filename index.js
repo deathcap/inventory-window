@@ -103,6 +103,7 @@
     InventoryWindow.prototype.dropSlot = function(div, ev, src) {
       console.log('dropSlot');
       this.dragNode.parentNode.removeChild(this.dragNode);
+      div.style.backgroundImage = 'url(' + this.dragNode.src + ')';
       this.dragNode = null;
     };
 

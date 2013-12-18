@@ -111,6 +111,9 @@ pointer-events: none;
     console.log 'dropSlot'
 
     @dragNode.parentNode.removeChild(@dragNode)
+
+    div.style.backgroundImage = 'url(' + @dragNode.src + ')' # TODO: real item, not just image
+    
     @dragNode = null
 
     return
