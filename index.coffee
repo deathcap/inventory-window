@@ -20,15 +20,20 @@ class InventoryWindow extends EventEmitter
 
       container.appendChild @createSlotNode src
     widthpx = @width * (@textureSize + @borderSize * 2)
-    container.setAttribute 'style', "border: 1px dotted black; display: inline; float: left; width: #{widthpx}px"
+    container.setAttribute 'style', "border: 1px solid black; display: inline; float: left; width: #{widthpx}px"
 
     container
 
   createSlotNode: (src) ->
-    img = document.createElement 'img'
-    img.setAttribute 'src',  src
-    #img.setAttribute 'class', 'inventory-slot'  # .inventory-slot { border: 1px solid black; display: inline; float: inherit; }
-    img.setAttribute 'style', "border: #{@borderSize}px solid black; display: inline; float: inherit;"
-    img.setAttribute 'width', ''+@textureSize
-    img.setAttribute 'height', ''+@textureSize
-    img
+    div = document.createElement 'div'
+    div.setAttribute 'style', "
+border: #{@borderSize}px solid black;
+display: block;
+float: inherit;
+margin: 0;
+padding: 0;
+background-image: url(#{src});
+width: #{@textureSize}px;
+height: #{@textureSize}px;
+"
+    div

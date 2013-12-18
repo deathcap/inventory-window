@@ -41,18 +41,15 @@
         container.appendChild(this.createSlotNode(src));
       }
       widthpx = this.width * (this.textureSize + this.borderSize * 2);
-      container.setAttribute('style', "border: 1px dotted black; display: inline; float: left; width: " + widthpx + "px");
+      container.setAttribute('style', "border: 1px solid black; display: inline; float: left; width: " + widthpx + "px");
       return container;
     };
 
     InventoryWindow.prototype.createSlotNode = function(src) {
-      var img;
-      img = document.createElement('img');
-      img.setAttribute('src', src);
-      img.setAttribute('style', "border: " + this.borderSize + "px solid black; display: inline; float: inherit;");
-      img.setAttribute('width', '' + this.textureSize);
-      img.setAttribute('height', '' + this.textureSize);
-      return img;
+      var div;
+      div = document.createElement('div');
+      div.setAttribute('style', "border: " + this.borderSize + "px solid black;display: block;float: inherit;margin: 0;padding: 0;background-image: url(" + src + ");width: " + this.textureSize + "px;height: " + this.textureSize + "px;");
+      return div;
     };
 
     return InventoryWindow;
