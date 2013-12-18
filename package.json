@@ -1,0 +1,23 @@
+{
+  "name": "inventory-window",
+  "description": "",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:deathcap/inventory-window.git"
+  },
+  "dependencies": {
+    "ever": "0.0.3",
+    "itempile": "git://github.com/deathcap/itempile.git",
+    "inventory": "git://github.com/deathcap/inventory.git"
+  },
+  "devDependencies": {
+    "coffee-script": "1.6.3",
+    "coffeeify": "0.5.2",
+    "browserify": "2.35.1",
+    "beefy": "0.4.5"
+  },
+  "scripts": {
+    "start": "beefy test.coffee:bundle.js 8888 -- -t coffeeify"
+  }
+}

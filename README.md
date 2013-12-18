@@ -1,0 +1,6 @@
+# inventory-window
+
+## License
+
+MIT
+
