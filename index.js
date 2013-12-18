@@ -34,11 +34,12 @@
       this.textureSize = (_ref3 = opts.textureSize) != null ? _ref3 : 16;
       this.borderSize = (_ref4 = opts.borderSize) != null ? _ref4 : 1;
       this.emptySlotImage = (_ref5 = opts.emptySlotImage) != null ? _ref5 : 'data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA';
+      this.slotNodes = [];
       this.dragNode = null;
     }
 
     InventoryWindow.prototype.createContainer = function() {
-      var container, i, slotItem, src, text, widthpx, _i, _ref;
+      var container, i, node, slotItem, src, text, widthpx, _i, _ref;
       container = document.createElement('div');
       for (i = _i = 0, _ref = this.inventory.size(); 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
         slotItem = this.inventory.slot(i);
@@ -55,17 +56,20 @@
           src = this.emptySlotImage;
           text = void 0;
         }
-        container.appendChild(this.createSlotNode(src, text));
+        node = this.createSlotNode(src, text, i);
+        this.slotNodes.push(node);
+        container.appendChild(node);
       }
       widthpx = this.width * (this.textureSize + this.borderSize * 2);
       container.setAttribute('style', "border: 1px solid black;display: block;float: left;width: " + widthpx + "px;font-size: 5pt;user-select: none;-moz-user-select: none;-webkit-user-select: none;transform: scale(5,5) translate(80px, 80px);-webkit-transform: scale(5,5) translate(80px, 80px);-moz-transform: scale(5,5) translate(80px, 80px);-ms-transform: scale(5,5) translate(80px, 80px);-o-transform: scale(5,5) translate(80px, 80px);");
       return container;
     };
 
-    InventoryWindow.prototype.createSlotNode = function(src, text) {
+    InventoryWindow.prototype.createSlotNode = function(src, text, index) {
       var div, textNode,
         _this = this;
       div = document.createElement('div');
+      div.setAttribute('data-inventory-index', index);
       div.setAttribute('style', "border: " + this.borderSize + "px solid black;display: block;float: inherit;margin: 0;padding: 0;background-image: url(" + src + ");width: " + this.textureSize + "px;height: " + this.textureSize + "px;");
       if (text != null) {
         textNode = document.createTextNode(text);
@@ -74,9 +78,9 @@
       ever(div).on('mousedown', function(ev) {
         console.log('mousedown');
         if (_this.dragNode) {
-          return _this.dropSlot(div, ev, src);
+          return _this.dropSlot(index, ev);
         } else {
-          return _this.pickUpSlot(div, ev, src);
+          return _this.pickUpSlot(index, ev);
         }
       });
       ever(document).on('mousemove', function(ev) {
@@ -89,19 +93,22 @@
       return div;
     };
 
-    InventoryWindow.prototype.pickUpSlot = function(div, ev, src) {
-      console.log('pickUpSlot');
+    InventoryWindow.prototype.pickUpSlot = function(index, ev) {
+      var div, src;
+      console.log('pickUpSlot', index);
+      div = this.slotNodes[index];
       div.style.backgroundImage = 'url(' + this.emptySlotImage + ')';
-      console.log(ev);
-      console.log(div.style.backgroundImage);
       this.dragNode = document.createElement('img');
+      src = this.getTexture(this.inventory.slot(index));
       this.dragNode.setAttribute('src', src);
       this.dragNode.setAttribute('style', "position: absolute;left: " + ev.x + "px;top: " + ev.y + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;");
       return document.body.appendChild(this.dragNode);
     };
 
-    InventoryWindow.prototype.dropSlot = function(div, ev, src) {
-      console.log('dropSlot');
+    InventoryWindow.prototype.dropSlot = function(index, ev) {
+      var div;
+      console.log('dropSlot', index);
+      div = this.slotNodes[index];
       this.dragNode.parentNode.removeChild(this.dragNode);
       div.style.backgroundImage = 'url(' + this.dragNode.src + ')';
       this.dragNode = null;

@@ -14,6 +14,7 @@ class InventoryWindow extends EventEmitter
     @borderSize = opts.borderSize ? 1
     @emptySlotImage = opts.emptySlotImage ? 'data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA' # blank
 
+    @slotNodes = []
     @dragNode = null
 
   createContainer: () ->
@@ -32,7 +33,10 @@ class InventoryWindow extends EventEmitter
         src = @emptySlotImage
         text = undefined
 
-      container.appendChild @createSlotNode(src, text)
+      node = @createSlotNode(src, text, i)
+      @slotNodes.push node
+      container.appendChild node
+
     widthpx = @width * (@textureSize + @borderSize * 2)
     container.setAttribute 'style', "
 border: 1px solid black;
@@ -53,8 +57,9 @@ transform: scale(5,5) translate(80px, 80px);
 
     container
 
-  createSlotNode: (src, text) ->
+  createSlotNode: (src, text, index) ->
     div = document.createElement 'div'
+    div.setAttribute 'data-inventory-index', index
     div.setAttribute 'style', "
 border: #{@borderSize}px solid black;
 display: block;
@@ -72,9 +77,9 @@ height: #{@textureSize}px;
     ever(div).on 'mousedown', (ev) =>
       console.log 'mousedown'
       if @dragNode
-        @dropSlot div, ev, src
+        @dropSlot index, ev
       else
-        @pickUpSlot div, ev, src
+        @pickUpSlot index, ev
 
     ever(document).on 'mousemove', (ev) =>
       return if not @dragNode
@@ -84,17 +89,16 @@ height: #{@textureSize}px;
 
     div
 
-  pickUpSlot: (div, ev, src) ->
-    console.log 'pickUpSlot'
+  pickUpSlot: (index, ev) ->
+    console.log 'pickUpSlot',index
 
+    div = @slotNodes[index]
     # clear slot
     div.style.backgroundImage = 'url(' + @emptySlotImage + ')'
 
-    console.log ev
-    console.log div.style.backgroundImage
-
     # create a new node, attached TODO: also include text
     @dragNode = document.createElement 'img'
+    src = @getTexture @inventory.slot(index)
     @dragNode.setAttribute 'src', src
     @dragNode.setAttribute 'style', "
 position: absolute;
@@ -107,14 +111,18 @@ pointer-events: none;
 "
     document.body.appendChild @dragNode
 
-  dropSlot: (div, ev, src) ->
-    console.log 'dropSlot'
+  dropSlot: (index, ev) ->
+    console.log 'dropSlot',index
+
+    div = @slotNodes[index]
 
     @dragNode.parentNode.removeChild(@dragNode)
-
     div.style.backgroundImage = 'url(' + @dragNode.src + ')' # TODO: real item, not just image
     
     @dragNode = null
+
+    # TODO: if not empty, pick up this slot after dropped (swap)
+    #pickUpSlot div, ev, src
 
     return
 
