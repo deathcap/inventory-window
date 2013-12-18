@@ -12,7 +12,7 @@
     __extends(InventoryWindow, _super);
 
     function InventoryWindow(opts) {
-      var _ref, _ref1, _ref2, _ref3, _ref4;
+      var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
       if (opts == null) {
         opts = {};
       }
@@ -33,6 +33,8 @@
       this.width = (_ref2 = opts.width) != null ? _ref2 : 5;
       this.textureSize = (_ref3 = opts.textureSize) != null ? _ref3 : 16;
       this.borderSize = (_ref4 = opts.borderSize) != null ? _ref4 : 1;
+      this.leftMouseButton = (_ref5 = opts.leftMouseButton) != null ? _ref5 : 0;
+      this.rightMouseButton = (_ref6 = opts.rightMouseButton) != null ? _ref6 : 2;
       this.slotNodes = [];
       this.dragNode = null;
       this.dragSourceIndex = null;
@@ -111,24 +113,34 @@
     };
 
     InventoryWindow.prototype.pickUpSlot = function(index, ev) {
-      var pile;
-      pile = this.inventory.slot(index);
-      console.log('pickUpSlot', index, pile);
-      if (pile == null) {
+      var itemPile;
+      itemPile = this.inventory.slot(index);
+      console.log('pickUpSlot', index, itemPile);
+      if (itemPile == null) {
         return;
       }
       this.populateSlotNode(this.slotNodes[index], void 0);
       this.dragSourceIndex = index;
-      this.dragNode = this.createSlotNode(pile);
-      this.dragNode.setAttribute('style', this.dragNode.getAttribute('style') + ("position: absolute;left: " + ev.x + "px;top: " + ev.y + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;-webkit-transform: scale(5,5); /* TODO: stop scaling */"));
+      this.dragNode = this.createDragNode(itemPile, ev.x, ev.y);
       return document.body.appendChild(this.dragNode);
     };
 
+    InventoryWindow.prototype.createDragNode = function(itemPile, initialX, initialY) {
+      var node;
+      node = this.createSlotNode(itemPile);
+      node.setAttribute('style', node.getAttribute('style') + ("position: absolute;left: " + initialX + "px;top: " + initialY + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;-webkit-transform: scale(5,5); /* TODO: stop scaling hack */"));
+      return node;
+    };
+
     InventoryWindow.prototype.dropSlot = function(index, ev) {
-      var pile;
-      pile = this.inventory.slot(index);
-      console.log('dropSlot', index, pile);
-      this.inventory.swap(this.dragSourceIndex, index);
+      var itemPile;
+      itemPile = this.inventory.slot(index);
+      console.log('dropSlot', index, itemPile);
+      if (ev.button === this.rightMouseButton) {
+        this.inventory.array[index].splitPile(1);
+      } else {
+        this.inventory.swap(this.dragSourceIndex, index);
+      }
       this.refreshSlotNode(this.dragSourceIndex);
       this.refreshSlotNode(index);
       this.dragNode.parentNode.removeChild(this.dragNode);

@@ -12,6 +12,8 @@ class InventoryWindow extends EventEmitter
     @width = opts.width ? 5
     @textureSize = opts.textureSize ? 16
     @borderSize = opts.borderSize ? 1
+    @leftMouseButton = opts.leftMouseButton ? 0
+    @rightMouseButton = opts.rightMouseButton ? 2
 
     @slotNodes = []
     @dragNode = null
@@ -103,10 +105,10 @@ font-size: 5pt;
     @populateSlotNode @slotNodes[index], @inventory.array[index]
 
   pickUpSlot: (index, ev) ->
-    pile = @inventory.slot(index)
-    console.log 'pickUpSlot',index,pile
+    itemPile= @inventory.slot(index)
+    console.log 'pickUpSlot',index,itemPile
 
-    if not pile?
+    if not itemPile?
       # not picking up anything
       return
 
@@ -115,25 +117,36 @@ font-size: 5pt;
 
     # create a new node, attached TODO: also include text
     @dragSourceIndex = index
-    @dragNode = @createSlotNode(pile)
-    @dragNode.setAttribute 'style', @dragNode.getAttribute('style') + "
+    
+    @dragNode = @createDragNode(itemPile, ev.x, ev.y)
+    document.body.appendChild @dragNode
+
+  createDragNode: (itemPile, initialX, initialY) ->
+    node = @createSlotNode(itemPile)
+    node.setAttribute 'style', node.getAttribute('style') + "
 position: absolute;
-left: #{ev.x}px;
-top: #{ev.y}px;
+left: #{initialX}px;
+top: #{initialY}px;
 user-select: none;
 -moz-user-select: none;
 -webkit-user-select: none;
 pointer-events: none;
 
--webkit-transform: scale(5,5); /* TODO: stop scaling */
+-webkit-transform: scale(5,5); /* TODO: stop scaling hack */
 "
-    document.body.appendChild @dragNode
+    return node
 
   dropSlot: (index, ev) ->
-    pile = @inventory.slot(index)
-    console.log 'dropSlot',index,pile
+    itemPile = @inventory.slot(index)
+    console.log 'dropSlot',index,itemPile
 
-    @inventory.swap @dragSourceIndex, index
+    if ev.button == @rightMouseButton
+      # right click drop: drop one item
+      @inventory.array[index].splitPile 1
+    else
+      # left click drop: drop whole pile
+      @inventory.swap @dragSourceIndex, index
+
     @refreshSlotNode @dragSourceIndex
     @refreshSlotNode index
 
