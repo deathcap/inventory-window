@@ -10,26 +10,38 @@
     __extends(InventoryWindow, _super);
 
     function InventoryWindow(opts) {
+      var _ref, _ref1, _ref2, _ref3, _ref4;
       if (opts == null) {
         opts = {};
       }
-      this.inventory = opts.inventory || (function() {
-        throw 'inventory-window requires "inventory" option set to Inventory instance';
+      this.inventory = (function() {
+        if ((_ref = opts.inventory) != null) {
+          return _ref;
+        } else {
+          throw 'inventory-window requires "inventory" option set to Inventory instance';
+        }
       })();
-      this.getTexture = opts.getTexture || (function() {
-        throw 'inventory-window requires "getTexture" option set to callback';
+      this.getTexture = (function() {
+        if ((_ref1 = opts.getTexture) != null) {
+          return _ref1;
+        } else {
+          throw 'inventory-window requires "getTexture" option set to callback';
+        }
       })();
-      this.textureSize = opts.textureSize || 16;
+      this.width = (_ref2 = opts.width) != null ? _ref2 : 5;
+      this.textureSize = (_ref3 = opts.textureSize) != null ? _ref3 : 16;
+      this.borderSize = (_ref4 = opts.borderSize) != null ? _ref4 : 1;
     }
 
     InventoryWindow.prototype.createContainer = function() {
-      var container, i, src, _i, _ref;
+      var container, i, src, widthpx, _i, _ref;
       container = document.createElement('div');
-      container.setAttribute('style', 'border: 1px dotted black; display: inline; float: left;');
       for (i = _i = 0, _ref = this.inventory.size(); 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
         src = this.getTexture(this.inventory.slot(i));
         container.appendChild(this.createSlotNode(src));
       }
+      widthpx = this.width * (this.textureSize + this.borderSize * 2);
+      container.setAttribute('style', "border: 1px dotted black; display: inline; float: left; width: " + widthpx + "px");
       return container;
     };
 
@@ -37,7 +49,7 @@
       var img;
       img = document.createElement('img');
       img.setAttribute('src', src);
-      img.setAttribute('style', 'border: 1px solid black; display: inline; float: inherit;');
+      img.setAttribute('style', "border: " + this.borderSize + "px solid black; display: inline; float: inherit;");
       img.setAttribute('width', '' + this.textureSize);
       img.setAttribute('height', '' + this.textureSize);
       return img;
