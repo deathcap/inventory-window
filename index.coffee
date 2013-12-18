@@ -8,6 +8,7 @@ class InventoryWindow extends EventEmitter
     opts ?= {}
     @inventory = opts.inventory || throw 'inventory-window requires "inventory" option set to Inventory instance'
     @getTexture = opts.getTexture || throw 'inventory-window requires "getTexture" option set to callback'
+    @textureSize = opts.textureSize || 16
 
   createContainer: () ->
     container = document.createElement 'div'
@@ -25,4 +26,6 @@ class InventoryWindow extends EventEmitter
     img.setAttribute 'src',  src
     #img.setAttribute 'class', 'inventory-slot'  # .inventory-slot { border: 1px solid black; display: inline; float: inherit; }
     img.setAttribute 'style', 'border: 1px solid black; display: inline; float: inherit;'
+    img.setAttribute 'width', ''+@textureSize
+    img.setAttribute 'height', ''+@textureSize
     img

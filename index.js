@@ -19,6 +19,7 @@
       this.getTexture = opts.getTexture || (function() {
         throw 'inventory-window requires "getTexture" option set to callback';
       })();
+      this.textureSize = opts.textureSize || 16;
     }
 
     InventoryWindow.prototype.createContainer = function() {
@@ -37,6 +38,8 @@
       img = document.createElement('img');
       img.setAttribute('src', src);
       img.setAttribute('style', 'border: 1px solid black; display: inline; float: inherit;');
+      img.setAttribute('width', '' + this.textureSize);
+      img.setAttribute('height', '' + this.textureSize);
       return img;
     };
 
