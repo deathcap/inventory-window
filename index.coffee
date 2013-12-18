@@ -44,7 +44,6 @@ border: 1px solid black;
 display: block;
 float: left;
 width: #{widthpx}px;
-font-size: 5pt;
 user-select: none;
 -moz-user-select: none;
 -webkit-user-select: none;
@@ -87,6 +86,7 @@ padding: 0;
 background-image: url(#{src});
 width: #{@textureSize}px;
 height: #{@textureSize}px;
+font-size: 5pt;
 "
     textNode = document.createTextNode(text ? ' ')
     div.appendChild textNode
@@ -119,11 +119,8 @@ height: #{@textureSize}px;
     @updateSlotNode index, undefined
 
     # create a new node, attached TODO: also include text
-    src = @getTexture pile
-    #@dragNode = @createSlotNode(src, 
-    @dragNode = document.createElement 'img'
-    @dragNode.setAttribute 'src', src
-    @dragNode.setAttribute 'style', "
+    @dragNode = @createSlotNode(pile)
+    @dragNode.setAttribute 'style', @dragNode.getAttribute('style') + "
 position: absolute;
 left: #{ev.x}px;
 top: #{ev.y}px;
@@ -131,6 +128,8 @@ user-select: none;
 -moz-user-select: none;
 -webkit-user-select: none;
 pointer-events: none;
+
+-webkit-transform: scale(5,5); /* TODO: stop scaling */
 "
     document.body.appendChild @dragNode
 

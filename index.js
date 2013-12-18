@@ -61,7 +61,7 @@
         container.appendChild(node);
       }
       widthpx = this.width * (this.textureSize + this.borderSize * 2);
-      container.setAttribute('style', "border: 1px solid black;display: block;float: left;width: " + widthpx + "px;font-size: 5pt;user-select: none;-moz-user-select: none;-webkit-user-select: none;transform: scale(5,5) translate(80px, 80px);-webkit-transform: scale(5,5) translate(80px, 80px);-moz-transform: scale(5,5) translate(80px, 80px);-ms-transform: scale(5,5) translate(80px, 80px);-o-transform: scale(5,5) translate(80px, 80px);");
+      container.setAttribute('style', "border: 1px solid black;display: block;float: left;width: " + widthpx + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;transform: scale(5,5) translate(80px, 80px);-webkit-transform: scale(5,5) translate(80px, 80px);-moz-transform: scale(5,5) translate(80px, 80px);-ms-transform: scale(5,5) translate(80px, 80px);-o-transform: scale(5,5) translate(80px, 80px);");
       return container;
     };
 
@@ -93,7 +93,7 @@
         text = void 0;
       }
       div = document.createElement('div');
-      div.setAttribute('style', "border: " + this.borderSize + "px solid black;display: block;float: inherit;margin: 0;padding: 0;background-image: url(" + src + ");width: " + this.textureSize + "px;height: " + this.textureSize + "px;");
+      div.setAttribute('style', "border: " + this.borderSize + "px solid black;display: block;float: inherit;margin: 0;padding: 0;background-image: url(" + src + ");width: " + this.textureSize + "px;height: " + this.textureSize + "px;font-size: 5pt;");
       textNode = document.createTextNode(text != null ? text : ' ');
       div.appendChild(textNode);
       return div;
@@ -114,17 +114,15 @@
     };
 
     InventoryWindow.prototype.pickUpSlot = function(index, ev) {
-      var pile, src;
+      var pile;
       pile = this.inventory.slot(index);
       console.log('pickUpSlot', index, pile);
       if (pile == null) {
         return;
       }
       this.updateSlotNode(index, void 0);
-      src = this.getTexture(pile);
-      this.dragNode = document.createElement('img');
-      this.dragNode.setAttribute('src', src);
-      this.dragNode.setAttribute('style', "position: absolute;left: " + ev.x + "px;top: " + ev.y + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;");
+      this.dragNode = this.createSlotNode(pile);
+      this.dragNode.setAttribute('style', this.dragNode.getAttribute('style') + ("position: absolute;left: " + ev.x + "px;top: " + ev.y + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;-webkit-transform: scale(5,5); /* TODO: stop scaling */"));
       return document.body.appendChild(this.dragNode);
     };
 
