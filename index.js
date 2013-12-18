@@ -34,21 +34,32 @@
     }
 
     InventoryWindow.prototype.createContainer = function() {
-      var container, i, src, widthpx, _i, _ref;
+      var container, i, src, text, widthpx, _i, _ref, _ref1;
       container = document.createElement('div');
       for (i = _i = 0, _ref = this.inventory.size(); 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
         src = this.getTexture(this.inventory.slot(i));
-        container.appendChild(this.createSlotNode(src));
+        text = (_ref1 = this.inventory.slot(i)) != null ? _ref1.count : void 0;
+        if (text === 1) {
+          text = void 0;
+        }
+        if (text === Infinity) {
+          text = '\u221e';
+        }
+        container.appendChild(this.createSlotNode(src, text));
       }
       widthpx = this.width * (this.textureSize + this.borderSize * 2);
-      container.setAttribute('style', "border: 1px solid black; display: inline; float: left; width: " + widthpx + "px");
+      container.setAttribute('style', "border: 1px solid blackdisplay: inline;float: left;width: " + widthpx + "px;font-size: 5pt;");
       return container;
     };
 
-    InventoryWindow.prototype.createSlotNode = function(src) {
-      var div;
+    InventoryWindow.prototype.createSlotNode = function(src, text) {
+      var div, textNode;
       div = document.createElement('div');
       div.setAttribute('style', "border: " + this.borderSize + "px solid black;display: block;float: inherit;margin: 0;padding: 0;background-image: url(" + src + ");width: " + this.textureSize + "px;height: " + this.textureSize + "px;");
+      if (text != null) {
+        textNode = document.createTextNode(text);
+        div.appendChild(textNode);
+      }
       return div;
     };
 

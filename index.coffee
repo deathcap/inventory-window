@@ -17,14 +17,24 @@ class InventoryWindow extends EventEmitter
     #container.setAttribute 'class', 'inventory-window'  # .inventory-window { border: 1px dotted black; display: inline; float: left; }
     for i in [0...@inventory.size()]
       src = @getTexture @inventory.slot(i)
+      #text = @getTextOverlay @inventory.slot
+      text = @inventory.slot(i)?.count
+      text = undefined if text == 1
+      text = '\u221e' if text == Infinity
 
-      container.appendChild @createSlotNode src
+      container.appendChild @createSlotNode(src, text)
     widthpx = @width * (@textureSize + @borderSize * 2)
-    container.setAttribute 'style', "border: 1px solid black; display: inline; float: left; width: #{widthpx}px"
+    container.setAttribute 'style', "
+border: 1px solid black
+display: inline;
+float: left;
+width: #{widthpx}px;
+font-size: 5pt;
+"
 
     container
 
-  createSlotNode: (src) ->
+  createSlotNode: (src, text) ->
     div = document.createElement 'div'
     div.setAttribute 'style', "
 border: #{@borderSize}px solid black;
@@ -36,4 +46,8 @@ background-image: url(#{src});
 width: #{@textureSize}px;
 height: #{@textureSize}px;
 "
+    if text?
+      textNode = document.createTextNode text
+      div.appendChild textNode
+
     div

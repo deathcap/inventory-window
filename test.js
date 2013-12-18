@@ -10,17 +10,19 @@
 
   inv = new Inventory(5 * 5);
 
-  inv.give(new ItemPile('diamond', 10));
-
-  inv.give(new ItemPile('emerald', 64));
+  inv.give(new ItemPile('diamond', 1));
 
   inv.give(new ItemPile('emerald', 64));
 
   inv.give(new ItemPile('emerald', 32));
 
-  for (i = _i = 0; _i <= 20; i = ++_i) {
+  inv.give(new ItemPile('emerald', 32));
+
+  for (i = _i = 0; _i < 20; i = ++_i) {
     inv.give(new ItemPile('stick', 64));
   }
+
+  inv.array[24] = new ItemPile('diamond', Infinity);
 
   console.log(inv + '');
 
