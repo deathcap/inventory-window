@@ -17,23 +17,24 @@ class InventoryWindow extends EventEmitter
     @slotNodes = []
     @dragNode = null
 
+    @enable()
+
+  enable: () ->
+    ever(document).on 'mousemove', (ev) =>
+      return if not @dragNode
+
+      @dragNode.style.left = ev.x + 'px'
+      @dragNode.style.top = ev.y + 'px'
+
   createContainer: () ->
     container = document.createElement 'div'
     #container.setAttribute 'class', 'inventory-window'  # .inventory-window { border: 1px dotted black; display: inline; float: left; }
     for i in [0...@inventory.size()]
       slotItem = @inventory.slot(i)
 
-      if slotItem?
-        src = @getTexture slotItem
-        #text = @getTextOverlay @inventory.slot
-        text = slotItem.count
-        text = undefined if text == 1
-        text = '\u221e' if text == Infinity
-      else
-        src = @emptySlotImage
-        text = undefined
+      node = @createSlotNode(slotItem)
+      @bindSlotNodeEvent node, i
 
-      node = @createSlotNode(src, text, i)
       @slotNodes.push node
       container.appendChild node
 
@@ -57,9 +58,26 @@ transform: scale(5,5) translate(80px, 80px);
 
     container
 
-  createSlotNode: (src, text, index) ->
+  bindSlotNodeEvent: (node, index) ->
+    ever(node).on 'mousedown', (ev) =>
+      console.log 'mousedown'
+      if @dragNode
+        @dropSlot index, ev
+      else
+        @pickUpSlot index, ev
+
+  createSlotNode: (itemPile) ->
+    if itemPile?
+      src = @getTexture itemPile
+      #text = @getTextOverlay @inventory.slot
+      text = itemPile.count
+      text = undefined if text == 1
+      text = '\u221e' if text == Infinity
+    else
+      src = @emptySlotImage
+      text = undefined
+
     div = document.createElement 'div'
-    div.setAttribute 'data-inventory-index', index
     div.setAttribute 'style', "
 border: #{@borderSize}px solid black;
 display: block;
@@ -73,18 +91,6 @@ height: #{@textureSize}px;
     textNode = document.createTextNode(text ? ' ')
     div.appendChild textNode
 
-    ever(div).on 'mousedown', (ev) =>
-      console.log 'mousedown'
-      if @dragNode
-        @dropSlot index, ev
-      else
-        @pickUpSlot index, ev
-
-    ever(document).on 'mousemove', (ev) =>
-      return if not @dragNode
-
-      @dragNode.style.left = ev.x + 'px'
-      @dragNode.style.top = ev.y + 'px'
 
     div
 
@@ -109,14 +115,13 @@ height: #{@textureSize}px;
       # not picking up anything
       return
 
-    div = @slotNodes[index]
     # clear slot
-    #div.style.backgroundImage = 'url(' + @emptySlotImage + ')'
     @updateSlotNode index, undefined
 
     # create a new node, attached TODO: also include text
-    @dragNode = document.createElement 'img'
     src = @getTexture pile
+    #@dragNode = @createSlotNode(src, 
+    @dragNode = document.createElement 'img'
     @dragNode.setAttribute 'src', src
     @dragNode.setAttribute 'style', "
 position: absolute;

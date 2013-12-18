@@ -36,27 +36,27 @@
       this.emptySlotImage = (_ref5 = opts.emptySlotImage) != null ? _ref5 : 'data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA';
       this.slotNodes = [];
       this.dragNode = null;
+      this.enable();
     }
 
+    InventoryWindow.prototype.enable = function() {
+      var _this = this;
+      return ever(document).on('mousemove', function(ev) {
+        if (!_this.dragNode) {
+          return;
+        }
+        _this.dragNode.style.left = ev.x + 'px';
+        return _this.dragNode.style.top = ev.y + 'px';
+      });
+    };
+
     InventoryWindow.prototype.createContainer = function() {
-      var container, i, node, slotItem, src, text, widthpx, _i, _ref;
+      var container, i, node, slotItem, widthpx, _i, _ref;
       container = document.createElement('div');
       for (i = _i = 0, _ref = this.inventory.size(); 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
         slotItem = this.inventory.slot(i);
-        if (slotItem != null) {
-          src = this.getTexture(slotItem);
-          text = slotItem.count;
-          if (text === 1) {
-            text = void 0;
-          }
-          if (text === Infinity) {
-            text = '\u221e';
-          }
-        } else {
-          src = this.emptySlotImage;
-          text = void 0;
-        }
-        node = this.createSlotNode(src, text, i);
+        node = this.createSlotNode(slotItem);
+        this.bindSlotNodeEvent(node, i);
         this.slotNodes.push(node);
         container.appendChild(node);
       }
@@ -65,15 +65,9 @@
       return container;
     };
 
-    InventoryWindow.prototype.createSlotNode = function(src, text, index) {
-      var div, textNode,
-        _this = this;
-      div = document.createElement('div');
-      div.setAttribute('data-inventory-index', index);
-      div.setAttribute('style', "border: " + this.borderSize + "px solid black;display: block;float: inherit;margin: 0;padding: 0;background-image: url(" + src + ");width: " + this.textureSize + "px;height: " + this.textureSize + "px;");
-      textNode = document.createTextNode(text != null ? text : ' ');
-      div.appendChild(textNode);
-      ever(div).on('mousedown', function(ev) {
+    InventoryWindow.prototype.bindSlotNodeEvent = function(node, index) {
+      var _this = this;
+      return ever(node).on('mousedown', function(ev) {
         console.log('mousedown');
         if (_this.dragNode) {
           return _this.dropSlot(index, ev);
@@ -81,13 +75,27 @@
           return _this.pickUpSlot(index, ev);
         }
       });
-      ever(document).on('mousemove', function(ev) {
-        if (!_this.dragNode) {
-          return;
+    };
+
+    InventoryWindow.prototype.createSlotNode = function(itemPile) {
+      var div, src, text, textNode;
+      if (itemPile != null) {
+        src = this.getTexture(itemPile);
+        text = itemPile.count;
+        if (text === 1) {
+          text = void 0;
         }
-        _this.dragNode.style.left = ev.x + 'px';
-        return _this.dragNode.style.top = ev.y + 'px';
-      });
+        if (text === Infinity) {
+          text = '\u221e';
+        }
+      } else {
+        src = this.emptySlotImage;
+        text = void 0;
+      }
+      div = document.createElement('div');
+      div.setAttribute('style', "border: " + this.borderSize + "px solid black;display: block;float: inherit;margin: 0;padding: 0;background-image: url(" + src + ");width: " + this.textureSize + "px;height: " + this.textureSize + "px;");
+      textNode = document.createTextNode(text != null ? text : ' ');
+      div.appendChild(textNode);
       return div;
     };
 
@@ -106,16 +114,15 @@
     };
 
     InventoryWindow.prototype.pickUpSlot = function(index, ev) {
-      var div, pile, src;
+      var pile, src;
       pile = this.inventory.slot(index);
       console.log('pickUpSlot', index, pile);
       if (pile == null) {
         return;
       }
-      div = this.slotNodes[index];
       this.updateSlotNode(index, void 0);
-      this.dragNode = document.createElement('img');
       src = this.getTexture(pile);
+      this.dragNode = document.createElement('img');
       this.dragNode.setAttribute('src', src);
       this.dragNode.setAttribute('style', "position: absolute;left: " + ev.x + "px;top: " + ev.y + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;");
       return document.body.appendChild(this.dragNode);
