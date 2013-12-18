@@ -118,12 +118,11 @@ font-size: 5pt;
     # create a new node, attached TODO: also include text
     @dragSourceIndex = index
     
-    @dragNode = @createDragNode(itemPile, ev.x, ev.y)
-    document.body.appendChild @dragNode
+    @createDragNode(itemPile, ev.x, ev.y)
 
   createDragNode: (itemPile, initialX, initialY) ->
-    node = @createSlotNode(itemPile)
-    node.setAttribute 'style', node.getAttribute('style') + "
+    @dragNode = @createSlotNode(itemPile)
+    @dragNode.setAttribute 'style', @dragNode.getAttribute('style') + "
 position: absolute;
 left: #{initialX}px;
 top: #{initialY}px;
@@ -134,7 +133,12 @@ pointer-events: none;
 
 -webkit-transform: scale(5,5); /* TODO: stop scaling hack */
 "
-    return node
+    document.body.appendChild @dragNode
+
+  removeDragNode: () ->
+    @dragNode.parentNode.removeChild(@dragNode)
+    @dragNode = null
+    @dragSourceIndex = null
 
   dropSlot: (index, ev) ->
     itemPile = @inventory.slot(index)
@@ -142,17 +146,19 @@ pointer-events: none;
 
     if ev.button == @rightMouseButton
       # right click drop: drop one item
-      @inventory.array[index].splitPile 1
+      newDragPile = @inventory.array[index].splitPile -1
+      @removeDragNode()
+      @createDragNode newDragPile, ev.x, ev.y
+      return
+      # TODO
     else
       # left click drop: drop whole pile
       @inventory.swap @dragSourceIndex, index
 
-    @refreshSlotNode @dragSourceIndex
+    @refreshSlotNode @dragSourceIndex if @dragSourceIndex?
     @refreshSlotNode index
 
-    @dragNode.parentNode.removeChild(@dragNode)
-    @dragNode = null
-    @dragSourceIndex = null
+    @removeDragNode()
 
     # TODO: if not empty, pick up this slot after dropped (swap)
     #pickUpSlot div, ev, src

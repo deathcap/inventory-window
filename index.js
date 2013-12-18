@@ -121,31 +121,38 @@
       }
       this.populateSlotNode(this.slotNodes[index], void 0);
       this.dragSourceIndex = index;
-      this.dragNode = this.createDragNode(itemPile, ev.x, ev.y);
-      return document.body.appendChild(this.dragNode);
+      return this.createDragNode(itemPile, ev.x, ev.y);
     };
 
     InventoryWindow.prototype.createDragNode = function(itemPile, initialX, initialY) {
-      var node;
-      node = this.createSlotNode(itemPile);
-      node.setAttribute('style', node.getAttribute('style') + ("position: absolute;left: " + initialX + "px;top: " + initialY + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;-webkit-transform: scale(5,5); /* TODO: stop scaling hack */"));
-      return node;
+      this.dragNode = this.createSlotNode(itemPile);
+      this.dragNode.setAttribute('style', this.dragNode.getAttribute('style') + ("position: absolute;left: " + initialX + "px;top: " + initialY + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;-webkit-transform: scale(5,5); /* TODO: stop scaling hack */"));
+      return document.body.appendChild(this.dragNode);
+    };
+
+    InventoryWindow.prototype.removeDragNode = function() {
+      this.dragNode.parentNode.removeChild(this.dragNode);
+      this.dragNode = null;
+      return this.dragSourceIndex = null;
     };
 
     InventoryWindow.prototype.dropSlot = function(index, ev) {
-      var itemPile;
+      var itemPile, newDragPile;
       itemPile = this.inventory.slot(index);
       console.log('dropSlot', index, itemPile);
       if (ev.button === this.rightMouseButton) {
-        this.inventory.array[index].splitPile(1);
+        newDragPile = this.inventory.array[index].splitPile(-1);
+        this.removeDragNode();
+        this.createDragNode(newDragPile, ev.x, ev.y);
+        return;
       } else {
         this.inventory.swap(this.dragSourceIndex, index);
       }
-      this.refreshSlotNode(this.dragSourceIndex);
+      if (this.dragSourceIndex != null) {
+        this.refreshSlotNode(this.dragSourceIndex);
+      }
       this.refreshSlotNode(index);
-      this.dragNode.parentNode.removeChild(this.dragNode);
-      this.dragNode = null;
-      this.dragSourceIndex = null;
+      this.removeDragNode();
     };
 
     return InventoryWindow;
