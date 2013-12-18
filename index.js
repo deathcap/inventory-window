@@ -71,10 +71,8 @@
       div = document.createElement('div');
       div.setAttribute('data-inventory-index', index);
       div.setAttribute('style', "border: " + this.borderSize + "px solid black;display: block;float: inherit;margin: 0;padding: 0;background-image: url(" + src + ");width: " + this.textureSize + "px;height: " + this.textureSize + "px;");
-      if (text != null) {
-        textNode = document.createTextNode(text);
-        div.appendChild(textNode);
-      }
+      textNode = document.createTextNode(text != null ? text : ' ');
+      div.appendChild(textNode);
       ever(div).on('mousedown', function(ev) {
         console.log('mousedown');
         if (_this.dragNode) {
@@ -93,6 +91,20 @@
       return div;
     };
 
+    InventoryWindow.prototype.updateSlotNode = function(index, newItemPile) {
+      var div, src, text;
+      div = this.slotNodes[index];
+      if (newItemPile != null) {
+        src = this.getTexture(newItemPile);
+        text = '' + newItemPile.count;
+      } else {
+        src = this.emptySlotImage;
+        text = '';
+      }
+      div.style.backgroundImage = 'url(' + src + ')';
+      return div.textContent = text;
+    };
+
     InventoryWindow.prototype.pickUpSlot = function(index, ev) {
       var div, pile, src;
       pile = this.inventory.slot(index);
@@ -101,7 +113,7 @@
         return;
       }
       div = this.slotNodes[index];
-      div.style.backgroundImage = 'url(' + this.emptySlotImage + ')';
+      this.updateSlotNode(index, void 0);
       this.dragNode = document.createElement('img');
       src = this.getTexture(pile);
       this.dragNode.setAttribute('src', src);

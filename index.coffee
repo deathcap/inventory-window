@@ -70,9 +70,8 @@ background-image: url(#{src});
 width: #{@textureSize}px;
 height: #{@textureSize}px;
 "
-    if text?
-      textNode = document.createTextNode text
-      div.appendChild textNode
+    textNode = document.createTextNode(text ? ' ')
+    div.appendChild textNode
 
     ever(div).on 'mousedown', (ev) =>
       console.log 'mousedown'
@@ -89,6 +88,19 @@ height: #{@textureSize}px;
 
     div
 
+  updateSlotNode: (index, newItemPile) ->
+    div = @slotNodes[index]
+
+    if newItemPile?
+      src = @getTexture newItemPile
+      text = ''+newItemPile.count
+    else
+      src = @emptySlotImage
+      text = ''
+
+    div.style.backgroundImage = 'url(' + src + ')'
+    div.textContent = text
+
   pickUpSlot: (index, ev) ->
     pile = @inventory.slot(index)
     console.log 'pickUpSlot',index,pile
@@ -99,7 +111,8 @@ height: #{@textureSize}px;
 
     div = @slotNodes[index]
     # clear slot
-    div.style.backgroundImage = 'url(' + @emptySlotImage + ')'
+    #div.style.backgroundImage = 'url(' + @emptySlotImage + ')'
+    @updateSlotNode index, undefined
 
     # create a new node, attached TODO: also include text
     @dragNode = document.createElement 'img'
