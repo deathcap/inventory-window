@@ -12,7 +12,7 @@
     __extends(InventoryWindow, _super);
 
     function InventoryWindow(opts) {
-      var _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
+      var _ref, _ref1, _ref2, _ref3, _ref4;
       if (opts == null) {
         opts = {};
       }
@@ -33,7 +33,6 @@
       this.width = (_ref2 = opts.width) != null ? _ref2 : 5;
       this.textureSize = (_ref3 = opts.textureSize) != null ? _ref3 : 16;
       this.borderSize = (_ref4 = opts.borderSize) != null ? _ref4 : 1;
-      this.emptySlotImage = (_ref5 = opts.emptySlotImage) != null ? _ref5 : 'data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA';
       this.slotNodes = [];
       this.dragNode = null;
       this.dragSourceIndex = null;
@@ -100,10 +99,10 @@
           text = '\u221e';
         }
       } else {
-        src = this.emptySlotImage;
+        src = void 0;
         text = '';
       }
-      div.style.backgroundImage = 'url(' + src + ')';
+      div.style.backgroundImage = src != null ? 'url(' + src + ')' : '';
       return div.textContent = text;
     };
 

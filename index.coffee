@@ -12,7 +12,6 @@ class InventoryWindow extends EventEmitter
     @width = opts.width ? 5
     @textureSize = opts.textureSize ? 16
     @borderSize = opts.borderSize ? 1
-    @emptySlotImage = opts.emptySlotImage ? 'data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA' # blank
 
     @slotNodes = []
     @dragNode = null
@@ -94,10 +93,10 @@ font-size: 5pt;
       text = '' if text == 1
       text = '\u221e' if text == Infinity
     else
-      src = @emptySlotImage
+      src = undefined
       text = ''
 
-    div.style.backgroundImage = 'url(' + src + ')'
+    div.style.backgroundImage = if src? then 'url(' + src + ')' else ''
     div.textContent = text
 
   refreshSlotNode: (index) ->
