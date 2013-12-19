@@ -17,6 +17,7 @@ class InventoryWindow extends EventEmitter
     @slotNodes = []
     @heldNode = undefined
     @heldItemPile = undefined
+    @container = undefined
 
     @enable()
 
@@ -49,7 +50,7 @@ user-select: none;
 -webkit-user-select: none;
 "
 
-    container
+    @container = container
 
   bindSlotNodeEvent: (node, index) ->
     ever(node).on 'mousedown', (ev) =>
@@ -97,6 +98,10 @@ image-rendering: crisp-edges;
 
   refreshSlotNode: (index) ->
     @populateSlotNode @slotNodes[index], @inventory.array[index]
+
+  refresh: () ->
+    for i in [0...@inventory.size()]
+      @refreshSlotNode(i)
 
   positionAtMouse: (node, mouseEvent) ->
     x = mouseEvent.x ? mouseEvent.clientX

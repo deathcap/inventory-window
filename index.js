@@ -37,6 +37,7 @@
       this.slotNodes = [];
       this.heldNode = void 0;
       this.heldItemPile = void 0;
+      this.container = void 0;
       this.enable();
     }
 
@@ -62,7 +63,7 @@
       }
       widthpx = this.width * (this.textureSize + this.borderSize * 2);
       container.setAttribute('style', "border: " + this.borderSize + "px solid black;display: block;float: left;width: " + widthpx + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;");
-      return container;
+      return this.container = container;
     };
 
     InventoryWindow.prototype.bindSlotNodeEvent = function(node, index) {
@@ -103,6 +104,15 @@
 
     InventoryWindow.prototype.refreshSlotNode = function(index) {
       return this.populateSlotNode(this.slotNodes[index], this.inventory.array[index]);
+    };
+
+    InventoryWindow.prototype.refresh = function() {
+      var i, _i, _ref, _results;
+      _results = [];
+      for (i = _i = 0, _ref = this.inventory.size(); 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+        _results.push(this.refreshSlotNode(i));
+      }
+      return _results;
     };
 
     InventoryWindow.prototype.positionAtMouse = function(node, mouseEvent) {
