@@ -12,8 +12,7 @@ class InventoryWindow extends EventEmitter
     @width = opts.width ? 5
     @textureSize = opts.textureSize ? (16 * 5)
     @borderSize = opts.borderSize ? 4
-    @leftMouseButton = opts.leftMouseButton ? 0
-    @rightMouseButton = opts.rightMouseButton ? 2
+    @secondaryMouseButton = opts.secondaryMouseButton ? 2
 
     @slotNodes = []
     @heldNode = undefined
@@ -135,22 +134,7 @@ pointer-events: none;
     itemPile = @inventory.slot(index)
     console.log 'clickSlot',index,itemPile
 
-    if ev.button == @rightMouseButton
-      if not @heldItemPile
-        @heldItemPile = @inventory.array[index]?.splitPile(0.5)
-      else
-        return # TODO
-        if @inventory.array[index]
-          if @inventory.array[index].mergePile(@heldItemPile) == false
-            tmp = @heldItemPile
-            @heldItemPile = @inventory.array[index]
-            @inventory.array[index] = tmp
-        else
-          @inventory.array[index] = @heldItemPile 
-          @heldItemPile = undefined
-      @createHeldNode @heldItemPile, ev
-      @refreshSlotNode index
-    else
+    if ev.button != @secondaryMouseButton
       # left click drop: drop whole pile
       if not @heldItemPile
         # pickup whole pile
@@ -168,6 +152,20 @@ pointer-events: none;
           # fill entire slot
           @inventory.array[index] = @heldItemPile 
           @heldItemPile = undefined
-      @createHeldNode @heldItemPile, ev
-      @refreshSlotNode index
+    else
+      # right-click: half/one
+      if not @heldItemPile
+        @heldItemPile = @inventory.array[index]?.splitPile(0.5)
+      else
+        if @inventory.array[index]
+          oneHeld = @heldItemPile.splitPile(1)
+          if @inventory.array[index].mergePile(oneHeld) == false
+            @heldItemPile.increase(1)
+            tmp = @heldItemPile
+            @heldItemPile = @inventory.array[index]
+            @inventory.array[index] = tmp
+        else
+          @inventory.array[index] = @heldItemPile.splitPile(1)
+    @createHeldNode @heldItemPile, ev
+    @refreshSlotNode index
 
