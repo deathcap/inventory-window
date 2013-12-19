@@ -10,8 +10,8 @@ class InventoryWindow extends EventEmitter
     @inventory = opts.inventory ? throw 'inventory-window requires "inventory" option set to Inventory instance'
     @getTexture = opts.getTexture ? throw 'inventory-window requires "getTexture" option set to callback'
     @width = opts.width ? 5
-    @textureSize = opts.textureSize ? 16
-    @borderSize = opts.borderSize ? 1
+    @textureSize = opts.textureSize ? (16 * 5)
+    @borderSize = opts.borderSize ? 4
     @leftMouseButton = opts.leftMouseButton ? 0
     @rightMouseButton = opts.rightMouseButton ? 2
 
@@ -42,26 +42,19 @@ class InventoryWindow extends EventEmitter
 
     widthpx = @width * (@textureSize + @borderSize * 2)
     container.setAttribute 'style', "
-border: 1px solid black;
+border: #{@borderSize}px solid black;
 display: block;
 float: left;
 width: #{widthpx}px;
 user-select: none;
 -moz-user-select: none;
 -webkit-user-select: none;
-
-transform: scale(5,5) translate(80px, 80px);
--webkit-transform: scale(5,5) translate(80px, 80px);
--moz-transform: scale(5,5) translate(80px, 80px);
--ms-transform: scale(5,5) translate(80px, 80px);
--o-transform: scale(5,5) translate(80px, 80px);
 "
 
     container
 
   bindSlotNodeEvent: (node, index) ->
     ever(node).on 'mousedown', (ev) =>
-      console.log 'mousedown'
       @clickSlot index, ev
 
   createSlotNode: (itemPile) ->
@@ -74,7 +67,8 @@ margin: 0;
 padding: 0;
 width: #{@textureSize}px;
 height: #{@textureSize}px;
-font-size: 5pt;
+font-size: 20pt;
+background-size: 100% auto;
 "
     textNode = document.createTextNode()
     div.appendChild textNode
@@ -131,8 +125,6 @@ user-select: none;
 -moz-user-select: none;
 -webkit-user-select: none;
 pointer-events: none;
-
--webkit-transform: scale(5,5); /* TODO: stop scaling hack */
 "
     document.body.appendChild @heldNode
 

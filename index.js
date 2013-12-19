@@ -31,8 +31,8 @@
         }
       })();
       this.width = (_ref2 = opts.width) != null ? _ref2 : 5;
-      this.textureSize = (_ref3 = opts.textureSize) != null ? _ref3 : 16;
-      this.borderSize = (_ref4 = opts.borderSize) != null ? _ref4 : 1;
+      this.textureSize = (_ref3 = opts.textureSize) != null ? _ref3 : 16 * 5;
+      this.borderSize = (_ref4 = opts.borderSize) != null ? _ref4 : 4;
       this.leftMouseButton = (_ref5 = opts.leftMouseButton) != null ? _ref5 : 0;
       this.rightMouseButton = (_ref6 = opts.rightMouseButton) != null ? _ref6 : 2;
       this.slotNodes = [];
@@ -63,14 +63,13 @@
         container.appendChild(node);
       }
       widthpx = this.width * (this.textureSize + this.borderSize * 2);
-      container.setAttribute('style', "border: 1px solid black;display: block;float: left;width: " + widthpx + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;transform: scale(5,5) translate(80px, 80px);-webkit-transform: scale(5,5) translate(80px, 80px);-moz-transform: scale(5,5) translate(80px, 80px);-ms-transform: scale(5,5) translate(80px, 80px);-o-transform: scale(5,5) translate(80px, 80px);");
+      container.setAttribute('style', "border: " + this.borderSize + "px solid black;display: block;float: left;width: " + widthpx + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;");
       return container;
     };
 
     InventoryWindow.prototype.bindSlotNodeEvent = function(node, index) {
       var _this = this;
       return ever(node).on('mousedown', function(ev) {
-        console.log('mousedown');
         return _this.clickSlot(index, ev);
       });
     };
@@ -78,7 +77,7 @@
     InventoryWindow.prototype.createSlotNode = function(itemPile) {
       var div, textNode;
       div = document.createElement('div');
-      div.setAttribute('style', "border: " + this.borderSize + "px solid black;display: block;float: inherit;margin: 0;padding: 0;width: " + this.textureSize + "px;height: " + this.textureSize + "px;font-size: 5pt;");
+      div.setAttribute('style', "border: " + this.borderSize + "px solid black;display: block;float: inherit;margin: 0;padding: 0;width: " + this.textureSize + "px;height: " + this.textureSize + "px;font-size: 20pt;background-size: 100% auto;");
       textNode = document.createTextNode();
       div.appendChild(textNode);
       this.populateSlotNode(div, itemPile);
@@ -129,7 +128,7 @@
       }
       console.log('createHeldNode itempile=', this.heldItemPile);
       this.heldNode = this.createSlotNode(this.heldItemPile);
-      this.heldNode.setAttribute('style', this.heldNode.getAttribute('style') + ("position: absolute;left: " + initialX + "px;top: " + initialY + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;-webkit-transform: scale(5,5); /* TODO: stop scaling hack */"));
+      this.heldNode.setAttribute('style', this.heldNode.getAttribute('style') + ("position: absolute;left: " + initialX + "px;top: " + initialY + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;"));
       return document.body.appendChild(this.heldNode);
     };
 
