@@ -124,7 +124,11 @@
     };
 
     InventoryWindow.prototype.createHeldNode = function(index, initialX, initialY) {
+      if (this.heldNode) {
+        this.removeHeldNode();
+      }
       this.heldItemPile = this.inventory.array[index];
+      console.log('createHeldNode itempile=', this.heldItemPile);
       this.heldNode = this.createSlotNode(this.heldItemPile);
       this.heldNode.setAttribute('style', this.heldNode.getAttribute('style') + ("position: absolute;left: " + initialX + "px;top: " + initialY + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;-webkit-transform: scale(5,5); /* TODO: stop scaling hack */"));
       return document.body.appendChild(this.heldNode);
@@ -137,17 +141,17 @@
     };
 
     InventoryWindow.prototype.dropSlot = function(index, ev) {
-      var itemPile;
+      var dropPile, itemPile;
       itemPile = this.inventory.slot(index);
       console.log('dropSlot', index, itemPile);
       if (ev.button === this.rightMouseButton) {
         return;
       } else {
-        this.inventory.array[index] = this.heldItemPile;
-        this.heldItemPile = null;
+        dropPile = this.heldItemPile;
+        this.createHeldNode(index, ev.x, ev.y);
+        this.inventory.array[index] = dropPile;
       }
-      this.refreshSlotNode(index);
-      this.removeHeldNode();
+      return this.refreshSlotNode(index);
     };
 
     return InventoryWindow;

@@ -119,7 +119,10 @@ font-size: 5pt;
     @createHeldNode(index, ev.x, ev.y)
 
   createHeldNode: (index, initialX, initialY) ->
+    @removeHeldNode() if @heldNode
+    
     @heldItemPile = @inventory.array[index]
+    console.log 'createHeldNode itempile=',@heldItemPile
     @heldNode = @createSlotNode(@heldItemPile)
     @heldNode.setAttribute 'style', @heldNode.getAttribute('style') + "
 position: absolute;
@@ -152,16 +155,10 @@ pointer-events: none;
       # TODO
     else
       # left click drop: drop whole pile
-      @inventory.array[index] = @heldItemPile
-      @heldItemPile = null
+      dropPile = @heldItemPile
+      @createHeldNode index, ev.x, ev.y
+      @inventory.array[index] = dropPile
 
     @refreshSlotNode index
-
-    @removeHeldNode()
-
-    # TODO: if not empty, pick up this slot after dropped (swap)
-    #pickUpSlot div, ev, src
-
-    return
 
 
