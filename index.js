@@ -138,18 +138,26 @@
     };
 
     InventoryWindow.prototype.clickSlot = function(index, ev) {
-      var dropPile, excess, itemPile, tmp;
+      var itemPile, tmp, _ref;
       itemPile = this.inventory.slot(index);
       console.log('clickSlot', index, itemPile);
-      if (ev.button === this.rightMouseButton && !this.inventory.slot(index)) {
-        return;
-        dropPile = this.heldItemPile.splitPile(1);
-        if (!this.inventory.array[index]) {
-          this.inventory.array[index] = dropPile;
+      if (ev.button === this.rightMouseButton) {
+        if (!this.heldItemPile) {
+          this.heldItemPile = (_ref = this.inventory.array[index]) != null ? _ref.splitPile(0.5) : void 0;
         } else {
-          excess = this.inventory.array[index].mergePile(dropPile);
+          return;
+          if (this.inventory.array[index]) {
+            if (this.inventory.array[index].mergePile(this.heldItemPile) === false) {
+              tmp = this.heldItemPile;
+              this.heldItemPile = this.inventory.array[index];
+              this.inventory.array[index] = tmp;
+            }
+          } else {
+            this.inventory.array[index] = this.heldItemPile;
+            this.heldItemPile = void 0;
+          }
         }
-        this.createHeldNodeWithPile(this.heldItemPile, ev);
+        this.createHeldNode(this.heldItemPile, ev);
         return this.refreshSlotNode(index);
       } else {
         if (!this.heldItemPile) {

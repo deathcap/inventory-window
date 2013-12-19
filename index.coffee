@@ -135,16 +135,20 @@ pointer-events: none;
     itemPile = @inventory.slot(index)
     console.log 'clickSlot',index,itemPile
 
-    if ev.button == @rightMouseButton and not @inventory.slot(index)
-      # right click drop: drop one item
-      return # TODO
-
-      dropPile = @heldItemPile.splitPile(1)
-      if not @inventory.array[index]
-        @inventory.array[index] = dropPile
+    if ev.button == @rightMouseButton
+      if not @heldItemPile
+        @heldItemPile = @inventory.array[index]?.splitPile(0.5)
       else
-        excess = @inventory.array[index].mergePile(dropPile)
-      @createHeldNodeWithPile @heldItemPile, ev
+        return # TODO
+        if @inventory.array[index]
+          if @inventory.array[index].mergePile(@heldItemPile) == false
+            tmp = @heldItemPile
+            @heldItemPile = @inventory.array[index]
+            @inventory.array[index] = tmp
+        else
+          @inventory.array[index] = @heldItemPile 
+          @heldItemPile = undefined
+      @createHeldNode @heldItemPile, ev
       @refreshSlotNode index
     else
       # left click drop: drop whole pile
