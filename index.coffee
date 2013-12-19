@@ -112,17 +112,22 @@ image-rendering: crisp-edges;
     @populateSlotNode @slotNodes[index], undefined
 
     # create a new node, attached to cursor
-    @createHeldNode(index, ev.x, ev.y)
+    @createHeldNode index, ev
 
-  createHeldNode: (index, initialX, initialY) ->
+  createHeldNode: (index, mouseEvent) ->
     @removeHeldNode() if @heldNode
+
+    initialX = mouseEvent.x ? mouseEvent.clientX
+    initialY = mouseEvent.y ? mouseEvent.clientY
+
+    console.log "event",initialX,initialY,mouseEvent
     
     @heldItemPile = @inventory.array[index]
     return if not @heldItemPile
 
     console.log 'createHeldNode itempile=',@heldItemPile
     @heldNode = @createSlotNode(@heldItemPile)
-    @heldNode.setAttribute 'style', @heldNode.getAttribute('style') + "
+    @heldNode.setAttribute 'style', style = @heldNode.getAttribute('style') + "
 position: absolute;
 left: #{initialX}px;
 top: #{initialY}px;
@@ -131,6 +136,8 @@ user-select: none;
 -webkit-user-select: none;
 pointer-events: none;
 "
+    console.log "style=<#{style}>"
+
     document.body.appendChild @heldNode
 
   removeHeldNode: () ->
@@ -146,7 +153,8 @@ pointer-events: none;
 
     # left click drop: drop whole pile
     dropPile = @heldItemPile
-    @createHeldNode index, ev.x, ev.y   # pickup clicked pile, if any
+    console.log ev
+    @createHeldNode index, ev # pickup clicked pile, if any
     @inventory.array[index] = dropPile
     @refreshSlotNode index
 

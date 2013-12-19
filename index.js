@@ -115,20 +115,25 @@
         return;
       }
       this.populateSlotNode(this.slotNodes[index], void 0);
-      return this.createHeldNode(index, ev.x, ev.y);
+      return this.createHeldNode(index, ev);
     };
 
-    InventoryWindow.prototype.createHeldNode = function(index, initialX, initialY) {
+    InventoryWindow.prototype.createHeldNode = function(index, mouseEvent) {
+      var initialX, initialY, style, _ref, _ref1;
       if (this.heldNode) {
         this.removeHeldNode();
       }
+      initialX = (_ref = mouseEvent.x) != null ? _ref : mouseEvent.clientX;
+      initialY = (_ref1 = mouseEvent.y) != null ? _ref1 : mouseEvent.clientY;
+      console.log("event", initialX, initialY, mouseEvent);
       this.heldItemPile = this.inventory.array[index];
       if (!this.heldItemPile) {
         return;
       }
       console.log('createHeldNode itempile=', this.heldItemPile);
       this.heldNode = this.createSlotNode(this.heldItemPile);
-      this.heldNode.setAttribute('style', this.heldNode.getAttribute('style') + ("position: absolute;left: " + initialX + "px;top: " + initialY + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;"));
+      this.heldNode.setAttribute('style', style = this.heldNode.getAttribute('style') + ("position: absolute;left: " + initialX + "px;top: " + initialY + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;"));
+      console.log("style=<" + style + ">");
       return document.body.appendChild(this.heldNode);
     };
 
@@ -143,7 +148,8 @@
       itemPile = this.inventory.slot(index);
       console.log('clickSlot', index, itemPile);
       dropPile = this.heldItemPile;
-      this.createHeldNode(index, ev.x, ev.y);
+      console.log(ev);
+      this.createHeldNode(index, ev);
       this.inventory.array[index] = dropPile;
       return this.refreshSlotNode(index);
     };
