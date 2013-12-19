@@ -82,7 +82,7 @@ image-rendering: crisp-edges;
     div
 
   populateSlotNode: (div, itemPile) ->
-    if itemPile?
+    if itemPile? and itemPile.count > 0
       src = @getTexture itemPile
       #text = @getTextOverlay @inventory.slot
       text = itemPile.count

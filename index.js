@@ -84,7 +84,7 @@
 
     InventoryWindow.prototype.populateSlotNode = function(div, itemPile) {
       var src, text;
-      if (itemPile != null) {
+      if ((itemPile != null) && itemPile.count > 0) {
         src = this.getTexture(itemPile);
         text = itemPile.count;
         if (text === 1) {

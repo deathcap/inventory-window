@@ -20,9 +20,11 @@
 
   inv.give(new ItemPile('emerald', 32));
 
-  for (i = _i = 0; _i < 15; i = ++_i) {
+  for (i = _i = 0; _i < 10; i = ++_i) {
     inv.give(new ItemPile('stick', 64));
   }
+
+  inv.array[20] = new ItemPile('stick', 2);
 
   inv.array[21] = new ItemPile('stick', 16);
 
