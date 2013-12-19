@@ -36,19 +36,19 @@
       this.leftMouseButton = (_ref5 = opts.leftMouseButton) != null ? _ref5 : 0;
       this.rightMouseButton = (_ref6 = opts.rightMouseButton) != null ? _ref6 : 2;
       this.slotNodes = [];
-      this.dragNode = null;
-      this.dragSourceIndex = null;
+      this.heldNode = null;
+      this.heldItemPile = null;
       this.enable();
     }
 
     InventoryWindow.prototype.enable = function() {
       var _this = this;
       return ever(document).on('mousemove', function(ev) {
-        if (!_this.dragNode) {
+        if (!_this.heldNode) {
           return;
         }
-        _this.dragNode.style.left = ev.x + 'px';
-        return _this.dragNode.style.top = ev.y + 'px';
+        _this.heldNode.style.left = ev.x + 'px';
+        return _this.heldNode.style.top = ev.y + 'px';
       });
     };
 
@@ -71,7 +71,7 @@
       var _this = this;
       return ever(node).on('mousedown', function(ev) {
         console.log('mousedown');
-        if (_this.dragNode) {
+        if (_this.heldNode) {
           return _this.dropSlot(index, ev);
         } else {
           return _this.pickUpSlot(index, ev);
@@ -120,39 +120,34 @@
         return;
       }
       this.populateSlotNode(this.slotNodes[index], void 0);
-      this.dragSourceIndex = index;
-      return this.createDragNode(itemPile, ev.x, ev.y);
+      return this.createHeldNode(index, ev.x, ev.y);
     };
 
-    InventoryWindow.prototype.createDragNode = function(itemPile, initialX, initialY) {
-      this.dragNode = this.createSlotNode(itemPile);
-      this.dragNode.setAttribute('style', this.dragNode.getAttribute('style') + ("position: absolute;left: " + initialX + "px;top: " + initialY + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;-webkit-transform: scale(5,5); /* TODO: stop scaling hack */"));
-      return document.body.appendChild(this.dragNode);
+    InventoryWindow.prototype.createHeldNode = function(index, initialX, initialY) {
+      this.heldItemPile = this.inventory.array[index];
+      this.heldNode = this.createSlotNode(this.heldItemPile);
+      this.heldNode.setAttribute('style', this.heldNode.getAttribute('style') + ("position: absolute;left: " + initialX + "px;top: " + initialY + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;-webkit-transform: scale(5,5); /* TODO: stop scaling hack */"));
+      return document.body.appendChild(this.heldNode);
     };
 
-    InventoryWindow.prototype.removeDragNode = function() {
-      this.dragNode.parentNode.removeChild(this.dragNode);
-      this.dragNode = null;
-      return this.dragSourceIndex = null;
+    InventoryWindow.prototype.removeHeldNode = function() {
+      this.heldNode.parentNode.removeChild(this.heldNode);
+      this.heldNode = null;
+      return this.heldItemPile = null;
     };
 
     InventoryWindow.prototype.dropSlot = function(index, ev) {
-      var itemPile, newDragPile;
+      var itemPile;
       itemPile = this.inventory.slot(index);
       console.log('dropSlot', index, itemPile);
       if (ev.button === this.rightMouseButton) {
-        newDragPile = this.inventory.array[index].splitPile(-1);
-        this.removeDragNode();
-        this.createDragNode(newDragPile, ev.x, ev.y);
         return;
       } else {
-        this.inventory.swap(this.dragSourceIndex, index);
-      }
-      if (this.dragSourceIndex != null) {
-        this.refreshSlotNode(this.dragSourceIndex);
+        this.inventory.array[index] = this.heldItemPile;
+        this.heldItemPile = null;
       }
       this.refreshSlotNode(index);
-      this.removeDragNode();
+      this.removeHeldNode();
     };
 
     return InventoryWindow;

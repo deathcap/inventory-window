@@ -16,17 +16,17 @@ class InventoryWindow extends EventEmitter
     @rightMouseButton = opts.rightMouseButton ? 2
 
     @slotNodes = []
-    @dragNode = null
-    @dragSourceIndex = null
+    @heldNode = null
+    @heldItemPile = null
 
     @enable()
 
   enable: () ->
     ever(document).on 'mousemove', (ev) =>
-      return if not @dragNode
+      return if not @heldNode
 
-      @dragNode.style.left = ev.x + 'px'
-      @dragNode.style.top = ev.y + 'px'
+      @heldNode.style.left = ev.x + 'px'
+      @heldNode.style.top = ev.y + 'px'
 
   createContainer: () ->
     container = document.createElement 'div'
@@ -62,7 +62,7 @@ transform: scale(5,5) translate(80px, 80px);
   bindSlotNodeEvent: (node, index) ->
     ever(node).on 'mousedown', (ev) =>
       console.log 'mousedown'
-      if @dragNode
+      if @heldNode
         @dropSlot index, ev
       else
         @pickUpSlot index, ev
@@ -105,7 +105,7 @@ font-size: 5pt;
     @populateSlotNode @slotNodes[index], @inventory.array[index]
 
   pickUpSlot: (index, ev) ->
-    itemPile= @inventory.slot(index)
+    itemPile = @inventory.slot(index)
     console.log 'pickUpSlot',index,itemPile
 
     if not itemPile?
@@ -115,14 +115,13 @@ font-size: 5pt;
     # clear slot
     @populateSlotNode @slotNodes[index], undefined
 
-    # create a new node, attached TODO: also include text
-    @dragSourceIndex = index
-    
-    @createDragNode(itemPile, ev.x, ev.y)
+    # create a new node, attached to cursor
+    @createHeldNode(index, ev.x, ev.y)
 
-  createDragNode: (itemPile, initialX, initialY) ->
-    @dragNode = @createSlotNode(itemPile)
-    @dragNode.setAttribute 'style', @dragNode.getAttribute('style') + "
+  createHeldNode: (index, initialX, initialY) ->
+    @heldItemPile = @inventory.array[index]
+    @heldNode = @createSlotNode(@heldItemPile)
+    @heldNode.setAttribute 'style', @heldNode.getAttribute('style') + "
 position: absolute;
 left: #{initialX}px;
 top: #{initialY}px;
@@ -133,12 +132,12 @@ pointer-events: none;
 
 -webkit-transform: scale(5,5); /* TODO: stop scaling hack */
 "
-    document.body.appendChild @dragNode
+    document.body.appendChild @heldNode
 
-  removeDragNode: () ->
-    @dragNode.parentNode.removeChild(@dragNode)
-    @dragNode = null
-    @dragSourceIndex = null
+  removeHeldNode: () ->
+    @heldNode.parentNode.removeChild(@heldNode)
+    @heldNode = null
+    @heldItemPile = null
 
   dropSlot: (index, ev) ->
     itemPile = @inventory.slot(index)
@@ -146,19 +145,19 @@ pointer-events: none;
 
     if ev.button == @rightMouseButton
       # right click drop: drop one item
-      newDragPile = @inventory.array[index].splitPile -1
-      @removeDragNode()
-      @createDragNode newDragPile, ev.x, ev.y
+      #newDragPile = @inventory.array[index].splitPile -1
+      #@removeHeldNode()
+      #@createHeldNode newDragPile, ev.x, ev.y
       return
       # TODO
     else
       # left click drop: drop whole pile
-      @inventory.swap @dragSourceIndex, index
+      @inventory.array[index] = @heldItemPile
+      @heldItemPile = null
 
-    @refreshSlotNode @dragSourceIndex if @dragSourceIndex?
     @refreshSlotNode index
 
-    @removeDragNode()
+    @removeHeldNode()
 
     # TODO: if not empty, pick up this slot after dropped (swap)
     #pickUpSlot div, ev, src
