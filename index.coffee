@@ -124,12 +124,12 @@ image-rendering: crisp-edges;
     node.style.top = y + 'px'
 
   createHeldNode: (index, ev) ->
+    @createHeldNodeWithPile @inventory.array[index], ev
+
+  createHeldNodeWithPile: (itemPile, ev) ->
     @removeHeldNode() if @heldNode
-
-    @heldItemPile = @inventory.array[index]
+    @heldItemPile = itemPile
     return if not @heldItemPile
-
-    console.log 'createHeldNode itempile=',@heldItemPile
     @heldNode = @createSlotNode(@heldItemPile)
     @heldNode.setAttribute 'style', style = @heldNode.getAttribute('style') + "
 position: absolute;
@@ -152,12 +152,16 @@ pointer-events: none;
     itemPile = @inventory.slot(index)
     console.log 'clickSlot',index,itemPile
 
-    # TODO: if ev.button == @rightMouseButton # right click drop: drop one item
-
-    # left click drop: drop whole pile
-    dropPile = @heldItemPile
-    console.log ev
-    @createHeldNode index, ev # pickup clicked pile, if any
-    @inventory.array[index] = dropPile
-    @refreshSlotNode index
+    if ev.button == @rightMouseButton and not @inventory.slot(index)
+      # right click drop: drop one item (onto empty slot)
+      dropPile = @heldItemPile.splitPile(1)
+      @createHeldNodeWithPile @heldItemPile, ev
+      @inventory.array[index] = dropPile
+      @refreshSlotNode index
+    else
+      # left click drop: drop whole pile
+      dropPile = @heldItemPile
+      @createHeldNode index, ev # pickup clicked pile, if any
+      @inventory.array[index] = dropPile
+      @refreshSlotNode index
 

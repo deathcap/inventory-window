@@ -128,15 +128,18 @@
     };
 
     InventoryWindow.prototype.createHeldNode = function(index, ev) {
+      return this.createHeldNodeWithPile(this.inventory.array[index], ev);
+    };
+
+    InventoryWindow.prototype.createHeldNodeWithPile = function(itemPile, ev) {
       var style;
       if (this.heldNode) {
         this.removeHeldNode();
       }
-      this.heldItemPile = this.inventory.array[index];
+      this.heldItemPile = itemPile;
       if (!this.heldItemPile) {
         return;
       }
-      console.log('createHeldNode itempile=', this.heldItemPile);
       this.heldNode = this.createSlotNode(this.heldItemPile);
       this.heldNode.setAttribute('style', style = this.heldNode.getAttribute('style') + "position: absolute;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;");
       this.positionAtMouse(this.heldNode, ev);
@@ -153,11 +156,17 @@
       var dropPile, itemPile;
       itemPile = this.inventory.slot(index);
       console.log('clickSlot', index, itemPile);
-      dropPile = this.heldItemPile;
-      console.log(ev);
-      this.createHeldNode(index, ev);
-      this.inventory.array[index] = dropPile;
-      return this.refreshSlotNode(index);
+      if (ev.button === this.rightMouseButton && !this.inventory.slot(index)) {
+        dropPile = this.heldItemPile.splitPile(1);
+        this.createHeldNodeWithPile(this.heldItemPile, ev);
+        this.inventory.array[index] = dropPile;
+        return this.refreshSlotNode(index);
+      } else {
+        dropPile = this.heldItemPile;
+        this.createHeldNode(index, ev);
+        this.inventory.array[index] = dropPile;
+        return this.refreshSlotNode(index);
+      }
     };
 
     return InventoryWindow;
