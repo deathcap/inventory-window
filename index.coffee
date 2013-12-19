@@ -75,7 +75,7 @@ image-rendering: -webkit-optimize-contrast;
 image-rendering: crisp-edges;
 -ms-interpolation-mode: nearest-neighbor;
 "
-    textNode = document.createTextNode()
+    textNode = document.createTextNode('')
     div.appendChild textNode
 
     # set image and text

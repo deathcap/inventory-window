@@ -78,7 +78,7 @@
       var div, textNode;
       div = document.createElement('div');
       div.setAttribute('style', "border: " + this.borderSize + "px solid black;display: block;float: inherit;margin: 0;padding: 0;width: " + this.textureSize + "px;height: " + this.textureSize + "px;font-size: 20pt;background-size: 100% auto;image-rendering: -moz-crisp-edges;image-rendering: -o-crisp-edges;image-rendering: -webkit-optimize-contrast;image-rendering: crisp-edges;-ms-interpolation-mode: nearest-neighbor;");
-      textNode = document.createTextNode();
+      textNode = document.createTextNode('');
       div.appendChild(textNode);
       this.populateSlotNode(div, itemPile);
       return div;
