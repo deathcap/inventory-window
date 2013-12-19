@@ -69,6 +69,11 @@ width: #{@textureSize}px;
 height: #{@textureSize}px;
 font-size: 20pt;
 background-size: 100% auto;
+image-rendering: -moz-crisp-edges;
+image-rendering: -o-crisp-edges;
+image-rendering: -webkit-optimize-contrast;
+image-rendering: crisp-edges;
+-ms-interpolation-mode: nearest-neighbor;
 "
     textNode = document.createTextNode()
     div.appendChild textNode
