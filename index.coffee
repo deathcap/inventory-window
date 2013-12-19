@@ -16,8 +16,8 @@ class InventoryWindow extends EventEmitter
     @rightMouseButton = opts.rightMouseButton ? 2
 
     @slotNodes = []
-    @heldNode = null
-    @heldItemPile = null
+    @heldNode = undefined
+    @heldItemPile = undefined
 
     @enable()
 
@@ -138,8 +138,8 @@ pointer-events: none;
 
   removeHeldNode: () ->
     @heldNode.parentNode.removeChild(@heldNode)
-    @heldNode = null
-    @heldItemPile = null
+    @heldNode = undefined
+    @heldItemPile = undefined
 
   clickSlot: (index, ev) ->
     itemPile = @inventory.slot(index)

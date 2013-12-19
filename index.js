@@ -36,8 +36,8 @@
       this.leftMouseButton = (_ref5 = opts.leftMouseButton) != null ? _ref5 : 0;
       this.rightMouseButton = (_ref6 = opts.rightMouseButton) != null ? _ref6 : 2;
       this.slotNodes = [];
-      this.heldNode = null;
-      this.heldItemPile = null;
+      this.heldNode = void 0;
+      this.heldItemPile = void 0;
       this.enable();
     }
 
@@ -135,8 +135,8 @@
 
     InventoryWindow.prototype.removeHeldNode = function() {
       this.heldNode.parentNode.removeChild(this.heldNode);
-      this.heldNode = null;
-      return this.heldItemPile = null;
+      this.heldNode = void 0;
+      return this.heldItemPile = void 0;
     };
 
     InventoryWindow.prototype.clickSlot = function(index, ev) {
