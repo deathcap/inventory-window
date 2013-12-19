@@ -110,8 +110,11 @@ image-rendering: crisp-edges;
 
   createHeldNode: (itemPile, ev) ->
     @removeHeldNode() if @heldNode
+    if !itemPile or itemPile.count == 0
+      @heldItemPile = undefined
+      return
+
     @heldItemPile = itemPile
-    return if not @heldItemPile
     @heldNode = @createSlotNode(@heldItemPile)
     @heldNode.setAttribute 'style', style = @heldNode.getAttribute('style') + "
 position: absolute;

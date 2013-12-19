@@ -120,10 +120,11 @@
       if (this.heldNode) {
         this.removeHeldNode();
       }
-      this.heldItemPile = itemPile;
-      if (!this.heldItemPile) {
+      if (!itemPile || itemPile.count === 0) {
+        this.heldItemPile = void 0;
         return;
       }
+      this.heldItemPile = itemPile;
       this.heldNode = this.createSlotNode(this.heldItemPile);
       this.heldNode.setAttribute('style', style = this.heldNode.getAttribute('style') + "position: absolute;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;");
       this.positionAtMouse(this.heldNode, ev);
