@@ -47,8 +47,7 @@
         if (!_this.heldNode) {
           return;
         }
-        _this.heldNode.style.left = ev.x + 'px';
-        return _this.heldNode.style.top = ev.y + 'px';
+        return _this.positionAtMouse(_this.heldNode, ev);
       });
     };
 
@@ -118,22 +117,29 @@
       return this.createHeldNode(index, ev);
     };
 
-    InventoryWindow.prototype.createHeldNode = function(index, mouseEvent) {
-      var initialX, initialY, style, _ref, _ref1;
+    InventoryWindow.prototype.positionAtMouse = function(node, mouseEvent) {
+      var x, y, _ref, _ref1;
+      x = (_ref = mouseEvent.x) != null ? _ref : mouseEvent.clientX;
+      y = (_ref1 = mouseEvent.y) != null ? _ref1 : mouseEvent.clientY;
+      x -= this.textureSize / 2;
+      y -= this.textureSize / 2;
+      node.style.left = x + 'px';
+      return node.style.top = y + 'px';
+    };
+
+    InventoryWindow.prototype.createHeldNode = function(index, ev) {
+      var style;
       if (this.heldNode) {
         this.removeHeldNode();
       }
-      initialX = (_ref = mouseEvent.x) != null ? _ref : mouseEvent.clientX;
-      initialY = (_ref1 = mouseEvent.y) != null ? _ref1 : mouseEvent.clientY;
-      console.log("event", initialX, initialY, mouseEvent);
       this.heldItemPile = this.inventory.array[index];
       if (!this.heldItemPile) {
         return;
       }
       console.log('createHeldNode itempile=', this.heldItemPile);
       this.heldNode = this.createSlotNode(this.heldItemPile);
-      this.heldNode.setAttribute('style', style = this.heldNode.getAttribute('style') + ("position: absolute;left: " + initialX + "px;top: " + initialY + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;"));
-      console.log("style=<" + style + ">");
+      this.heldNode.setAttribute('style', style = this.heldNode.getAttribute('style') + "position: absolute;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;");
+      this.positionAtMouse(this.heldNode, ev);
       return document.body.appendChild(this.heldNode);
     };
 

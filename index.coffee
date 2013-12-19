@@ -25,8 +25,7 @@ class InventoryWindow extends EventEmitter
     ever(document).on 'mousemove', (ev) =>
       return if not @heldNode
 
-      @heldNode.style.left = ev.x + 'px'
-      @heldNode.style.top = ev.y + 'px'
+      @positionAtMouse @heldNode, ev
 
   createContainer: () ->
     container = document.createElement 'div'
@@ -114,14 +113,19 @@ image-rendering: crisp-edges;
     # create a new node, attached to cursor
     @createHeldNode index, ev
 
-  createHeldNode: (index, mouseEvent) ->
+  positionAtMouse: (node, mouseEvent) ->
+    x = mouseEvent.x ? mouseEvent.clientX
+    y = mouseEvent.y ? mouseEvent.clientY
+
+    x -= @textureSize / 2
+    y -= @textureSize / 2
+
+    node.style.left = x + 'px'
+    node.style.top = y + 'px'
+
+  createHeldNode: (index, ev) ->
     @removeHeldNode() if @heldNode
 
-    initialX = mouseEvent.x ? mouseEvent.clientX
-    initialY = mouseEvent.y ? mouseEvent.clientY
-
-    console.log "event",initialX,initialY,mouseEvent
-    
     @heldItemPile = @inventory.array[index]
     return if not @heldItemPile
 
@@ -129,14 +133,13 @@ image-rendering: crisp-edges;
     @heldNode = @createSlotNode(@heldItemPile)
     @heldNode.setAttribute 'style', style = @heldNode.getAttribute('style') + "
 position: absolute;
-left: #{initialX}px;
-top: #{initialY}px;
 user-select: none;
 -moz-user-select: none;
 -webkit-user-select: none;
 pointer-events: none;
 "
-    console.log "style=<#{style}>"
+
+    @positionAtMouse @heldNode, ev
 
     document.body.appendChild @heldNode
 
