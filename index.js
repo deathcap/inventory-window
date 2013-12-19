@@ -71,11 +71,7 @@
       var _this = this;
       return ever(node).on('mousedown', function(ev) {
         console.log('mousedown');
-        if (_this.heldNode) {
-          return _this.dropSlot(index, ev);
-        } else {
-          return _this.pickUpSlot(index, ev);
-        }
+        return _this.clickSlot(index, ev);
       });
     };
 
@@ -128,6 +124,9 @@
         this.removeHeldNode();
       }
       this.heldItemPile = this.inventory.array[index];
+      if (!this.heldItemPile) {
+        return;
+      }
       console.log('createHeldNode itempile=', this.heldItemPile);
       this.heldNode = this.createSlotNode(this.heldItemPile);
       this.heldNode.setAttribute('style', this.heldNode.getAttribute('style') + ("position: absolute;left: " + initialX + "px;top: " + initialY + "px;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;-webkit-transform: scale(5,5); /* TODO: stop scaling hack */"));
@@ -140,17 +139,13 @@
       return this.heldItemPile = null;
     };
 
-    InventoryWindow.prototype.dropSlot = function(index, ev) {
+    InventoryWindow.prototype.clickSlot = function(index, ev) {
       var dropPile, itemPile;
       itemPile = this.inventory.slot(index);
-      console.log('dropSlot', index, itemPile);
-      if (ev.button === this.rightMouseButton) {
-        return;
-      } else {
-        dropPile = this.heldItemPile;
-        this.createHeldNode(index, ev.x, ev.y);
-        this.inventory.array[index] = dropPile;
-      }
+      console.log('clickSlot', index, itemPile);
+      dropPile = this.heldItemPile;
+      this.createHeldNode(index, ev.x, ev.y);
+      this.inventory.array[index] = dropPile;
       return this.refreshSlotNode(index);
     };
 

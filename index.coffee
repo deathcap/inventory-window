@@ -62,10 +62,7 @@ transform: scale(5,5) translate(80px, 80px);
   bindSlotNodeEvent: (node, index) ->
     ever(node).on 'mousedown', (ev) =>
       console.log 'mousedown'
-      if @heldNode
-        @dropSlot index, ev
-      else
-        @pickUpSlot index, ev
+      @clickSlot index, ev
 
   createSlotNode: (itemPile) ->
     div = document.createElement 'div'
@@ -122,6 +119,8 @@ font-size: 5pt;
     @removeHeldNode() if @heldNode
     
     @heldItemPile = @inventory.array[index]
+    return if not @heldItemPile
+
     console.log 'createHeldNode itempile=',@heldItemPile
     @heldNode = @createSlotNode(@heldItemPile)
     @heldNode.setAttribute 'style', @heldNode.getAttribute('style') + "
@@ -142,23 +141,15 @@ pointer-events: none;
     @heldNode = null
     @heldItemPile = null
 
-  dropSlot: (index, ev) ->
+  clickSlot: (index, ev) ->
     itemPile = @inventory.slot(index)
-    console.log 'dropSlot',index,itemPile
+    console.log 'clickSlot',index,itemPile
 
-    if ev.button == @rightMouseButton
-      # right click drop: drop one item
-      #newDragPile = @inventory.array[index].splitPile -1
-      #@removeHeldNode()
-      #@createHeldNode newDragPile, ev.x, ev.y
-      return
-      # TODO
-    else
-      # left click drop: drop whole pile
-      dropPile = @heldItemPile
-      @createHeldNode index, ev.x, ev.y
-      @inventory.array[index] = dropPile
+    # TODO: if ev.button == @rightMouseButton # right click drop: drop one item
 
+    # left click drop: drop whole pile
+    dropPile = @heldItemPile
+    @createHeldNode index, ev.x, ev.y   # pickup clicked pile, if any
+    @inventory.array[index] = dropPile
     @refreshSlotNode index
-
 
