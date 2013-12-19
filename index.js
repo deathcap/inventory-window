@@ -138,7 +138,7 @@
     };
 
     InventoryWindow.prototype.clickSlot = function(index, ev) {
-      var dropPile, excess, itemPile;
+      var dropPile, excess, itemPile, tmp;
       itemPile = this.inventory.slot(index);
       console.log('clickSlot', index, itemPile);
       if (ev.button === this.rightMouseButton && !this.inventory.slot(index)) {
@@ -157,7 +157,11 @@
           this.inventory.array[index] = void 0;
         } else {
           if (this.inventory.array[index]) {
-            this.inventory.array[index].mergePile(this.heldItemPile);
+            if (this.inventory.array[index].mergePile(this.heldItemPile) === false) {
+              tmp = this.heldItemPile;
+              this.heldItemPile = this.inventory.array[index];
+              this.inventory.array[index] = tmp;
+            }
           } else {
             this.inventory.array[index] = this.heldItemPile;
             this.heldItemPile = void 0;

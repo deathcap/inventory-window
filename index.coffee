@@ -149,12 +149,19 @@ pointer-events: none;
     else
       # left click drop: drop whole pile
       if not @heldItemPile
+        # pickup whole pile
         @heldItemPile = @inventory.array[index]
         @inventory.array[index] = undefined
       else
         if @inventory.array[index]
-          @inventory.array[index].mergePile @heldItemPile
+          # try to merge piles dropped on each other
+          if @inventory.array[index].mergePile(@heldItemPile) == false
+            # cannot pile together; swap dropped/held
+            tmp = @heldItemPile
+            @heldItemPile = @inventory.array[index]
+            @inventory.array[index] = tmp
         else
+          # fill entire slot
           @inventory.array[index] = @heldItemPile 
           @heldItemPile = undefined
       @createHeldNode @heldItemPile, ev
