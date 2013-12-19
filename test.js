@@ -20,9 +20,13 @@
 
   inv.give(new ItemPile('emerald', 32));
 
-  for (i = _i = 0; _i < 20; i = ++_i) {
+  for (i = _i = 0; _i < 18; i = ++_i) {
     inv.give(new ItemPile('stick', 64));
   }
+
+  inv.array[21] = new ItemPile('stick', 16);
+
+  inv.array[22] = new ItemPile('stick', 32);
 
   inv.array[24] = new ItemPile('diamond', Infinity);
 

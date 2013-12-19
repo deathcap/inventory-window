@@ -99,20 +99,6 @@ image-rendering: crisp-edges;
   refreshSlotNode: (index) ->
     @populateSlotNode @slotNodes[index], @inventory.array[index]
 
-  pickUpSlot: (index, ev) ->
-    itemPile = @inventory.slot(index)
-    console.log 'pickUpSlot',index,itemPile
-
-    if not itemPile?
-      # not picking up anything
-      return
-
-    # clear slot
-    @populateSlotNode @slotNodes[index], undefined
-
-    # create a new node, attached to cursor
-    @createHeldNode index, ev
-
   positionAtMouse: (node, mouseEvent) ->
     x = mouseEvent.x ? mouseEvent.clientX
     y = mouseEvent.y ? mouseEvent.clientY
@@ -123,10 +109,7 @@ image-rendering: crisp-edges;
     node.style.left = x + 'px'
     node.style.top = y + 'px'
 
-  createHeldNode: (index, ev) ->
-    @createHeldNodeWithPile @inventory.array[index], ev
-
-  createHeldNodeWithPile: (itemPile, ev) ->
+  createHeldNode: (itemPile, ev) ->
     @removeHeldNode() if @heldNode
     @heldItemPile = itemPile
     return if not @heldItemPile
@@ -153,15 +136,20 @@ pointer-events: none;
     console.log 'clickSlot',index,itemPile
 
     if ev.button == @rightMouseButton and not @inventory.slot(index)
-      # right click drop: drop one item (onto empty slot)
+      # right click drop: drop one item
+      return # TODO
+
       dropPile = @heldItemPile.splitPile(1)
+      if not @inventory.array[index]
+        @inventory.array[index] = dropPile
+      else
+        excess = @inventory.array[index].mergePile(dropPile)
       @createHeldNodeWithPile @heldItemPile, ev
-      @inventory.array[index] = dropPile
       @refreshSlotNode index
     else
       # left click drop: drop whole pile
       dropPile = @heldItemPile
-      @createHeldNode index, ev # pickup clicked pile, if any
+      @createHeldNode @inventory.array[index], ev # pickup clicked pile, if any
       @inventory.array[index] = dropPile
       @refreshSlotNode index
 

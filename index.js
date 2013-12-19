@@ -106,17 +106,6 @@
       return this.populateSlotNode(this.slotNodes[index], this.inventory.array[index]);
     };
 
-    InventoryWindow.prototype.pickUpSlot = function(index, ev) {
-      var itemPile;
-      itemPile = this.inventory.slot(index);
-      console.log('pickUpSlot', index, itemPile);
-      if (itemPile == null) {
-        return;
-      }
-      this.populateSlotNode(this.slotNodes[index], void 0);
-      return this.createHeldNode(index, ev);
-    };
-
     InventoryWindow.prototype.positionAtMouse = function(node, mouseEvent) {
       var x, y, _ref, _ref1;
       x = (_ref = mouseEvent.x) != null ? _ref : mouseEvent.clientX;
@@ -127,11 +116,7 @@
       return node.style.top = y + 'px';
     };
 
-    InventoryWindow.prototype.createHeldNode = function(index, ev) {
-      return this.createHeldNodeWithPile(this.inventory.array[index], ev);
-    };
-
-    InventoryWindow.prototype.createHeldNodeWithPile = function(itemPile, ev) {
+    InventoryWindow.prototype.createHeldNode = function(itemPile, ev) {
       var style;
       if (this.heldNode) {
         this.removeHeldNode();
@@ -153,17 +138,22 @@
     };
 
     InventoryWindow.prototype.clickSlot = function(index, ev) {
-      var dropPile, itemPile;
+      var dropPile, excess, itemPile;
       itemPile = this.inventory.slot(index);
       console.log('clickSlot', index, itemPile);
       if (ev.button === this.rightMouseButton && !this.inventory.slot(index)) {
+        return;
         dropPile = this.heldItemPile.splitPile(1);
+        if (!this.inventory.array[index]) {
+          this.inventory.array[index] = dropPile;
+        } else {
+          excess = this.inventory.array[index].mergePile(dropPile);
+        }
         this.createHeldNodeWithPile(this.heldItemPile, ev);
-        this.inventory.array[index] = dropPile;
         return this.refreshSlotNode(index);
       } else {
         dropPile = this.heldItemPile;
-        this.createHeldNode(index, ev);
+        this.createHeldNode(this.inventory.array[index], ev);
         this.inventory.array[index] = dropPile;
         return this.refreshSlotNode(index);
       }
