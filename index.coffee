@@ -148,8 +148,15 @@ pointer-events: none;
       @refreshSlotNode index
     else
       # left click drop: drop whole pile
-      dropPile = @heldItemPile
-      @createHeldNode @inventory.array[index], ev # pickup clicked pile, if any
-      @inventory.array[index] = dropPile
+      if not @heldItemPile
+        @heldItemPile = @inventory.array[index]
+        @inventory.array[index] = undefined
+      else
+        if @inventory.array[index]
+          @inventory.array[index].mergePile @heldItemPile
+        else
+          @inventory.array[index] = @heldItemPile 
+          @heldItemPile = undefined
+      @createHeldNode @heldItemPile, ev
       @refreshSlotNode index
 

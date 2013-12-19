@@ -152,9 +152,18 @@
         this.createHeldNodeWithPile(this.heldItemPile, ev);
         return this.refreshSlotNode(index);
       } else {
-        dropPile = this.heldItemPile;
-        this.createHeldNode(this.inventory.array[index], ev);
-        this.inventory.array[index] = dropPile;
+        if (!this.heldItemPile) {
+          this.heldItemPile = this.inventory.array[index];
+          this.inventory.array[index] = void 0;
+        } else {
+          if (this.inventory.array[index]) {
+            this.inventory.array[index].mergePile(this.heldItemPile);
+          } else {
+            this.inventory.array[index] = this.heldItemPile;
+            this.heldItemPile = void 0;
+          }
+        }
+        this.createHeldNode(this.heldItemPile, ev);
         return this.refreshSlotNode(index);
       }
     };
