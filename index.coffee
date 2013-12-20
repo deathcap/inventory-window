@@ -34,7 +34,7 @@ class InventoryWindow extends EventEmitter
     container = document.createElement 'div'
     #container.setAttribute 'class', 'inventory-window'  # .inventory-window { border: 1px dotted black; display: inline; float: left; }
     for i in [0...@inventory.size()]
-      slotItem = @inventory.slot(i)
+      slotItem = @inventory.get(i)
 
       node = @createSlotNode(slotItem)
       @bindSlotNodeEvent node, i
@@ -152,7 +152,7 @@ pointer-events: none;
     @heldItemPile = undefined
 
   clickSlot: (index, ev) ->
-    itemPile = @inventory.slot(index)
+    itemPile = @inventory.get(index)
     console.log 'clickSlot',index,itemPile
 
     if ev.button != @secondaryMouseButton

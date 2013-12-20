@@ -59,7 +59,7 @@
       var container, i, node, slotItem, widthpx, _i, _ref;
       container = document.createElement('div');
       for (i = _i = 0, _ref = this.inventory.size(); 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
-        slotItem = this.inventory.slot(i);
+        slotItem = this.inventory.get(i);
         node = this.createSlotNode(slotItem);
         this.bindSlotNodeEvent(node, i);
         this.slotNodes.push(node);
@@ -159,7 +159,7 @@
 
     InventoryWindow.prototype.clickSlot = function(index, ev) {
       var itemPile, oneHeld, tmp, _ref;
-      itemPile = this.inventory.slot(index);
+      itemPile = this.inventory.get(index);
       console.log('clickSlot', index, itemPile);
       if (ev.button !== this.secondaryMouseButton) {
         if (!this.heldItemPile) {
