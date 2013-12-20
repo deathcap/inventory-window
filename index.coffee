@@ -94,9 +94,20 @@ image-rendering: crisp-edges;
     else
       src = undefined
       text = ''
+    
+    newImage = if src? then 'url(' + src + ')' else ''
 
-    div.style.backgroundImage = if src? then 'url(' + src + ')' else ''
-    div.textContent = text
+    oldImage = div.style.backgroundImage ? ''
+    oldImagePath = oldImage.replace(window.location.href, '')
+    newImagePath = newImage.replace(window.location.href, '')
+   
+    if oldImagePath != newImagePath
+      console.log 'set',oldImagePath,newImagePath
+      div.style.backgroundImage = newImage
+   
+    if div.textContent != text
+      console.log 'set',div.textContent,text
+      div.textContent = text
 
   refreshSlotNode: (index) ->
     @populateSlotNode @slotNodes[index], @inventory.array[index]

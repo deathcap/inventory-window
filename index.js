@@ -87,7 +87,7 @@
     };
 
     InventoryWindow.prototype.populateSlotNode = function(div, itemPile) {
-      var src, text;
+      var newImage, newImagePath, oldImage, oldImagePath, src, text, _ref;
       if ((itemPile != null) && itemPile.count > 0) {
         src = this.getTexture(itemPile);
         text = itemPile.count;
@@ -101,8 +101,18 @@
         src = void 0;
         text = '';
       }
-      div.style.backgroundImage = src != null ? 'url(' + src + ')' : '';
-      return div.textContent = text;
+      newImage = src != null ? 'url(' + src + ')' : '';
+      oldImage = (_ref = div.style.backgroundImage) != null ? _ref : '';
+      oldImagePath = oldImage.replace(window.location.href, '');
+      newImagePath = newImage.replace(window.location.href, '');
+      if (oldImagePath !== newImagePath) {
+        console.log('set', oldImagePath, newImagePath);
+        div.style.backgroundImage = newImage;
+      }
+      if (div.textContent !== text) {
+        console.log('set', div.textContent, text);
+        return div.textContent = text;
+      }
     };
 
     InventoryWindow.prototype.refreshSlotNode = function(index) {
