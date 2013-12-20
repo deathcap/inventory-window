@@ -26,6 +26,8 @@ class InventoryWindow extends EventEmitter
       return if not @heldNode
 
       @positionAtMouse @heldNode, ev
+    @inventory.on 'changed', () =>
+      @refresh()
 
   createContainer: () ->
     container = document.createElement 'div'

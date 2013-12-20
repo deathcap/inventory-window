@@ -43,11 +43,14 @@
 
     InventoryWindow.prototype.enable = function() {
       var _this = this;
-      return ever(document).on('mousemove', function(ev) {
+      ever(document).on('mousemove', function(ev) {
         if (!_this.heldNode) {
           return;
         }
         return _this.positionAtMouse(_this.heldNode, ev);
+      });
+      return this.inventory.on('changed', function() {
+        return _this.refresh();
       });
     };
 
