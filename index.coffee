@@ -160,7 +160,7 @@ pointer-events: none;
       if not @heldItemPile
         # pickup whole pile
         @heldItemPile = @inventory.array[index]
-        @inventory.array[index] = undefined
+        @inventory.set(index, undefined)
       else
         if @inventory.array[index]
           # try to merge piles dropped on each other
@@ -168,10 +168,10 @@ pointer-events: none;
             # cannot pile together; swap dropped/held
             tmp = @heldItemPile
             @heldItemPile = @inventory.array[index]
-            @inventory.array[index] = tmp
+            @inventory.set(index, tmp)
         else
           # fill entire slot
-          @inventory.array[index] = @heldItemPile 
+          @inventory.set(index, @heldItemPile)
           @heldItemPile = undefined
     else
       # right-click: half/one
@@ -184,9 +184,9 @@ pointer-events: none;
             @heldItemPile.increase(1)
             tmp = @heldItemPile
             @heldItemPile = @inventory.array[index]
-            @inventory.array[index] = tmp
+            @inventory.set(index, tmp)
         else
-          @inventory.array[index] = @heldItemPile.splitPile(1)
+          @inventory.set(index, @heldItemPile.splitPile(1))
     @createHeldNode @heldItemPile, ev
     @refreshSlotNode index
 

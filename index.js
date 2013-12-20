@@ -164,16 +164,16 @@
       if (ev.button !== this.secondaryMouseButton) {
         if (!this.heldItemPile) {
           this.heldItemPile = this.inventory.array[index];
-          this.inventory.array[index] = void 0;
+          this.inventory.set(index, void 0);
         } else {
           if (this.inventory.array[index]) {
             if (this.inventory.array[index].mergePile(this.heldItemPile) === false) {
               tmp = this.heldItemPile;
               this.heldItemPile = this.inventory.array[index];
-              this.inventory.array[index] = tmp;
+              this.inventory.set(index, tmp);
             }
           } else {
-            this.inventory.array[index] = this.heldItemPile;
+            this.inventory.set(index, this.heldItemPile);
             this.heldItemPile = void 0;
           }
         }
@@ -187,10 +187,10 @@
               this.heldItemPile.increase(1);
               tmp = this.heldItemPile;
               this.heldItemPile = this.inventory.array[index];
-              this.inventory.array[index] = tmp;
+              this.inventory.set(index, tmp);
             }
           } else {
-            this.inventory.array[index] = this.heldItemPile.splitPile(1);
+            this.inventory.set(index, this.heldItemPile.splitPile(1));
           }
         }
       }
