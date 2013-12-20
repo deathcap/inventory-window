@@ -140,8 +140,8 @@ user-select: none;
 -moz-user-select: none;
 -webkit-user-select: none;
 pointer-events: none;
+z-index: 10;
 "
-    console.log 'style',@heldNode.getAttribute('style')
 
     @positionAtMouse @heldNode, ev
 
