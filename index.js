@@ -113,7 +113,7 @@
     };
 
     InventoryWindow.prototype.refreshSlotNode = function(index) {
-      return this.populateSlotNode(this.slotNodes[index], this.inventory.array[index]);
+      return this.populateSlotNode(this.slotNodes[index], this.inventory.get(index));
     };
 
     InventoryWindow.prototype.refresh = function() {
@@ -147,6 +147,7 @@
       this.heldItemPile = itemPile;
       this.heldNode = this.createSlotNode(this.heldItemPile);
       this.heldNode.setAttribute('style', style = this.heldNode.getAttribute('style') + "position: absolute;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;");
+      console.log('style', this.heldNode.getAttribute('style'));
       this.positionAtMouse(this.heldNode, ev);
       return document.body.appendChild(this.heldNode);
     };
@@ -163,13 +164,13 @@
       console.log('clickSlot', index, itemPile);
       if (ev.button !== this.secondaryMouseButton) {
         if (!this.heldItemPile) {
-          this.heldItemPile = this.inventory.array[index];
+          this.heldItemPile = this.inventory.get(index);
           this.inventory.set(index, void 0);
         } else {
-          if (this.inventory.array[index]) {
-            if (this.inventory.array[index].mergePile(this.heldItemPile) === false) {
+          if (this.inventory.get(index)) {
+            if (this.inventory.get(index).mergePile(this.heldItemPile) === false) {
               tmp = this.heldItemPile;
-              this.heldItemPile = this.inventory.array[index];
+              this.heldItemPile = this.inventory.get(index);
               this.inventory.set(index, tmp);
             }
           } else {
@@ -179,14 +180,14 @@
         }
       } else {
         if (!this.heldItemPile) {
-          this.heldItemPile = (_ref = this.inventory.array[index]) != null ? _ref.splitPile(0.5) : void 0;
+          this.heldItemPile = (_ref = this.inventory.get(index)) != null ? _ref.splitPile(0.5) : void 0;
         } else {
-          if (this.inventory.array[index]) {
+          if (this.inventory.get(index)) {
             oneHeld = this.heldItemPile.splitPile(1);
-            if (this.inventory.array[index].mergePile(oneHeld) === false) {
+            if (this.inventory.get(index).mergePile(oneHeld) === false) {
               this.heldItemPile.increase(1);
               tmp = this.heldItemPile;
-              this.heldItemPile = this.inventory.array[index];
+              this.heldItemPile = this.inventory.get(index);
               this.inventory.set(index, tmp);
             }
           } else {

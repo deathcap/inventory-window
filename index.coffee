@@ -110,7 +110,7 @@ image-rendering: crisp-edges;
       div.textContent = text
 
   refreshSlotNode: (index) ->
-    @populateSlotNode @slotNodes[index], @inventory.array[index]
+    @populateSlotNode @slotNodes[index], @inventory.get(index)
 
   refresh: () ->
     for i in [0...@inventory.size()]
@@ -141,6 +141,7 @@ user-select: none;
 -webkit-user-select: none;
 pointer-events: none;
 "
+    console.log 'style',@heldNode.getAttribute('style')
 
     @positionAtMouse @heldNode, ev
 
@@ -159,15 +160,15 @@ pointer-events: none;
       # left click drop: drop whole pile
       if not @heldItemPile
         # pickup whole pile
-        @heldItemPile = @inventory.array[index]
+        @heldItemPile = @inventory.get(index)
         @inventory.set(index, undefined)
       else
-        if @inventory.array[index]
+        if @inventory.get(index)
           # try to merge piles dropped on each other
-          if @inventory.array[index].mergePile(@heldItemPile) == false
+          if @inventory.get(index).mergePile(@heldItemPile) == false
             # cannot pile together; swap dropped/held
             tmp = @heldItemPile
-            @heldItemPile = @inventory.array[index]
+            @heldItemPile = @inventory.get(index)
             @inventory.set(index, tmp)
         else
           # fill entire slot
@@ -176,14 +177,14 @@ pointer-events: none;
     else
       # right-click: half/one
       if not @heldItemPile
-        @heldItemPile = @inventory.array[index]?.splitPile(0.5)
+        @heldItemPile = @inventory.get(index)?.splitPile(0.5)
       else
-        if @inventory.array[index]
+        if @inventory.get(index)
           oneHeld = @heldItemPile.splitPile(1)
-          if @inventory.array[index].mergePile(oneHeld) == false
+          if @inventory.get(index).mergePile(oneHeld) == false
             @heldItemPile.increase(1)
             tmp = @heldItemPile
-            @heldItemPile = @inventory.array[index]
+            @heldItemPile = @inventory.get(index)
             @inventory.set(index, tmp)
         else
           @inventory.set(index, @heldItemPile.splitPile(1))
