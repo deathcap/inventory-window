@@ -18,6 +18,7 @@ class InventoryWindow extends EventEmitter
     @heldNode = undefined
     @heldItemPile = undefined
     @container = undefined
+    @resolvedImageURLs = {}
 
     @enable()
 
@@ -97,16 +98,15 @@ image-rendering: crisp-edges;
     
     newImage = if src? then 'url(' + src + ')' else ''
 
-    oldImage = div.style.backgroundImage ? ''
-    oldImagePath = oldImage.replace(window.location.href, '')
-    newImagePath = newImage.replace(window.location.href, '')
-   
-    if oldImagePath != newImagePath
-      console.log 'set',oldImagePath,newImagePath
+    # update image, but only if changed to prevent flickering
+    if @resolvedImageURLs[newImage] != div.style.backgroundImage
       div.style.backgroundImage = newImage
+      # wrinkle: if the URL may not be fully resolved (relative path, ../, etc.),
+      # but setting backgroundImage resolves it, so it won't always match what we
+      # set it to -- to fix this, cache the result for comparison next time
+      @resolvedImageURLs[newImage] = div.style.backgroundImage
    
     if div.textContent != text
-      console.log 'set',div.textContent,text
       div.textContent = text
 
   refreshSlotNode: (index) ->

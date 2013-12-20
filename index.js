@@ -38,6 +38,7 @@
       this.heldNode = void 0;
       this.heldItemPile = void 0;
       this.container = void 0;
+      this.resolvedImageURLs = {};
       this.enable();
     }
 
@@ -87,7 +88,7 @@
     };
 
     InventoryWindow.prototype.populateSlotNode = function(div, itemPile) {
-      var newImage, newImagePath, oldImage, oldImagePath, src, text, _ref;
+      var newImage, src, text;
       if ((itemPile != null) && itemPile.count > 0) {
         src = this.getTexture(itemPile);
         text = itemPile.count;
@@ -102,15 +103,11 @@
         text = '';
       }
       newImage = src != null ? 'url(' + src + ')' : '';
-      oldImage = (_ref = div.style.backgroundImage) != null ? _ref : '';
-      oldImagePath = oldImage.replace(window.location.href, '');
-      newImagePath = newImage.replace(window.location.href, '');
-      if (oldImagePath !== newImagePath) {
-        console.log('set', oldImagePath, newImagePath);
+      if (this.resolvedImageURLs[newImage] !== div.style.backgroundImage) {
         div.style.backgroundImage = newImage;
+        this.resolvedImageURLs[newImage] = div.style.backgroundImage;
       }
       if (div.textContent !== text) {
-        console.log('set', div.textContent, text);
         return div.textContent = text;
       }
     };
