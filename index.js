@@ -171,6 +171,8 @@
               tmp = this.heldItemPile;
               this.heldItemPile = this.inventory.get(index);
               this.inventory.set(index, tmp);
+            } else {
+              this.inventory.changed();
             }
           } else {
             this.inventory.set(index, this.heldItemPile);
@@ -180,6 +182,7 @@
       } else {
         if (!this.heldItemPile) {
           this.heldItemPile = (_ref = this.inventory.get(index)) != null ? _ref.splitPile(0.5) : void 0;
+          this.inventory.changed();
         } else {
           if (this.inventory.get(index)) {
             oneHeld = this.heldItemPile.splitPile(1);
@@ -188,6 +191,8 @@
               tmp = this.heldItemPile;
               this.heldItemPile = this.inventory.get(index);
               this.inventory.set(index, tmp);
+            } else {
+              this.inventory.changed();
             }
           } else {
             this.inventory.set(index, this.heldItemPile.splitPile(1));

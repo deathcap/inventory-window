@@ -170,6 +170,8 @@ z-index: 10;
             tmp = @heldItemPile
             @heldItemPile = @inventory.get(index)
             @inventory.set(index, tmp)
+          else
+            @inventory.changed()
         else
           # fill entire slot
           @inventory.set(index, @heldItemPile)
@@ -178,6 +180,7 @@ z-index: 10;
       # right-click: half/one
       if not @heldItemPile
         @heldItemPile = @inventory.get(index)?.splitPile(0.5)
+        @inventory.changed()
       else
         if @inventory.get(index)
           oneHeld = @heldItemPile.splitPile(1)
@@ -186,6 +189,8 @@ z-index: 10;
             tmp = @heldItemPile
             @heldItemPile = @inventory.get(index)
             @inventory.set(index, tmp)
+          else
+            @inventory.changed()
         else
           @inventory.set(index, @heldItemPile.splitPile(1))
     @createHeldNode @heldItemPile, ev
