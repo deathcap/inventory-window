@@ -19,14 +19,21 @@ class InventoryWindow extends EventEmitter
     @heldItemPile = undefined
     @container = undefined
     @resolvedImageURLs = {}
+    @mouseButtonDown = undefined
 
     @enable()
 
   enable: () ->
     ever(document).on 'mousemove', (ev) =>
       return if not @heldNode
-
       @positionAtMouse @heldNode, ev
+
+      if @mouseButtonDown
+        console.log 'dragging an item'
+
+    ever(document).on 'mouseup', (ev) =>
+      @mouseButtonDown = undefined
+
     @inventory.on 'changed', () =>
       @refresh()
 
@@ -155,6 +162,8 @@ z-index: 10;
   clickSlot: (index, ev) ->
     itemPile = @inventory.get(index)
     console.log 'clickSlot',index,itemPile
+
+    @mouseButtonDown = ev.button
 
     if ev.button != @secondaryMouseButton
       # left click drop: drop whole pile

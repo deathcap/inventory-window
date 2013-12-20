@@ -39,6 +39,7 @@
       this.heldItemPile = void 0;
       this.container = void 0;
       this.resolvedImageURLs = {};
+      this.mouseButtonDown = void 0;
       this.enable();
     }
 
@@ -48,7 +49,13 @@
         if (!_this.heldNode) {
           return;
         }
-        return _this.positionAtMouse(_this.heldNode, ev);
+        _this.positionAtMouse(_this.heldNode, ev);
+        if (_this.mouseButtonDown) {
+          return console.log('dragging an item');
+        }
+      });
+      ever(document).on('mouseup', function(ev) {
+        return _this.mouseButtonDown = void 0;
       });
       return this.inventory.on('changed', function() {
         return _this.refresh();
@@ -161,6 +168,7 @@
       var itemPile, oneHeld, tmp, _ref;
       itemPile = this.inventory.get(index);
       console.log('clickSlot', index, itemPile);
+      this.mouseButtonDown = ev.button;
       if (ev.button !== this.secondaryMouseButton) {
         if (!this.heldItemPile) {
           this.heldItemPile = this.inventory.get(index);
