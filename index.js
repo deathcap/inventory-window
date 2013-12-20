@@ -49,10 +49,7 @@
         if (!_this.heldNode) {
           return;
         }
-        _this.positionAtMouse(_this.heldNode, ev);
-        if (_this.mouseButtonDown) {
-          return console.log('dragging an item');
-        }
+        return _this.positionAtMouse(_this.heldNode, ev);
       });
       ever(document).on('mouseup', function(ev) {
         return _this.mouseButtonDown = void 0;
@@ -79,8 +76,19 @@
 
     InventoryWindow.prototype.bindSlotNodeEvent = function(node, index) {
       var _this = this;
-      return ever(node).on('mousedown', function(ev) {
+      ever(node).on('mousedown', function(ev) {
         return _this.clickSlot(index, ev);
+      });
+      return ever(node).on('mouseover', function(ev) {
+        if (_this.heldItemPile == null) {
+          return;
+        }
+        if (_this.mouseButtonDown !== _this.secondaryMouseButton) {
+          return;
+        }
+        _this.dropOneHeld(index);
+        _this.createHeldNode(_this.heldItemPile, ev);
+        return _this.refreshSlotNode(index);
       });
     };
 
@@ -164,8 +172,25 @@
       return this.heldItemPile = void 0;
     };
 
+    InventoryWindow.prototype.dropOneHeld = function(index) {
+      var oneHeld, tmp;
+      if (this.inventory.get(index)) {
+        oneHeld = this.heldItemPile.splitPile(1);
+        if (this.inventory.get(index).mergePile(oneHeld) === false) {
+          this.heldItemPile.increase(1);
+          tmp = this.heldItemPile;
+          this.heldItemPile = this.inventory.get(index);
+          return this.inventory.set(index, tmp);
+        } else {
+          return this.inventory.changed();
+        }
+      } else {
+        return this.inventory.set(index, this.heldItemPile.splitPile(1));
+      }
+    };
+
     InventoryWindow.prototype.clickSlot = function(index, ev) {
-      var itemPile, oneHeld, tmp, _ref;
+      var itemPile, tmp, _ref;
       itemPile = this.inventory.get(index);
       console.log('clickSlot', index, itemPile);
       this.mouseButtonDown = ev.button;
@@ -192,19 +217,7 @@
           this.heldItemPile = (_ref = this.inventory.get(index)) != null ? _ref.splitPile(0.5) : void 0;
           this.inventory.changed();
         } else {
-          if (this.inventory.get(index)) {
-            oneHeld = this.heldItemPile.splitPile(1);
-            if (this.inventory.get(index).mergePile(oneHeld) === false) {
-              this.heldItemPile.increase(1);
-              tmp = this.heldItemPile;
-              this.heldItemPile = this.inventory.get(index);
-              this.inventory.set(index, tmp);
-            } else {
-              this.inventory.changed();
-            }
-          } else {
-            this.inventory.set(index, this.heldItemPile.splitPile(1));
-          }
+          this.dropOneHeld(index);
         }
       }
       this.createHeldNode(this.heldItemPile, ev);

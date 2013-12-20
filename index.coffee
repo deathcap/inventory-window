@@ -28,9 +28,6 @@ class InventoryWindow extends EventEmitter
       return if not @heldNode
       @positionAtMouse @heldNode, ev
 
-      if @mouseButtonDown
-        console.log 'dragging an item'
-
     ever(document).on 'mouseup', (ev) =>
       @mouseButtonDown = undefined
 
@@ -65,6 +62,17 @@ user-select: none;
   bindSlotNodeEvent: (node, index) ->
     ever(node).on 'mousedown', (ev) =>
       @clickSlot index, ev
+    ever(node).on 'mouseover', (ev) =>
+      return if not @heldItemPile?
+      return if @mouseButtonDown != @secondaryMouseButton
+
+      # 'drag paint' mode, distributing items as mouseover without clicking
+      @dropOneHeld(index)
+      @createHeldNode @heldItemPile, ev
+      @refreshSlotNode index
+
+      # TODO: support left-click drag paint = evenly redistribute 
+      #  (vs right-click = drop only one item)
 
   createSlotNode: (itemPile) ->
     div = document.createElement 'div'
@@ -159,6 +167,22 @@ z-index: 10;
     @heldNode = undefined
     @heldItemPile = undefined
 
+  dropOneHeld: (index) ->
+    if @inventory.get(index)
+      # drop one, but try to merge with existing
+      oneHeld = @heldItemPile.splitPile(1)
+      if @inventory.get(index).mergePile(oneHeld) == false
+        # could not merge, so swap 
+        @heldItemPile.increase(1)
+        tmp = @heldItemPile
+        @heldItemPile = @inventory.get(index)
+        @inventory.set(index, tmp)
+      else
+        @inventory.changed()
+    else
+      # drop on empty slot
+      @inventory.set(index, @heldItemPile.splitPile(1))
+
   clickSlot: (index, ev) ->
     itemPile = @inventory.get(index)
     console.log 'clickSlot',index,itemPile
@@ -188,20 +212,11 @@ z-index: 10;
     else
       # right-click: half/one
       if not @heldItemPile
+        # pickup half
         @heldItemPile = @inventory.get(index)?.splitPile(0.5)
         @inventory.changed()
       else
-        if @inventory.get(index)
-          oneHeld = @heldItemPile.splitPile(1)
-          if @inventory.get(index).mergePile(oneHeld) == false
-            @heldItemPile.increase(1)
-            tmp = @heldItemPile
-            @heldItemPile = @inventory.get(index)
-            @inventory.set(index, tmp)
-          else
-            @inventory.changed()
-        else
-          @inventory.set(index, @heldItemPile.splitPile(1))
+        @dropOneHeld(index)
     @createHeldNode @heldItemPile, ev
     @refreshSlotNode index
 
