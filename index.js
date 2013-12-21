@@ -11,6 +11,14 @@
   module.exports = InventoryWindow = (function(_super) {
     __extends(InventoryWindow, _super);
 
+    InventoryWindow.heldItemPile = void 0;
+
+    InventoryWindow.heldNode = void 0;
+
+    InventoryWindow.mouseButtonDown = void 0;
+
+    InventoryWindow.resolvedImageURLs = {};
+
     function InventoryWindow(opts) {
       var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
       if (opts == null) {
@@ -36,11 +44,7 @@
       this.borderSize = (_ref5 = opts.borderSize) != null ? _ref5 : 4;
       this.secondaryMouseButton = (_ref6 = opts.secondaryMouseButton) != null ? _ref6 : 2;
       this.slotNodes = [];
-      this.heldNode = void 0;
-      this.heldItemPile = void 0;
       this.container = void 0;
-      this.resolvedImageURLs = {};
-      this.mouseButtonDown = void 0;
       this.selectedIndex = void 0;
       this.enable();
     }
@@ -48,13 +52,13 @@
     InventoryWindow.prototype.enable = function() {
       var _this = this;
       ever(document).on('mousemove', function(ev) {
-        if (!_this.heldNode) {
+        if (!InventoryWindow.heldNode) {
           return;
         }
-        return _this.positionAtMouse(_this.heldNode, ev);
+        return _this.positionAtMouse(InventoryWindow.heldNode, ev);
       });
       ever(document).on('mouseup', function(ev) {
-        return _this.mouseButtonDown = void 0;
+        return InventoryWindow.mouseButtonDown = void 0;
       });
       return this.inventory.on('changed', function() {
         return _this.refresh();
@@ -83,14 +87,14 @@
         return _this.clickSlot(index, ev);
       });
       return ever(node).on('mouseover', function(ev) {
-        if (_this.heldItemPile == null) {
+        if (InventoryWindow.heldItemPile == null) {
           return;
         }
-        if (_this.mouseButtonDown !== _this.secondaryMouseButton) {
+        if (InventoryWindow.mouseButtonDown !== _this.secondaryMouseButton) {
           return;
         }
         _this.dropOneHeld(index);
-        _this.createHeldNode(_this.heldItemPile, ev);
+        _this.createHeldNode(InventoryWindow.heldItemPile, ev);
         return _this.refreshSlotNode(index);
       });
     };
@@ -121,9 +125,9 @@
         text = '';
       }
       newImage = src != null ? 'url(' + src + ')' : '';
-      if (this.resolvedImageURLs[newImage] !== div.style.backgroundImage) {
+      if (InventoryWindow.resolvedImageURLs[newImage] !== div.style.backgroundImage) {
         div.style.backgroundImage = newImage;
-        this.resolvedImageURLs[newImage] = div.style.backgroundImage;
+        InventoryWindow.resolvedImageURLs[newImage] = div.style.backgroundImage;
       }
       if (div.textContent !== text) {
         return div.textContent = text;
@@ -173,40 +177,40 @@
 
     InventoryWindow.prototype.createHeldNode = function(itemPile, ev) {
       var style;
-      if (this.heldNode) {
+      if (InventoryWindow.heldNode) {
         this.removeHeldNode();
       }
       if (!itemPile || itemPile.count === 0) {
-        this.heldItemPile = void 0;
+        InventoryWindow.heldItemPile = void 0;
         return;
       }
-      this.heldItemPile = itemPile;
-      this.heldNode = this.createSlotNode(this.heldItemPile);
-      this.heldNode.setAttribute('style', style = this.heldNode.getAttribute('style') + "position: absolute;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;z-index: 10;");
-      this.positionAtMouse(this.heldNode, ev);
-      return document.body.appendChild(this.heldNode);
+      InventoryWindow.heldItemPile = itemPile;
+      InventoryWindow.heldNode = this.createSlotNode(InventoryWindow.heldItemPile);
+      InventoryWindow.heldNode.setAttribute('style', style = InventoryWindow.heldNode.getAttribute('style') + "position: absolute;user-select: none;-moz-user-select: none;-webkit-user-select: none;pointer-events: none;z-index: 10;");
+      this.positionAtMouse(InventoryWindow.heldNode, ev);
+      return document.body.appendChild(InventoryWindow.heldNode);
     };
 
     InventoryWindow.prototype.removeHeldNode = function() {
-      this.heldNode.parentNode.removeChild(this.heldNode);
-      this.heldNode = void 0;
-      return this.heldItemPile = void 0;
+      InventoryWindow.heldNode.parentNode.removeChild(InventoryWindow.heldNode);
+      InventoryWindow.heldNode = void 0;
+      return InventoryWindow.heldItemPile = void 0;
     };
 
     InventoryWindow.prototype.dropOneHeld = function(index) {
       var oneHeld, tmp;
       if (this.inventory.get(index)) {
-        oneHeld = this.heldItemPile.splitPile(1);
+        oneHeld = InventoryWindow.heldItemPile.splitPile(1);
         if (this.inventory.get(index).mergePile(oneHeld) === false) {
-          this.heldItemPile.increase(1);
-          tmp = this.heldItemPile;
-          this.heldItemPile = this.inventory.get(index);
+          InventoryWindow.heldItemPile.increase(1);
+          tmp = InventoryWindow.heldItemPile;
+          InventoryWindow.heldItemPile = this.inventory.get(index);
           return this.inventory.set(index, tmp);
         } else {
           return this.inventory.changed();
         }
       } else {
-        return this.inventory.set(index, this.heldItemPile.splitPile(1));
+        return this.inventory.set(index, InventoryWindow.heldItemPile.splitPile(1));
       }
     };
 
@@ -214,34 +218,34 @@
       var itemPile, tmp, _ref;
       itemPile = this.inventory.get(index);
       console.log('clickSlot', index, itemPile);
-      this.mouseButtonDown = ev.button;
+      InventoryWindow.mouseButtonDown = ev.button;
       if (ev.button !== this.secondaryMouseButton) {
-        if (!this.heldItemPile) {
-          this.heldItemPile = this.inventory.get(index);
+        if (!InventoryWindow.heldItemPile) {
+          InventoryWindow.heldItemPile = this.inventory.get(index);
           this.inventory.set(index, void 0);
         } else {
           if (this.inventory.get(index)) {
-            if (this.inventory.get(index).mergePile(this.heldItemPile) === false) {
-              tmp = this.heldItemPile;
-              this.heldItemPile = this.inventory.get(index);
+            if (this.inventory.get(index).mergePile(InventoryWindow.heldItemPile) === false) {
+              tmp = InventoryWindow.heldItemPile;
+              InventoryWindow.heldItemPile = this.inventory.get(index);
               this.inventory.set(index, tmp);
             } else {
               this.inventory.changed();
             }
           } else {
-            this.inventory.set(index, this.heldItemPile);
-            this.heldItemPile = void 0;
+            this.inventory.set(index, InventoryWindow.heldItemPile);
+            InventoryWindow.heldItemPile = void 0;
           }
         }
       } else {
-        if (!this.heldItemPile) {
-          this.heldItemPile = (_ref = this.inventory.get(index)) != null ? _ref.splitPile(0.5) : void 0;
+        if (!InventoryWindow.heldItemPile) {
+          InventoryWindow.heldItemPile = (_ref = this.inventory.get(index)) != null ? _ref.splitPile(0.5) : void 0;
           this.inventory.changed();
         } else {
           this.dropOneHeld(index);
         }
       }
-      this.createHeldNode(this.heldItemPile, ev);
+      this.createHeldNode(InventoryWindow.heldItemPile, ev);
       return this.refreshSlotNode(index);
     };
 
