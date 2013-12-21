@@ -20,7 +20,7 @@
     InventoryWindow.resolvedImageURLs = {};
 
     function InventoryWindow(opts) {
-      var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
+      var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
       if (opts == null) {
         opts = {};
       }
@@ -43,6 +43,8 @@
       this.textureSize = (_ref4 = opts.textureSize) != null ? _ref4 : 16 * 5;
       this.borderSize = (_ref5 = opts.borderSize) != null ? _ref5 : 4;
       this.secondaryMouseButton = (_ref6 = opts.secondaryMouseButton) != null ? _ref6 : 2;
+      this.allowDrop = (_ref7 = opts.allowDrop) != null ? _ref7 : true;
+      this.allowDragPaint = (_ref8 = opts.allowDragPaint) != null ? _ref8 : true;
       this.slotNodes = [];
       this.container = void 0;
       this.selectedIndex = void 0;
@@ -87,6 +89,12 @@
         return _this.clickSlot(index, ev);
       });
       return ever(node).on('mouseover', function(ev) {
+        if (!_this.allowDragPaint) {
+          return;
+        }
+        if (!_this.allowDrop) {
+          return;
+        }
         if (InventoryWindow.heldItemPile == null) {
           return;
         }
@@ -224,6 +232,9 @@
           InventoryWindow.heldItemPile = this.inventory.get(index);
           this.inventory.set(index, void 0);
         } else {
+          if (!this.allowDrop) {
+            return;
+          }
           if (this.inventory.get(index)) {
             if (this.inventory.get(index).mergePile(InventoryWindow.heldItemPile) === false) {
               tmp = InventoryWindow.heldItemPile;
@@ -242,6 +253,9 @@
           InventoryWindow.heldItemPile = (_ref = this.inventory.get(index)) != null ? _ref.splitPile(0.5) : void 0;
           this.inventory.changed();
         } else {
+          if (!this.allowDrop) {
+            return;
+          }
           this.dropOneHeld(index);
         }
       }

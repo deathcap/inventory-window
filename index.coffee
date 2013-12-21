@@ -19,6 +19,8 @@ class InventoryWindow extends EventEmitter
     @textureSize = opts.textureSize ? (16 * 5)
     @borderSize = opts.borderSize ? 4
     @secondaryMouseButton = opts.secondaryMouseButton ? 2
+    @allowDrop = opts.allowDrop ? true
+    @allowDragPaint = opts.allowDragPaint ? true
 
     @slotNodes = []
     @container = undefined
@@ -67,6 +69,8 @@ user-select: none;
     ever(node).on 'mousedown', (ev) =>
       @clickSlot index, ev
     ever(node).on 'mouseover', (ev) =>
+      return if not @allowDragPaint
+      return if not @allowDrop
       return if not InventoryWindow.heldItemPile?
       return if InventoryWindow.mouseButtonDown != @secondaryMouseButton
 
@@ -208,12 +212,13 @@ z-index: 10;
     InventoryWindow.mouseButtonDown = ev.button
 
     if ev.button != @secondaryMouseButton
-      # left click drop: drop whole pile
+      # left click: whole pile
       if not InventoryWindow.heldItemPile
         # pickup whole pile
         InventoryWindow.heldItemPile = @inventory.get(index)
         @inventory.set(index, undefined)
       else
+        return if not @allowDrop
         if @inventory.get(index)
           # try to merge piles dropped on each other
           if @inventory.get(index).mergePile(InventoryWindow.heldItemPile) == false
@@ -234,6 +239,7 @@ z-index: 10;
         InventoryWindow.heldItemPile = @inventory.get(index)?.splitPile(0.5)
         @inventory.changed()
       else
+        return if not @allowDrop
         @dropOneHeld(index)
     @createHeldNode InventoryWindow.heldItemPile, ev
     @refreshSlotNode index
