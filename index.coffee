@@ -15,7 +15,7 @@ class InventoryWindow extends EventEmitter
     @inventory = opts.inventory ? throw 'inventory-window requires "inventory" option set to Inventory instance'
     @getTexture = opts.getTexture ? throw 'inventory-window requires "getTexture" option set to callback'
     @inventorySize = opts.inventorySize ? @inventory.size()
-    @width = opts.width ? 5
+    @width = opts.width ? Math.min(5, @inventorySize)
     @textureSize = opts.textureSize ? (16 * 5)
     @borderSize = opts.borderSize ? 4
     @secondaryMouseButton = opts.secondaryMouseButton ? 2
