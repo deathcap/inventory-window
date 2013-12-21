@@ -20,6 +20,7 @@ class InventoryWindow extends EventEmitter
     @borderSize = opts.borderSize ? 4
     @secondaryMouseButton = opts.secondaryMouseButton ? 2
     @allowDrop = opts.allowDrop ? true
+    @allowPickup = opts.allowPickup ? true
     @allowDragPaint = opts.allowDragPaint ? true
 
     @slotNodes = []
@@ -215,6 +216,7 @@ z-index: 10;
       # left click: whole pile
       if not InventoryWindow.heldItemPile
         # pickup whole pile
+        return if not @allowPickup
         InventoryWindow.heldItemPile = @inventory.get(index)
         @inventory.set(index, undefined)
       else
@@ -236,6 +238,7 @@ z-index: 10;
       # right-click: half/one
       if not InventoryWindow.heldItemPile
         # pickup half
+        return if not @allowPickup
         InventoryWindow.heldItemPile = @inventory.get(index)?.splitPile(0.5)
         @inventory.changed()
       else

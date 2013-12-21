@@ -20,7 +20,7 @@
     InventoryWindow.resolvedImageURLs = {};
 
     function InventoryWindow(opts) {
-      var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
+      var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
       if (opts == null) {
         opts = {};
       }
@@ -44,7 +44,8 @@
       this.borderSize = (_ref5 = opts.borderSize) != null ? _ref5 : 4;
       this.secondaryMouseButton = (_ref6 = opts.secondaryMouseButton) != null ? _ref6 : 2;
       this.allowDrop = (_ref7 = opts.allowDrop) != null ? _ref7 : true;
-      this.allowDragPaint = (_ref8 = opts.allowDragPaint) != null ? _ref8 : true;
+      this.allowPickup = (_ref8 = opts.allowPickup) != null ? _ref8 : true;
+      this.allowDragPaint = (_ref9 = opts.allowDragPaint) != null ? _ref9 : true;
       this.slotNodes = [];
       this.container = void 0;
       this.selectedIndex = void 0;
@@ -229,6 +230,9 @@
       InventoryWindow.mouseButtonDown = ev.button;
       if (ev.button !== this.secondaryMouseButton) {
         if (!InventoryWindow.heldItemPile) {
+          if (!this.allowPickup) {
+            return;
+          }
           InventoryWindow.heldItemPile = this.inventory.get(index);
           this.inventory.set(index, void 0);
         } else {
@@ -250,6 +254,9 @@
         }
       } else {
         if (!InventoryWindow.heldItemPile) {
+          if (!this.allowPickup) {
+            return;
+          }
           InventoryWindow.heldItemPile = (_ref = this.inventory.get(index)) != null ? _ref.splitPile(0.5) : void 0;
           this.inventory.changed();
         } else {
