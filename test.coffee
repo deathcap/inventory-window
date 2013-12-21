@@ -35,4 +35,6 @@ document.body.appendChild(container)
 
 ever(document.body).on 'contextmenu', (ev) -> ev.preventDefault()
 
+w.setSelected 7
+
 window.w = w

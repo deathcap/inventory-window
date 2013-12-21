@@ -9,6 +9,7 @@ class InventoryWindow extends EventEmitter
     opts ?= {}
     @inventory = opts.inventory ? throw 'inventory-window requires "inventory" option set to Inventory instance'
     @getTexture = opts.getTexture ? throw 'inventory-window requires "getTexture" option set to callback'
+    @inventorySize = opts.inventorySize ? @inventory.size()
     @width = opts.width ? 5
     @textureSize = opts.textureSize ? (16 * 5)
     @borderSize = opts.borderSize ? 4
@@ -20,6 +21,7 @@ class InventoryWindow extends EventEmitter
     @container = undefined
     @resolvedImageURLs = {}
     @mouseButtonDown = undefined
+    @selectedIndex = undefined # no selection
 
     @enable()
 
@@ -37,10 +39,11 @@ class InventoryWindow extends EventEmitter
   createContainer: () ->
     container = document.createElement 'div'
     #container.setAttribute 'class', 'inventory-window'  # .inventory-window { border: 1px dotted black; display: inline; float: left; }
-    for i in [0...@inventory.size()]
+    for i in [0...@inventorySize]
       slotItem = @inventory.get(i)
 
       node = @createSlotNode(slotItem)
+      @setBorderStyle node, i
       @bindSlotNodeEvent node, i
 
       @slotNodes.push node
@@ -100,7 +103,7 @@ image-rendering: crisp-edges;
 
     div
 
-  populateSlotNode: (div, itemPile) ->
+  populateSlotNode: (div, itemPile, isSelected) ->
     if itemPile? and itemPile.count > 0
       src = @getTexture itemPile
       #text = @getTextOverlay @inventory.slot
@@ -110,7 +113,7 @@ image-rendering: crisp-edges;
     else
       src = undefined
       text = ''
-    
+
     newImage = if src? then 'url(' + src + ')' else ''
 
     # update image, but only if changed to prevent flickering
@@ -124,11 +127,25 @@ image-rendering: crisp-edges;
     if div.textContent != text
       div.textContent = text
 
+  setBorderStyle: (node, index) ->
+    if index == @selectedIndex
+      node.style.border = "#{@borderSize}px dotted black"
+    else
+      node.style.border = "#{@borderSize}px solid black"
+ 
+  setSelected: (index) ->
+    @selectedIndex = index
+    @refresh()   # TODO: selective refresh?
+
+  getSelected: (index) ->
+    @selectedIndex
+
   refreshSlotNode: (index) ->
     @populateSlotNode @slotNodes[index], @inventory.get(index)
+    @setBorderStyle @slotNodes[index], index 
 
   refresh: () ->
-    for i in [0...@inventory.size()]
+    for i in [0...@inventorySize]
       @refreshSlotNode(i)
 
   positionAtMouse: (node, mouseEvent) ->

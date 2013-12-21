@@ -12,7 +12,7 @@
     __extends(InventoryWindow, _super);
 
     function InventoryWindow(opts) {
-      var _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
+      var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
       if (opts == null) {
         opts = {};
       }
@@ -30,16 +30,18 @@
           throw 'inventory-window requires "getTexture" option set to callback';
         }
       })();
-      this.width = (_ref2 = opts.width) != null ? _ref2 : 5;
-      this.textureSize = (_ref3 = opts.textureSize) != null ? _ref3 : 16 * 5;
-      this.borderSize = (_ref4 = opts.borderSize) != null ? _ref4 : 4;
-      this.secondaryMouseButton = (_ref5 = opts.secondaryMouseButton) != null ? _ref5 : 2;
+      this.inventorySize = (_ref2 = opts.inventorySize) != null ? _ref2 : this.inventory.size();
+      this.width = (_ref3 = opts.width) != null ? _ref3 : 5;
+      this.textureSize = (_ref4 = opts.textureSize) != null ? _ref4 : 16 * 5;
+      this.borderSize = (_ref5 = opts.borderSize) != null ? _ref5 : 4;
+      this.secondaryMouseButton = (_ref6 = opts.secondaryMouseButton) != null ? _ref6 : 2;
       this.slotNodes = [];
       this.heldNode = void 0;
       this.heldItemPile = void 0;
       this.container = void 0;
       this.resolvedImageURLs = {};
       this.mouseButtonDown = void 0;
+      this.selectedIndex = void 0;
       this.enable();
     }
 
@@ -62,9 +64,10 @@
     InventoryWindow.prototype.createContainer = function() {
       var container, i, node, slotItem, widthpx, _i, _ref;
       container = document.createElement('div');
-      for (i = _i = 0, _ref = this.inventory.size(); 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+      for (i = _i = 0, _ref = this.inventorySize; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
         slotItem = this.inventory.get(i);
         node = this.createSlotNode(slotItem);
+        this.setBorderStyle(node, i);
         this.bindSlotNodeEvent(node, i);
         this.slotNodes.push(node);
         container.appendChild(node);
@@ -102,7 +105,7 @@
       return div;
     };
 
-    InventoryWindow.prototype.populateSlotNode = function(div, itemPile) {
+    InventoryWindow.prototype.populateSlotNode = function(div, itemPile, isSelected) {
       var newImage, src, text;
       if ((itemPile != null) && itemPile.count > 0) {
         src = this.getTexture(itemPile);
@@ -127,14 +130,32 @@
       }
     };
 
+    InventoryWindow.prototype.setBorderStyle = function(node, index) {
+      if (index === this.selectedIndex) {
+        return node.style.border = "" + this.borderSize + "px dotted black";
+      } else {
+        return node.style.border = "" + this.borderSize + "px solid black";
+      }
+    };
+
+    InventoryWindow.prototype.setSelected = function(index) {
+      this.selectedIndex = index;
+      return this.refresh();
+    };
+
+    InventoryWindow.prototype.getSelected = function(index) {
+      return this.selectedIndex;
+    };
+
     InventoryWindow.prototype.refreshSlotNode = function(index) {
-      return this.populateSlotNode(this.slotNodes[index], this.inventory.get(index));
+      this.populateSlotNode(this.slotNodes[index], this.inventory.get(index));
+      return this.setBorderStyle(this.slotNodes[index], index);
     };
 
     InventoryWindow.prototype.refresh = function() {
       var i, _i, _ref, _results;
       _results = [];
-      for (i = _i = 0, _ref = this.inventory.size(); 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+      for (i = _i = 0, _ref = this.inventorySize; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
         _results.push(this.refreshSlotNode(i));
       }
       return _results;

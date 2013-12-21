@@ -59,6 +59,8 @@
     return ev.preventDefault();
   });
 
+  w.setSelected(7);
+
   window.w = w;
 
 }).call(this);
