@@ -214,13 +214,18 @@ z-index: 10;
 
     if ev.button != @secondaryMouseButton
       # left click: whole pile
-      if not InventoryWindow.heldItemPile
+      if not InventoryWindow.heldItemPile or not @allowDrop
         # pickup whole pile
         return if not @allowPickup
-        InventoryWindow.heldItemPile = @inventory.get(index)
-        @inventory.set(index, undefined)
+
+        if InventoryWindow.heldItemPile?
+          # tried to drop on pickup-only inventory, so merge into held inventory instead
+          InventoryWindow.heldItemPile.mergePile @inventory.get(index)
+        else
+          InventoryWindow.heldItemPile = @inventory.get(index)
+          @inventory.set(index, undefined)
+        @emit 'pickup' # TODO: event data? index, item? cancelable?
       else
-        return if not @allowDrop
         if @inventory.get(index)
           # try to merge piles dropped on each other
           if @inventory.get(index).mergePile(InventoryWindow.heldItemPile) == false
@@ -241,6 +246,7 @@ z-index: 10;
         return if not @allowPickup
         InventoryWindow.heldItemPile = @inventory.get(index)?.splitPile(0.5)
         @inventory.changed()
+        @emit 'pickup' # TODO: event data? index, item? cancelable?
       else
         return if not @allowDrop
         @dropOneHeld(index)
