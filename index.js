@@ -234,7 +234,9 @@
             return;
           }
           if (InventoryWindow.heldItemPile != null) {
-            InventoryWindow.heldItemPile.mergePile(this.inventory.get(index));
+            if (this.inventory.get(index) != null) {
+              InventoryWindow.heldItemPile.mergePile(this.inventory.get(index));
+            }
           } else {
             InventoryWindow.heldItemPile = this.inventory.get(index);
             this.inventory.set(index, void 0);
