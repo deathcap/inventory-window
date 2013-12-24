@@ -18,6 +18,6 @@
     "beefy": "0.4.5"
   },
   "scripts": {
-    "start": "beefy test.coffee:bundle.js 8888 -- -t coffeeify"
+    "start": "beefy demo.coffee:bundle.js 8888 -- -t coffeeify"
   }
 }
