@@ -235,6 +235,9 @@
           }
           if (InventoryWindow.heldItemPile != null) {
             if (this.inventory.get(index) != null) {
+              if (!InventoryWindow.heldItemPile.canPileWith(this.inventory.get(index))) {
+                return;
+              }
               InventoryWindow.heldItemPile.mergePile(this.inventory.get(index));
             }
           } else {

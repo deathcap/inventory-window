@@ -220,6 +220,7 @@ z-index: 10;
         if InventoryWindow.heldItemPile?
           # tried to drop on pickup-only inventory, so merge into held inventory instead
           if @inventory.get(index)?
+            return if not InventoryWindow.heldItemPile.canPileWith @inventory.get(index)
             InventoryWindow.heldItemPile.mergePile @inventory.get(index)
         else
           InventoryWindow.heldItemPile = @inventory.get(index)
