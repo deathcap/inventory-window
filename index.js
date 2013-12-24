@@ -39,7 +39,7 @@
         }
       })();
       this.inventorySize = (_ref2 = opts.inventorySize) != null ? _ref2 : this.inventory.size();
-      this.width = (_ref3 = opts.width) != null ? _ref3 : Math.min(5, this.inventorySize);
+      this.width = (_ref3 = opts.width) != null ? _ref3 : this.inventory.width;
       this.textureSize = (_ref4 = opts.textureSize) != null ? _ref4 : 16 * 5;
       this.borderSize = (_ref5 = opts.borderSize) != null ? _ref5 : 4;
       this.secondaryMouseButton = (_ref6 = opts.secondaryMouseButton) != null ? _ref6 : 2;
