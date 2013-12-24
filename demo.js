@@ -10,7 +10,7 @@
 
   ever = require('ever');
 
-  inv = new Inventory(5 * 5);
+  inv = new Inventory(5, 5);
 
   inv.give(new ItemPile('diamond', 1));
 

@@ -3,7 +3,7 @@ Inventory = require 'inventory'
 ItemPile = require 'itempile'
 ever = require 'ever'
 
-inv = new Inventory(5*5)
+inv = new Inventory(5, 5)
 inv.give new ItemPile 'diamond', 1
 inv.give new ItemPile 'emerald', 64
 inv.give new ItemPile 'emerald', 32
