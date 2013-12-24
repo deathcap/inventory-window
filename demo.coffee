@@ -38,3 +38,10 @@ ever(document.body).on 'contextmenu', (ev) -> ev.preventDefault()
 w.setSelected 7
 
 window.w = w
+
+w2 = new InventoryWindow {
+  inventory: inv
+  getTexture: (pile) -> images[pile?.item]
+  allowDrop: false
+  }
+document.body.appendChild(w2.createContainer())
