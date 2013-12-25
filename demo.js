@@ -66,9 +66,6 @@
 
   w2 = new InventoryWindow({
     inventory: inv,
-    getTexture: function(pile) {
-      return images[pile != null ? pile.item : void 0];
-    },
     allowDrop: false
   });
 
