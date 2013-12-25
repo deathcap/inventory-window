@@ -19,12 +19,8 @@
 
     InventoryWindow.resolvedImageURLs = {};
 
-    InventoryWindow.defaultGetTexture = function(itemPile) {
-      throw 'inventory-window textures not specified, set InventoryWindow.defaultGetTexture or pass "getTexture" option';
-    };
-
     function InventoryWindow(opts) {
-      var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+      var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
       if (opts == null) {
         opts = {};
       }
@@ -35,15 +31,15 @@
           throw 'inventory-window requires "inventory" option set to Inventory instance';
         }
       })();
-      this.getTexture = (_ref1 = opts.getTexture) != null ? _ref1 : InventoryWindow.defaultGetTexture;
-      this.inventorySize = (_ref2 = opts.inventorySize) != null ? _ref2 : this.inventory.size();
-      this.width = (_ref3 = opts.width) != null ? _ref3 : this.inventory.width;
-      this.textureSize = (_ref4 = opts.textureSize) != null ? _ref4 : 16 * 5;
-      this.borderSize = (_ref5 = opts.borderSize) != null ? _ref5 : 4;
-      this.secondaryMouseButton = (_ref6 = opts.secondaryMouseButton) != null ? _ref6 : 2;
-      this.allowDrop = (_ref7 = opts.allowDrop) != null ? _ref7 : true;
-      this.allowPickup = (_ref8 = opts.allowPickup) != null ? _ref8 : true;
-      this.allowDragPaint = (_ref9 = opts.allowDragPaint) != null ? _ref9 : true;
+      this.getTexture = opts.getTexture;
+      this.inventorySize = (_ref1 = opts.inventorySize) != null ? _ref1 : this.inventory.size();
+      this.width = (_ref2 = opts.width) != null ? _ref2 : this.inventory.width;
+      this.textureSize = (_ref3 = opts.textureSize) != null ? _ref3 : 16 * 5;
+      this.borderSize = (_ref4 = opts.borderSize) != null ? _ref4 : 4;
+      this.secondaryMouseButton = (_ref5 = opts.secondaryMouseButton) != null ? _ref5 : 2;
+      this.allowDrop = (_ref6 = opts.allowDrop) != null ? _ref6 : true;
+      this.allowPickup = (_ref7 = opts.allowPickup) != null ? _ref7 : true;
+      this.allowDragPaint = (_ref8 = opts.allowDragPaint) != null ? _ref8 : true;
       this.slotNodes = [];
       this.container = void 0;
       this.selectedIndex = void 0;
@@ -119,7 +115,15 @@
     InventoryWindow.prototype.populateSlotNode = function(div, itemPile, isSelected) {
       var newImage, src, text;
       if ((itemPile != null) && itemPile.count > 0) {
-        src = this.getTexture(itemPile);
+        if (this.getTexture != null) {
+          src = this.getTexture(itemPile);
+        } else if (InventoryWindow.defaultGetTexture != null) {
+          src = InventoryWindow.defaultGetTexture(itemPile);
+        } else if (global.InventoryWindow_defaultGetTexture != null) {
+          src = global.InventoryWindow_defaultGetTexture(itemPile);
+        } else {
+          throw 'inventory-window textures not specified, set InventoryWindow.defaultGetTexture or pass "getTexture" option';
+        }
         text = itemPile.count;
         if (text === 1) {
           text = '';

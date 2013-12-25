@@ -10,12 +10,10 @@ class InventoryWindow extends EventEmitter
   @mouseButtonDown = undefined
   @resolvedImageURLs = {}
 
-  @defaultGetTexture = (itemPile) -> throw 'inventory-window textures not specified, set InventoryWindow.defaultGetTexture or pass "getTexture" option'
-
   constructor: (opts) ->
     opts ?= {}
     @inventory = opts.inventory ? throw 'inventory-window requires "inventory" option set to Inventory instance'
-    @getTexture = opts.getTexture ? InventoryWindow.defaultGetTexture
+    @getTexture = opts.getTexture
     @inventorySize = opts.inventorySize ? @inventory.size()
     @width = opts.width ? @inventory.width
     @textureSize = opts.textureSize ? (16 * 5)
@@ -112,7 +110,15 @@ image-rendering: crisp-edges;
 
   populateSlotNode: (div, itemPile, isSelected) ->
     if itemPile? and itemPile.count > 0
-      src = @getTexture itemPile
+      if @getTexture?
+        src = @getTexture itemPile
+      else if InventoryWindow.defaultGetTexture? # TODO: find out why this reverts so I have to use 'global' instead
+        src = InventoryWindow.defaultGetTexture itemPile
+      else if global.InventoryWindow_defaultGetTexture?
+        src = global.InventoryWindow_defaultGetTexture itemPile
+      else
+        throw 'inventory-window textures not specified, set InventoryWindow.defaultGetTexture or pass "getTexture" option'
+
       #text = @getTextOverlay @inventory.slot
       text = itemPile.count
       text = '' if text == 1
