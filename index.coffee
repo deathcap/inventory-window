@@ -13,6 +13,7 @@ class InventoryWindow extends EventEmitter
   constructor: (opts) ->
     opts ?= {}
     @inventory = opts.inventory ? throw 'inventory-window requires "inventory" option set to Inventory instance'
+    @linkedInventory = opts.linkedInventory
     @getTexture = opts.getTexture
     @inventorySize = opts.inventorySize ? @inventory.size()
     @width = opts.width ? @inventory.width
@@ -219,6 +220,8 @@ z-index: 10;
 
     InventoryWindow.mouseButtonDown = ev.button
 
+    shiftDown = ev.shiftKey
+
     if ev.button != @secondaryMouseButton
       # left click: whole pile
       if not InventoryWindow.heldItemPile or not @allowDrop
@@ -231,10 +234,18 @@ z-index: 10;
             return if not InventoryWindow.heldItemPile.canPileWith @inventory.get(index)
             InventoryWindow.heldItemPile.mergePile @inventory.get(index)
         else
-          InventoryWindow.heldItemPile = @inventory.get(index)
-          @inventory.set(index, undefined)
+          if not shiftDown
+            # simply picking up the whole pile
+            InventoryWindow.heldItemPile = @inventory.get(index)
+            @inventory.set(index, undefined)
+          else if @linkedInventory
+            # shift-click: transfer to linked inventory
+            @linkedInventory.give @inventory.get(index)
+            @inventory.changed()  # update source, might not have transferred all of the pile
+
         @emit 'pickup' # TODO: event data? index, item? cancelable?
       else
+        # drop whole pile
         if @inventory.get(index)
           # try to merge piles dropped on each other
           if @inventory.get(index).mergePile(InventoryWindow.heldItemPile) == false

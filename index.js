@@ -31,6 +31,7 @@
           throw 'inventory-window requires "inventory" option set to Inventory instance';
         }
       })();
+      this.linkedInventory = opts.linkedInventory;
       this.getTexture = opts.getTexture;
       this.inventorySize = (_ref1 = opts.inventorySize) != null ? _ref1 : this.inventory.size();
       this.width = (_ref2 = opts.width) != null ? _ref2 : this.inventory.width;
@@ -226,10 +227,11 @@
     };
 
     InventoryWindow.prototype.clickSlot = function(index, ev) {
-      var itemPile, tmp, _ref;
+      var itemPile, shiftDown, tmp, _ref;
       itemPile = this.inventory.get(index);
       console.log('clickSlot', index, itemPile);
       InventoryWindow.mouseButtonDown = ev.button;
+      shiftDown = ev.shiftKey;
       if (ev.button !== this.secondaryMouseButton) {
         if (!InventoryWindow.heldItemPile || !this.allowDrop) {
           if (!this.allowPickup) {
@@ -243,8 +245,13 @@
               InventoryWindow.heldItemPile.mergePile(this.inventory.get(index));
             }
           } else {
-            InventoryWindow.heldItemPile = this.inventory.get(index);
-            this.inventory.set(index, void 0);
+            if (!shiftDown) {
+              InventoryWindow.heldItemPile = this.inventory.get(index);
+              this.inventory.set(index, void 0);
+            } else if (this.linkedInventory) {
+              this.linkedInventory.give(this.inventory.get(index));
+              this.inventory.changed();
+            }
           }
           this.emit('pickup');
         } else {
