@@ -252,7 +252,7 @@
             if (!shiftDown) {
               InventoryWindow.heldItemPile = this.inventory.get(index);
               this.inventory.set(index, void 0);
-            } else if (this.linkedInventory) {
+            } else if (this.linkedInventory && (this.inventory.get(index) != null)) {
               this.linkedInventory.give(this.inventory.get(index));
               this.inventory.changed();
             }

@@ -241,7 +241,7 @@ z-index: 10;
             # simply picking up the whole pile
             InventoryWindow.heldItemPile = @inventory.get(index)
             @inventory.set(index, undefined)
-          else if @linkedInventory
+          else if @linkedInventory and @inventory.get(index)?
             # shift-click: transfer to linked inventory
             @linkedInventory.give @inventory.get(index)
             @inventory.changed()  # update source, might not have transferred all of the pile
