@@ -120,7 +120,11 @@
     };
 
     InventoryWindow.prototype.populateSlotNode = function(div, itemPile, isSelected) {
-      var maxDamage, newImage, progress, progressNode, src, text, _ref;
+      var maxDamage, newImage, progress, progressColor, progressNode, src, text, _ref;
+      src = void 0;
+      text = '';
+      progress = void 0;
+      progressColor = 'green';
       if ((itemPile != null) && itemPile.count > 0) {
         if (this.registry != null) {
           src = this.registry.getItemPileTexture(itemPile);
@@ -145,11 +149,14 @@
             maxDamage = 100;
           }
           progress = (maxDamage - itemPile.tags.damage) / maxDamage;
+          if (progress <= 0.20) {
+            progressColor = 'red';
+          } else if (progress <= 0.40) {
+            progressColor = 'orange';
+          } else {
+            progressColor = 'green';
+          }
         }
-      } else {
-        src = void 0;
-        text = '';
-        progress = void 0;
       }
       newImage = src != null ? 'url(' + src + ')' : '';
       if (InventoryWindow.resolvedImageURLs[newImage] !== div.style.backgroundImage) {
@@ -162,7 +169,7 @@
       progressNode = div.children[0];
       if (progressNode == null) {
         progressNode = document.createElement('div');
-        progressNode.setAttribute('style', "width: " + (progress * 100) + "%;border-top: " + this.progressThickness + "px solid green;top: " + (this.textureSize - this.borderSize * 2) + "px;position: relative;visibility: hidden;");
+        progressNode.setAttribute('style', "width: " + (progress * 100) + "%;border-top: " + this.progressThickness + "px solid " + progressColor + ";top: " + (this.textureSize - this.borderSize * 2) + "px;position: relative;visibility: hidden;");
         div.appendChild(progressNode);
       }
       return progressNode.style.visibility = progress != null ? '' : 'hidden';

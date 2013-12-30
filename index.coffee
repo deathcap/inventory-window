@@ -115,6 +115,11 @@ image-rendering: crisp-edges;
     div
 
   populateSlotNode: (div, itemPile, isSelected) ->
+    src = undefined
+    text = ''
+    progress = undefined
+    progressColor = 'green'
+
     if itemPile? and itemPile.count > 0
       if @registry?
         src = @registry.getItemPileTexture itemPile
@@ -137,10 +142,12 @@ image-rendering: crisp-edges;
           maxDamage = 100
 
         progress = (maxDamage - itemPile.tags.damage) / maxDamage
-    else
-      src = undefined
-      text = ''
-      progress = undefined
+        if progress <= 0.20
+          progressColor = 'red'
+        else if progress <= 0.40
+          progressColor = 'orange' 
+        else
+          progressColor = 'green'
 
     newImage = if src? then 'url(' + src + ')' else ''
 
@@ -160,7 +167,7 @@ image-rendering: crisp-edges;
       progressNode = document.createElement('div')
       progressNode.setAttribute 'style', "
 width: #{progress * 100}%;
-border-top: #{@progressThickness}px solid green;
+border-top: #{@progressThickness}px solid #{progressColor};
 top: #{@textureSize - @borderSize * 2}px;
 position: relative;
 visibility: hidden;
