@@ -47,6 +47,8 @@
       this.allowDrop = (_ref9 = opts.allowDrop) != null ? _ref9 : true;
       this.allowPickup = (_ref10 = opts.allowPickup) != null ? _ref10 : true;
       this.allowDragPaint = (_ref11 = opts.allowDragPaint) != null ? _ref11 : true;
+      this.progressColorsThresholds = opts.progressColorsThresholds != null ? opts.progressColorsThresholds : opts.progressColorsThresholds = [0.20, 0.40, Infinity];
+      this.progressColors = opts.progressColors != null ? opts.progressColors : opts.progressColors = ['red', 'orange', 'green'];
       this.slotNodes = [];
       this.container = void 0;
       this.selectedIndex = void 0;
@@ -149,14 +151,7 @@
             maxDamage = 100;
           }
           progress = (maxDamage - itemPile.tags.damage) / maxDamage;
-          if (progress <= 0.20) {
-            progressColor = 'red';
-          } else if (progress <= 0.40) {
-            progressColor = 'orange';
-          } else {
-            progressColor = 'green';
-          }
-          console.log('progress ', progress, progressColor);
+          progressColor = this.getProgressBarColor(progress);
         }
       }
       newImage = src != null ? 'url(' + src + ')' : '';
@@ -180,6 +175,18 @@
         progressNode.style.width = (progress * 100) + '%';
       }
       return progressNode.style.visibility = progress != null ? '' : 'hidden';
+    };
+
+    InventoryWindow.prototype.getProgressBarColor = function(progress) {
+      var i, threshold, _i, _len, _ref;
+      _ref = this.progressColorsThresholds;
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        threshold = _ref[i];
+        if (progress <= threshold) {
+          return this.progressColors[i];
+        }
+      }
+      return this.progressColors.slice(-1)[0];
     };
 
     InventoryWindow.prototype.setBorderStyle = function(node, index) {

@@ -28,6 +28,8 @@ class InventoryWindow extends EventEmitter
     @allowDrop = opts.allowDrop ? true
     @allowPickup = opts.allowPickup ? true
     @allowDragPaint = opts.allowDragPaint ? true
+    @progressColorsThresholds = opts.progressColorsThresholds ?= [0.20, 0.40, Infinity]
+    @progressColors = opts.progressColors ?= ['red', 'orange', 'green']
 
     @slotNodes = []
     @container = undefined
@@ -142,13 +144,7 @@ image-rendering: crisp-edges;
           maxDamage = 100
 
         progress = (maxDamage - itemPile.tags.damage) / maxDamage
-        if progress <= 0.20
-          progressColor = 'red'
-        else if progress <= 0.40
-          progressColor = 'orange' 
-        else
-          progressColor = 'green'
-        console.log 'progress ',progress,progressColor
+        progressColor = @getProgressBarColor(progress)
 
     newImage = if src? then 'url(' + src + ')' else ''
 
@@ -178,6 +174,11 @@ visibility: hidden;
     progressNode.style.width = (progress * 100) + '%' if progress?
     progressNode.style.visibility = if progress? then '' else 'hidden'
 
+  getProgressBarColor: (progress) ->
+    for threshold, i in @progressColorsThresholds
+      if progress <= threshold
+        return @progressColors[i]
+    return @progressColors.slice(-1)[0]  # default to last
 
   setBorderStyle: (node, index) ->
     if index == @selectedIndex
