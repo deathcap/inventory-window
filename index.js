@@ -33,6 +33,7 @@
       })();
       this.linkedInventory = opts.linkedInventory;
       this.getTexture = opts.getTexture;
+      this.registry = opts.registry;
       this.inventorySize = (_ref1 = opts.inventorySize) != null ? _ref1 : this.inventory.size();
       this.width = (_ref2 = opts.width) != null ? _ref2 : this.inventory.width;
       this.textureSize = (_ref3 = opts.textureSize) != null ? _ref3 : 16 * 5;
@@ -116,14 +117,14 @@
     InventoryWindow.prototype.populateSlotNode = function(div, itemPile, isSelected) {
       var newImage, src, text;
       if ((itemPile != null) && itemPile.count > 0) {
-        if (this.getTexture != null) {
+        if (this.registry != null) {
+          src = this.registry.getItemPileTexture(itemPile);
+        } else if (this.getTexture != null) {
           src = this.getTexture(itemPile);
         } else if (InventoryWindow.defaultGetTexture != null) {
           src = InventoryWindow.defaultGetTexture(itemPile);
-        } else if (global.InventoryWindow_defaultGetTexture != null) {
-          src = global.InventoryWindow_defaultGetTexture(itemPile);
         } else {
-          throw 'inventory-window textures not specified, set InventoryWindow.defaultGetTexture or pass "getTexture" option';
+          throw 'inventory-window textures not specified, set InventoryWindow.defaultGetTexture or pass "getTexture" or "registry" option';
         }
         text = itemPile.count;
         if (text === 1) {

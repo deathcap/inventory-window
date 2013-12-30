@@ -15,6 +15,7 @@ class InventoryWindow extends EventEmitter
     @inventory = opts.inventory ? throw 'inventory-window requires "inventory" option set to Inventory instance'
     @linkedInventory = opts.linkedInventory
     @getTexture = opts.getTexture
+    @registry = opts.registry
     @inventorySize = opts.inventorySize ? @inventory.size()
     @width = opts.width ? @inventory.width
     @textureSize = opts.textureSize ? (16 * 5)
@@ -111,14 +112,14 @@ image-rendering: crisp-edges;
 
   populateSlotNode: (div, itemPile, isSelected) ->
     if itemPile? and itemPile.count > 0
-      if @getTexture?
+      if @registry?
+        src = @registry.getItemPileTexture itemPile
+      else if @getTexture?
         src = @getTexture itemPile
-      else if InventoryWindow.defaultGetTexture? # TODO: find out why this reverts so I have to use 'global' instead
+      else if InventoryWindow.defaultGetTexture?
         src = InventoryWindow.defaultGetTexture itemPile
-      else if global.InventoryWindow_defaultGetTexture?
-        src = global.InventoryWindow_defaultGetTexture itemPile
       else
-        throw 'inventory-window textures not specified, set InventoryWindow.defaultGetTexture or pass "getTexture" option'
+        throw 'inventory-window textures not specified, set InventoryWindow.defaultGetTexture or pass "getTexture" or "registry" option'
 
       #text = @getTextOverlay @inventory.slot
       text = itemPile.count
