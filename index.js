@@ -34,6 +34,9 @@
       this.linkedInventory = opts.linkedInventory;
       this.getTexture = opts.getTexture;
       this.registry = opts.registry;
+      if ((this.getTexture == null) && (this.registry == null) && (InventoryWindow.defaultGetTexture == null)) {
+        throw 'inventory-window: required "getTexture" or "registry" option missing';
+      }
       this.inventorySize = (_ref1 = opts.inventorySize) != null ? _ref1 : this.inventory.size();
       this.width = (_ref2 = opts.width) != null ? _ref2 : this.inventory.width;
       this.textureSize = (_ref3 = opts.textureSize) != null ? _ref3 : 16 * 5;

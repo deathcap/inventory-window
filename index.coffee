@@ -16,6 +16,8 @@ class InventoryWindow extends EventEmitter
     @linkedInventory = opts.linkedInventory
     @getTexture = opts.getTexture
     @registry = opts.registry
+    if (!@getTexture? && !@registry? && !InventoryWindow.defaultGetTexture?)
+      throw 'inventory-window: required "getTexture" or "registry" option missing'
     @inventorySize = opts.inventorySize ? @inventory.size()
     @width = opts.width ? @inventory.width
     @textureSize = opts.textureSize ? (16 * 5)
