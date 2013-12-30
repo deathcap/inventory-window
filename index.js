@@ -124,7 +124,7 @@
       src = void 0;
       text = '';
       progress = void 0;
-      progressColor = 'green';
+      progressColor = void 0;
       if ((itemPile != null) && itemPile.count > 0) {
         if (this.registry != null) {
           src = this.registry.getItemPileTexture(itemPile);
@@ -156,6 +156,7 @@
           } else {
             progressColor = 'green';
           }
+          console.log('progress ', progress, progressColor);
         }
       }
       newImage = src != null ? 'url(' + src + ')' : '';
@@ -169,13 +170,16 @@
       progressNode = div.children[0];
       if (progressNode == null) {
         progressNode = document.createElement('div');
-        progressNode.setAttribute('style', "width: 0%;border-top: " + this.progressThickness + "px solid " + progressColor + ";top: " + (this.textureSize - this.borderSize * 2) + "px;position: relative;visibility: hidden;");
+        progressNode.setAttribute('style', "width: 0%;top: " + (this.textureSize - this.borderSize * 2) + "px;position: relative;visibility: hidden;");
         div.appendChild(progressNode);
       }
-      progressNode.style.visibility = progress != null ? '' : 'hidden';
-      if (progress != null) {
-        return progressNode.style.width = (progress * 100) + '%';
+      if (progressColor != null) {
+        progressNode.style.borderTop = "" + this.progressThickness + "px solid " + progressColor;
       }
+      if (progress != null) {
+        progressNode.style.width = (progress * 100) + '%';
+      }
+      return progressNode.style.visibility = progress != null ? '' : 'hidden';
     };
 
     InventoryWindow.prototype.setBorderStyle = function(node, index) {

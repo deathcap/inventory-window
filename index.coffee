@@ -118,7 +118,7 @@ image-rendering: crisp-edges;
     src = undefined
     text = ''
     progress = undefined
-    progressColor = 'green'
+    progressColor = undefined
 
     if itemPile? and itemPile.count > 0
       if @registry?
@@ -148,6 +148,7 @@ image-rendering: crisp-edges;
           progressColor = 'orange' 
         else
           progressColor = 'green'
+        console.log 'progress ',progress,progressColor
 
     newImage = if src? then 'url(' + src + ')' else ''
 
@@ -167,15 +168,15 @@ image-rendering: crisp-edges;
       progressNode = document.createElement('div')
       progressNode.setAttribute 'style', "
 width: 0%;
-border-top: #{@progressThickness}px solid #{progressColor};
 top: #{@textureSize - @borderSize * 2}px;
 position: relative;
 visibility: hidden;
 "
       div.appendChild progressNode
 
-    progressNode.style.visibility = if progress? then '' else 'hidden'
+    progressNode.style.borderTop = "#{@progressThickness}px solid #{progressColor}" if progressColor?
     progressNode.style.width = (progress * 100) + '%' if progress?
+    progressNode.style.visibility = if progress? then '' else 'hidden'
 
 
   setBorderStyle: (node, index) ->
