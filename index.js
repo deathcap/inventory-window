@@ -20,7 +20,7 @@
     InventoryWindow.resolvedImageURLs = {};
 
     function InventoryWindow(opts) {
-      var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+      var _ref, _ref1, _ref10, _ref11, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
       if (opts == null) {
         opts = {};
       }
@@ -32,20 +32,21 @@
         }
       })();
       this.linkedInventory = opts.linkedInventory;
-      this.getTexture = opts.getTexture;
+      this.getTexture = (_ref1 = opts.getTexture) != null ? _ref1 : InventoryWindow.defaultGetTexture;
       this.registry = opts.registry;
-      if ((this.getTexture == null) && (this.registry == null) && (InventoryWindow.defaultGetTexture == null)) {
+      if ((this.getTexture == null) && (this.registry == null)) {
         throw 'inventory-window: required "getTexture" or "registry" option missing';
       }
-      this.inventorySize = (_ref1 = opts.inventorySize) != null ? _ref1 : this.inventory.size();
-      this.width = (_ref2 = opts.width) != null ? _ref2 : this.inventory.width;
-      this.textureSize = (_ref3 = opts.textureSize) != null ? _ref3 : 16 * 5;
-      this.borderSize = (_ref4 = opts.borderSize) != null ? _ref4 : 4;
-      this.progressThickness = (_ref5 = opts.progressThickness) != null ? _ref5 : 10;
-      this.secondaryMouseButton = (_ref6 = opts.secondaryMouseButton) != null ? _ref6 : 2;
-      this.allowDrop = (_ref7 = opts.allowDrop) != null ? _ref7 : true;
-      this.allowPickup = (_ref8 = opts.allowPickup) != null ? _ref8 : true;
-      this.allowDragPaint = (_ref9 = opts.allowDragPaint) != null ? _ref9 : true;
+      this.getMaxDamage = (_ref2 = opts.getMaxDamage) != null ? _ref2 : InventoryWindow.defaultGetMaxDamage;
+      this.inventorySize = (_ref3 = opts.inventorySize) != null ? _ref3 : this.inventory.size();
+      this.width = (_ref4 = opts.width) != null ? _ref4 : this.inventory.width;
+      this.textureSize = (_ref5 = opts.textureSize) != null ? _ref5 : 16 * 5;
+      this.borderSize = (_ref6 = opts.borderSize) != null ? _ref6 : 4;
+      this.progressThickness = (_ref7 = opts.progressThickness) != null ? _ref7 : 10;
+      this.secondaryMouseButton = (_ref8 = opts.secondaryMouseButton) != null ? _ref8 : 2;
+      this.allowDrop = (_ref9 = opts.allowDrop) != null ? _ref9 : true;
+      this.allowPickup = (_ref10 = opts.allowPickup) != null ? _ref10 : true;
+      this.allowDragPaint = (_ref11 = opts.allowDragPaint) != null ? _ref11 : true;
       this.slotNodes = [];
       this.container = void 0;
       this.selectedIndex = void 0;
@@ -119,14 +120,12 @@
     };
 
     InventoryWindow.prototype.populateSlotNode = function(div, itemPile, isSelected) {
-      var newImage, progress, progressNode, src, text, _ref;
+      var maxDamage, newImage, progress, progressNode, src, text, _ref;
       if ((itemPile != null) && itemPile.count > 0) {
         if (this.registry != null) {
           src = this.registry.getItemPileTexture(itemPile);
         } else if (this.getTexture != null) {
           src = this.getTexture(itemPile);
-        } else if (InventoryWindow.defaultGetTexture != null) {
-          src = InventoryWindow.defaultGetTexture(itemPile);
         } else {
           throw 'inventory-window textures not specified, set InventoryWindow.defaultGetTexture or pass "getTexture" or "registry" option';
         }
@@ -138,7 +137,14 @@
           text = '\u221e';
         }
         if (((_ref = itemPile.tags) != null ? _ref.damage : void 0) != null) {
-          progress = itemPile.tags.damage / 100.0;
+          if (this.registry != null) {
+            maxDamage = this.registry.getItemProps(itemPile.item).maxDamage;
+          } else if (this.getMaxDamage != null) {
+            maxDamage = this.getMaxDamage(itemPile);
+          } else {
+            maxDamage = 100;
+          }
+          progress = (maxDamage - itemPile.tags.damage) / maxDamage;
         }
       } else {
         src = void 0;
@@ -156,7 +162,7 @@
       progressNode = div.children[0];
       if (progressNode == null) {
         progressNode = document.createElement('div');
-        progressNode.setAttribute('style', "width: 100%;border-top: " + this.progressThickness + "px solid green;top: " + (this.textureSize - this.borderSize * 2) + "px;position: relative;visibility: hidden;");
+        progressNode.setAttribute('style', "width: " + (progress * 100) + "%;border-top: " + this.progressThickness + "px solid green;top: " + (this.textureSize - this.borderSize * 2) + "px;position: relative;visibility: hidden;");
         div.appendChild(progressNode);
       }
       return progressNode.style.visibility = progress != null ? '' : 'hidden';

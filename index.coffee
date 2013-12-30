@@ -14,10 +14,11 @@ class InventoryWindow extends EventEmitter
     opts ?= {}
     @inventory = opts.inventory ? throw 'inventory-window requires "inventory" option set to Inventory instance'
     @linkedInventory = opts.linkedInventory
-    @getTexture = opts.getTexture
+    @getTexture = opts.getTexture ? InventoryWindow.defaultGetTexture
     @registry = opts.registry
-    if (!@getTexture? && !@registry? && !InventoryWindow.defaultGetTexture?)
+    if (!@getTexture? && !@registry?)
       throw 'inventory-window: required "getTexture" or "registry" option missing'
+    @getMaxDamage = opts.getMaxDamage ? InventoryWindow.defaultGetMaxDamage
     @inventorySize = opts.inventorySize ? @inventory.size()
     @width = opts.width ? @inventory.width
     @textureSize = opts.textureSize ? (16 * 5)
@@ -119,8 +120,6 @@ image-rendering: crisp-edges;
         src = @registry.getItemPileTexture itemPile
       else if @getTexture?
         src = @getTexture itemPile
-      else if InventoryWindow.defaultGetTexture?
-        src = InventoryWindow.defaultGetTexture itemPile
       else
         throw 'inventory-window textures not specified, set InventoryWindow.defaultGetTexture or pass "getTexture" or "registry" option'
 
@@ -130,7 +129,14 @@ image-rendering: crisp-edges;
       text = '\u221e' if text == Infinity
 
       if itemPile.tags?.damage?
-        progress = itemPile.tags.damage / 100.0
+        if @registry?
+          maxDamage = @registry.getItemProps(itemPile.item).maxDamage
+        else if @getMaxDamage?
+          maxDamage = @getMaxDamage(itemPile)
+        else
+          maxDamage = 100
+
+        progress = (maxDamage - itemPile.tags.damage) / maxDamage
     else
       src = undefined
       text = ''
@@ -153,7 +159,7 @@ image-rendering: crisp-edges;
     if not progressNode?
       progressNode = document.createElement('div')
       progressNode.setAttribute 'style', "
-width: 100%;
+width: #{progress * 100}%;
 border-top: #{@progressThickness}px solid green;
 top: #{@textureSize - @borderSize * 2}px;
 position: relative;

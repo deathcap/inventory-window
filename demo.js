@@ -51,6 +51,10 @@
     return images[pile != null ? pile.item : void 0];
   };
 
+  InventoryWindow.defaultGetMaxDamage = function(pile) {
+    return 80;
+  };
+
   w = new InventoryWindow({
     inventory: inv
   });

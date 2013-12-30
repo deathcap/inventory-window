@@ -31,6 +31,7 @@ pick: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAEJGl
 }
 
 InventoryWindow.defaultGetTexture = (pile) -> images[pile?.item]
+InventoryWindow.defaultGetMaxDamage = (pile) -> 80
 
 w = new InventoryWindow {
   inventory: inv
