@@ -20,7 +20,7 @@
     InventoryWindow.resolvedImageURLs = {};
 
     function InventoryWindow(opts) {
-      var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
+      var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
       if (opts == null) {
         opts = {};
       }
@@ -41,10 +41,11 @@
       this.width = (_ref2 = opts.width) != null ? _ref2 : this.inventory.width;
       this.textureSize = (_ref3 = opts.textureSize) != null ? _ref3 : 16 * 5;
       this.borderSize = (_ref4 = opts.borderSize) != null ? _ref4 : 4;
-      this.secondaryMouseButton = (_ref5 = opts.secondaryMouseButton) != null ? _ref5 : 2;
-      this.allowDrop = (_ref6 = opts.allowDrop) != null ? _ref6 : true;
-      this.allowPickup = (_ref7 = opts.allowPickup) != null ? _ref7 : true;
-      this.allowDragPaint = (_ref8 = opts.allowDragPaint) != null ? _ref8 : true;
+      this.progressThickness = (_ref5 = opts.progressThickness) != null ? _ref5 : 10;
+      this.secondaryMouseButton = (_ref6 = opts.secondaryMouseButton) != null ? _ref6 : 2;
+      this.allowDrop = (_ref7 = opts.allowDrop) != null ? _ref7 : true;
+      this.allowPickup = (_ref8 = opts.allowPickup) != null ? _ref8 : true;
+      this.allowDragPaint = (_ref9 = opts.allowDragPaint) != null ? _ref9 : true;
       this.slotNodes = [];
       this.container = void 0;
       this.selectedIndex = void 0;
@@ -108,17 +109,21 @@
     };
 
     InventoryWindow.prototype.createSlotNode = function(itemPile) {
-      var div, textNode;
+      var div, progressNode, textNode;
       div = document.createElement('div');
       div.setAttribute('style', "display: block;float: inherit;margin: 0;padding: 0;width: " + this.textureSize + "px;height: " + this.textureSize + "px;font-size: 20pt;background-size: 100% auto;image-rendering: -moz-crisp-edges;image-rendering: -o-crisp-edges;image-rendering: -webkit-optimize-contrast;image-rendering: crisp-edges;-ms-interpolation-mode: nearest-neighbor;");
       textNode = document.createTextNode('');
       div.appendChild(textNode);
+      progressNode = document.createElement('div');
+      progressNode.setAttribute('class', 'itemProgress');
+      progressNode.setAttribute('style', "width: 100%;border-top: " + this.progressThickness + "px solid green;top: " + (this.textureSize - this.borderSize * 2) + "px;position: relative;visibility: hidden;");
+      div.appendChild(progressNode);
       this.populateSlotNode(div, itemPile);
       return div;
     };
 
     InventoryWindow.prototype.populateSlotNode = function(div, itemPile, isSelected) {
-      var newImage, src, text;
+      var newImage, progressNode, src, text, _ref, _ref1;
       if ((itemPile != null) && itemPile.count > 0) {
         if (this.registry != null) {
           src = this.registry.getItemPileTexture(itemPile);
@@ -135,6 +140,14 @@
         }
         if (text === Infinity) {
           text = '\u221e';
+        }
+        progressNode = (_ref = div.getElementsByClassName('itemProgress')) != null ? _ref[0] : void 0;
+        if (progressNode != null) {
+          if (((_ref1 = itemPile.tags) != null ? _ref1.damage : void 0) != null) {
+            progressNode.style.visibility = '';
+          } else {
+            progressNode.style.visibility = 'hidden';
+          }
         }
       } else {
         src = void 0;

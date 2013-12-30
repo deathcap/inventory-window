@@ -22,6 +22,7 @@ class InventoryWindow extends EventEmitter
     @width = opts.width ? @inventory.width
     @textureSize = opts.textureSize ? (16 * 5)
     @borderSize = opts.borderSize ? 4
+    @progressThickness = opts.progressThickness ? 10
     @secondaryMouseButton = opts.secondaryMouseButton ? 2
     @allowDrop = opts.allowDrop ? true
     @allowPickup = opts.allowPickup ? true
@@ -107,6 +108,17 @@ image-rendering: crisp-edges;
     textNode = document.createTextNode('')
     div.appendChild textNode
 
+    progressNode = document.createElement('div')
+    progressNode.setAttribute 'class', 'itemProgress'
+    progressNode.setAttribute 'style', "
+width: 100%;
+border-top: #{@progressThickness}px solid green;
+top: #{@textureSize - @borderSize * 2}px;
+position: relative;
+visibility: hidden;
+"
+    div.appendChild progressNode
+
     # set image and text
     @populateSlotNode div, itemPile
 
@@ -127,6 +139,13 @@ image-rendering: crisp-edges;
       text = itemPile.count
       text = '' if text == 1
       text = '\u221e' if text == Infinity
+
+      progressNode = div.getElementsByClassName('itemProgress')?[0]
+      if progressNode? 
+        if itemPile.tags?.damage?
+          progressNode.style.visibility = ''
+        else
+          progressNode.style.visibility = 'hidden'
     else
       src = undefined
       text = ''
@@ -143,6 +162,7 @@ image-rendering: crisp-edges;
    
     if div.textContent != text
       div.textContent = text
+
 
   setBorderStyle: (node, index) ->
     if index == @selectedIndex
