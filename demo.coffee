@@ -10,6 +10,7 @@ inv.give new ItemPile 'emerald', 32
 inv.give new ItemPile 'emerald', 32
 for i in [0...10]
   inv.give new ItemPile 'stick', 64
+inv.array[18] = new ItemPile 'stick', 0
 inv.array[19] = new ItemPile 'pick', 1, {damage:50}
 inv.array[20] = new ItemPile 'stick', 2
 inv.array[21] = new ItemPile 'stick', 16

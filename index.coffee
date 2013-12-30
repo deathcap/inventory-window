@@ -122,7 +122,7 @@ image-rendering: crisp-edges;
     progress = undefined
     progressColor = undefined
 
-    if itemPile? and itemPile.count > 0
+    if itemPile?
       if @registry?
         src = @registry.getItemPileTexture itemPile
       else if @getTexture?

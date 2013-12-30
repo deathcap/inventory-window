@@ -127,7 +127,7 @@
       text = '';
       progress = void 0;
       progressColor = void 0;
-      if ((itemPile != null) && itemPile.count > 0) {
+      if (itemPile != null) {
         if (this.registry != null) {
           src = this.registry.getItemPileTexture(itemPile);
         } else if (this.getTexture != null) {
