@@ -293,6 +293,9 @@
               this.inventory.set(index, void 0);
             } else if (this.linkedInventory && (this.inventory.get(index) != null)) {
               this.linkedInventory.give(this.inventory.get(index));
+              if (this.inventory.get(index).count === 0) {
+                this.inventory.set(index, void 0);
+              }
               this.inventory.changed();
             }
           }

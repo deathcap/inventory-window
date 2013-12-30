@@ -280,6 +280,7 @@ z-index: 10;
           else if @linkedInventory and @inventory.get(index)?
             # shift-click: transfer to linked inventory
             @linkedInventory.give @inventory.get(index)
+            @inventory.set index, undefined if @inventory.get(index).count == 0
             @inventory.changed()  # update source, might not have transferred all of the pile
 
         @emit 'pickup' # TODO: event data? index, item? cancelable?
