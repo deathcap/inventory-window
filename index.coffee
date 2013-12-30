@@ -108,17 +108,6 @@ image-rendering: crisp-edges;
     textNode = document.createTextNode('')
     div.appendChild textNode
 
-    progressNode = document.createElement('div')
-    progressNode.setAttribute 'class', 'itemProgress'
-    progressNode.setAttribute 'style', "
-width: 100%;
-border-top: #{@progressThickness}px solid green;
-top: #{@textureSize - @borderSize * 2}px;
-position: relative;
-visibility: hidden;
-"
-    div.appendChild progressNode
-
     # set image and text
     @populateSlotNode div, itemPile
 
@@ -140,15 +129,12 @@ visibility: hidden;
       text = '' if text == 1
       text = '\u221e' if text == Infinity
 
-      progressNode = div.getElementsByClassName('itemProgress')?[0]
-      if progressNode? 
-        if itemPile.tags?.damage?
-          progressNode.style.visibility = ''
-        else
-          progressNode.style.visibility = 'hidden'
+      if itemPile.tags?.damage?
+        progress = itemPile.tags.damage / 100.0
     else
       src = undefined
       text = ''
+      progress = undefined
 
     newImage = if src? then 'url(' + src + ')' else ''
 
@@ -162,6 +148,20 @@ visibility: hidden;
    
     if div.textContent != text
       div.textContent = text
+
+    progressNode = div.children[0]
+    if not progressNode?
+      progressNode = document.createElement('div')
+      progressNode.setAttribute 'style', "
+width: 100%;
+border-top: #{@progressThickness}px solid green;
+top: #{@textureSize - @borderSize * 2}px;
+position: relative;
+visibility: hidden;
+"
+      div.appendChild progressNode
+
+    progressNode.style.visibility = if progress? then '' else 'hidden'
 
 
   setBorderStyle: (node, index) ->

@@ -109,21 +109,17 @@
     };
 
     InventoryWindow.prototype.createSlotNode = function(itemPile) {
-      var div, progressNode, textNode;
+      var div, textNode;
       div = document.createElement('div');
       div.setAttribute('style', "display: block;float: inherit;margin: 0;padding: 0;width: " + this.textureSize + "px;height: " + this.textureSize + "px;font-size: 20pt;background-size: 100% auto;image-rendering: -moz-crisp-edges;image-rendering: -o-crisp-edges;image-rendering: -webkit-optimize-contrast;image-rendering: crisp-edges;-ms-interpolation-mode: nearest-neighbor;");
       textNode = document.createTextNode('');
       div.appendChild(textNode);
-      progressNode = document.createElement('div');
-      progressNode.setAttribute('class', 'itemProgress');
-      progressNode.setAttribute('style', "width: 100%;border-top: " + this.progressThickness + "px solid green;top: " + (this.textureSize - this.borderSize * 2) + "px;position: relative;visibility: hidden;");
-      div.appendChild(progressNode);
       this.populateSlotNode(div, itemPile);
       return div;
     };
 
     InventoryWindow.prototype.populateSlotNode = function(div, itemPile, isSelected) {
-      var newImage, progressNode, src, text, _ref, _ref1;
+      var newImage, progress, progressNode, src, text, _ref;
       if ((itemPile != null) && itemPile.count > 0) {
         if (this.registry != null) {
           src = this.registry.getItemPileTexture(itemPile);
@@ -141,17 +137,13 @@
         if (text === Infinity) {
           text = '\u221e';
         }
-        progressNode = (_ref = div.getElementsByClassName('itemProgress')) != null ? _ref[0] : void 0;
-        if (progressNode != null) {
-          if (((_ref1 = itemPile.tags) != null ? _ref1.damage : void 0) != null) {
-            progressNode.style.visibility = '';
-          } else {
-            progressNode.style.visibility = 'hidden';
-          }
+        if (((_ref = itemPile.tags) != null ? _ref.damage : void 0) != null) {
+          progress = itemPile.tags.damage / 100.0;
         }
       } else {
         src = void 0;
         text = '';
+        progress = void 0;
       }
       newImage = src != null ? 'url(' + src + ')' : '';
       if (InventoryWindow.resolvedImageURLs[newImage] !== div.style.backgroundImage) {
@@ -159,8 +151,15 @@
         InventoryWindow.resolvedImageURLs[newImage] = div.style.backgroundImage;
       }
       if (div.textContent !== text) {
-        return div.textContent = text;
+        div.textContent = text;
       }
+      progressNode = div.children[0];
+      if (progressNode == null) {
+        progressNode = document.createElement('div');
+        progressNode.setAttribute('style', "width: 100%;border-top: " + this.progressThickness + "px solid green;top: " + (this.textureSize - this.borderSize * 2) + "px;position: relative;visibility: hidden;");
+        div.appendChild(progressNode);
+      }
+      return progressNode.style.visibility = progress != null ? '' : 'hidden';
     };
 
     InventoryWindow.prototype.setBorderStyle = function(node, index) {
