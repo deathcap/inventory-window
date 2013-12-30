@@ -166,7 +166,7 @@ image-rendering: crisp-edges;
     if not progressNode?
       progressNode = document.createElement('div')
       progressNode.setAttribute 'style', "
-width: #{progress * 100}%;
+width: 0%;
 border-top: #{@progressThickness}px solid #{progressColor};
 top: #{@textureSize - @borderSize * 2}px;
 position: relative;
@@ -175,6 +175,7 @@ visibility: hidden;
       div.appendChild progressNode
 
     progressNode.style.visibility = if progress? then '' else 'hidden'
+    progressNode.style.width = (progress * 100) + '%' if progress?
 
 
   setBorderStyle: (node, index) ->

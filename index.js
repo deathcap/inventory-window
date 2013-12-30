@@ -169,10 +169,13 @@
       progressNode = div.children[0];
       if (progressNode == null) {
         progressNode = document.createElement('div');
-        progressNode.setAttribute('style', "width: " + (progress * 100) + "%;border-top: " + this.progressThickness + "px solid " + progressColor + ";top: " + (this.textureSize - this.borderSize * 2) + "px;position: relative;visibility: hidden;");
+        progressNode.setAttribute('style', "width: 0%;border-top: " + this.progressThickness + "px solid " + progressColor + ";top: " + (this.textureSize - this.borderSize * 2) + "px;position: relative;visibility: hidden;");
         div.appendChild(progressNode);
       }
-      return progressNode.style.visibility = progress != null ? '' : 'hidden';
+      progressNode.style.visibility = progress != null ? '' : 'hidden';
+      if (progress != null) {
+        return progressNode.style.width = (progress * 100) + '%';
+      }
     };
 
     InventoryWindow.prototype.setBorderStyle = function(node, index) {
