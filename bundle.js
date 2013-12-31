@@ -366,7 +366,7 @@ document.body.appendChild(w3.createContainer());
     };
 
     InventoryWindow.prototype.clickSlot = function(index, ev) {
-      var itemPile, shiftDown, tmp, _ref;
+      var itemPile, shiftDown, tmp, _ref, _ref1;
       itemPile = this.inventory.get(index);
       console.log('clickSlot', index, itemPile);
       InventoryWindow.mouseButtonDown = ev.button;
@@ -416,6 +416,9 @@ document.body.appendChild(w3.createContainer());
             return;
           }
           InventoryWindow.heldItemPile = (_ref = this.inventory.get(index)) != null ? _ref.splitPile(0.5) : void 0;
+          if (((_ref1 = this.inventory.get(index)) != null ? _ref1.count : void 0) === 0) {
+            this.inventory.set(index, void 0);
+          }
           this.inventory.changed();
           this.emit('pickup');
         } else {
