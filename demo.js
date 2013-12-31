@@ -89,7 +89,7 @@
     linkedInventory: inv
   });
 
-  w2.linkedInventory = inv3;
+  w.linkedInventory = inv3;
 
   document.body.appendChild(w3.createContainer());
 

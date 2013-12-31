@@ -56,6 +56,6 @@ document.body.appendChild(w2.createContainer())
 
 inv3 = new Inventory(4, 4)
 w3 = new InventoryWindow {inventory: inv3, linkedInventory:inv} 
-w2.linkedInventory = inv3  # go both ways
+w.linkedInventory = inv3  # go both ways
 document.body.appendChild(w3.createContainer())
 
