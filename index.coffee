@@ -13,15 +13,23 @@ class InventoryWindow extends EventEmitter
   constructor: (opts) ->
     opts ?= {}
     @inventory = opts.inventory ? throw 'inventory-window requires "inventory" option set to Inventory instance'
-    @getTexture = opts.getTexture ? throw 'inventory-window requires "getTexture" option set to callback'
+    @linkedInventory = opts.linkedInventory
+    @getTexture = opts.getTexture ? InventoryWindow.defaultGetTexture
+    @registry = opts.registry
+    if (!@getTexture? && !@registry?)
+      throw 'inventory-window: required "getTexture" or "registry" option missing'
+    @getMaxDamage = opts.getMaxDamage ? InventoryWindow.defaultGetMaxDamage
     @inventorySize = opts.inventorySize ? @inventory.size()
     @width = opts.width ? @inventory.width
     @textureSize = opts.textureSize ? (16 * 5)
     @borderSize = opts.borderSize ? 4
+    @progressThickness = opts.progressThickness ? 10
     @secondaryMouseButton = opts.secondaryMouseButton ? 2
     @allowDrop = opts.allowDrop ? true
     @allowPickup = opts.allowPickup ? true
     @allowDragPaint = opts.allowDragPaint ? true
+    @progressColorsThresholds = opts.progressColorsThresholds ?= [0.20, 0.40, Infinity]
+    @progressColors = opts.progressColors ?= ['red', 'orange', 'green']
 
     @slotNodes = []
     @container = undefined
@@ -109,15 +117,34 @@ image-rendering: crisp-edges;
     div
 
   populateSlotNode: (div, itemPile, isSelected) ->
-    if itemPile? and itemPile.count > 0
-      src = @getTexture itemPile
+    src = undefined
+    text = ''
+    progress = undefined
+    progressColor = undefined
+
+    if itemPile?
+      if @registry?
+        src = @registry.getItemPileTexture itemPile
+      else if @getTexture?
+        src = @getTexture itemPile
+      else
+        throw 'inventory-window textures not specified, set InventoryWindow.defaultGetTexture or pass "getTexture" or "registry" option'
+
       #text = @getTextOverlay @inventory.slot
       text = itemPile.count
       text = '' if text == 1
       text = '\u221e' if text == Infinity
-    else
-      src = undefined
-      text = ''
+
+      if itemPile.tags?.damage?
+        if @registry?
+          maxDamage = @registry.getItemProps(itemPile.item).maxDamage
+        else if @getMaxDamage?
+          maxDamage = @getMaxDamage(itemPile)
+        else
+          maxDamage = 100
+
+        progress = (maxDamage - itemPile.tags.damage) / maxDamage
+        progressColor = @getProgressBarColor(progress)
 
     newImage = if src? then 'url(' + src + ')' else ''
 
@@ -131,6 +158,27 @@ image-rendering: crisp-edges;
    
     if div.textContent != text
       div.textContent = text
+
+    progressNode = div.children[0]
+    if not progressNode?
+      progressNode = document.createElement('div')
+      progressNode.setAttribute 'style', "
+width: 0%;
+top: #{@textureSize - @borderSize * 2}px;
+position: relative;
+visibility: hidden;
+"
+      div.appendChild progressNode
+
+    progressNode.style.borderTop = "#{@progressThickness}px solid #{progressColor}" if progressColor?
+    progressNode.style.width = (progress * 100) + '%' if progress?
+    progressNode.style.visibility = if progress? then '' else 'hidden'
+
+  getProgressBarColor: (progress) ->
+    for threshold, i in @progressColorsThresholds
+      if progress <= threshold
+        return @progressColors[i]
+    return @progressColors.slice(-1)[0]  # default to last
 
   setBorderStyle: (node, index) ->
     if index == @selectedIndex
@@ -211,6 +259,8 @@ z-index: 10;
 
     InventoryWindow.mouseButtonDown = ev.button
 
+    shiftDown = ev.shiftKey
+
     if ev.button != @secondaryMouseButton
       # left click: whole pile
       if not InventoryWindow.heldItemPile or not @allowDrop
@@ -220,12 +270,22 @@ z-index: 10;
         if InventoryWindow.heldItemPile?
           # tried to drop on pickup-only inventory, so merge into held inventory instead
           if @inventory.get(index)?
+            return if not InventoryWindow.heldItemPile.canPileWith @inventory.get(index)
             InventoryWindow.heldItemPile.mergePile @inventory.get(index)
         else
-          InventoryWindow.heldItemPile = @inventory.get(index)
-          @inventory.set(index, undefined)
+          if not shiftDown
+            # simply picking up the whole pile
+            InventoryWindow.heldItemPile = @inventory.get(index)
+            @inventory.set(index, undefined)
+          else if @linkedInventory and @inventory.get(index)?
+            # shift-click: transfer to linked inventory
+            @linkedInventory.give @inventory.get(index)
+            @inventory.set index, undefined if @inventory.get(index).count == 0
+            @inventory.changed()  # update source, might not have transferred all of the pile
+
         @emit 'pickup' # TODO: event data? index, item? cancelable?
       else
+        # drop whole pile
         if @inventory.get(index)
           # try to merge piles dropped on each other
           if @inventory.get(index).mergePile(InventoryWindow.heldItemPile) == false

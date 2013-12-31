@@ -20,7 +20,7 @@
     InventoryWindow.resolvedImageURLs = {};
 
     function InventoryWindow(opts) {
-      var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+      var _ref, _ref1, _ref10, _ref11, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
       if (opts == null) {
         opts = {};
       }
@@ -31,21 +31,24 @@
           throw 'inventory-window requires "inventory" option set to Inventory instance';
         }
       })();
-      this.getTexture = (function() {
-        if ((_ref1 = opts.getTexture) != null) {
-          return _ref1;
-        } else {
-          throw 'inventory-window requires "getTexture" option set to callback';
-        }
-      })();
-      this.inventorySize = (_ref2 = opts.inventorySize) != null ? _ref2 : this.inventory.size();
-      this.width = (_ref3 = opts.width) != null ? _ref3 : this.inventory.width;
-      this.textureSize = (_ref4 = opts.textureSize) != null ? _ref4 : 16 * 5;
-      this.borderSize = (_ref5 = opts.borderSize) != null ? _ref5 : 4;
-      this.secondaryMouseButton = (_ref6 = opts.secondaryMouseButton) != null ? _ref6 : 2;
-      this.allowDrop = (_ref7 = opts.allowDrop) != null ? _ref7 : true;
-      this.allowPickup = (_ref8 = opts.allowPickup) != null ? _ref8 : true;
-      this.allowDragPaint = (_ref9 = opts.allowDragPaint) != null ? _ref9 : true;
+      this.linkedInventory = opts.linkedInventory;
+      this.getTexture = (_ref1 = opts.getTexture) != null ? _ref1 : InventoryWindow.defaultGetTexture;
+      this.registry = opts.registry;
+      if ((this.getTexture == null) && (this.registry == null)) {
+        throw 'inventory-window: required "getTexture" or "registry" option missing';
+      }
+      this.getMaxDamage = (_ref2 = opts.getMaxDamage) != null ? _ref2 : InventoryWindow.defaultGetMaxDamage;
+      this.inventorySize = (_ref3 = opts.inventorySize) != null ? _ref3 : this.inventory.size();
+      this.width = (_ref4 = opts.width) != null ? _ref4 : this.inventory.width;
+      this.textureSize = (_ref5 = opts.textureSize) != null ? _ref5 : 16 * 5;
+      this.borderSize = (_ref6 = opts.borderSize) != null ? _ref6 : 4;
+      this.progressThickness = (_ref7 = opts.progressThickness) != null ? _ref7 : 10;
+      this.secondaryMouseButton = (_ref8 = opts.secondaryMouseButton) != null ? _ref8 : 2;
+      this.allowDrop = (_ref9 = opts.allowDrop) != null ? _ref9 : true;
+      this.allowPickup = (_ref10 = opts.allowPickup) != null ? _ref10 : true;
+      this.allowDragPaint = (_ref11 = opts.allowDragPaint) != null ? _ref11 : true;
+      this.progressColorsThresholds = opts.progressColorsThresholds != null ? opts.progressColorsThresholds : opts.progressColorsThresholds = [0.20, 0.40, Infinity];
+      this.progressColors = opts.progressColors != null ? opts.progressColors : opts.progressColors = ['red', 'orange', 'green'];
       this.slotNodes = [];
       this.container = void 0;
       this.selectedIndex = void 0;
@@ -119,9 +122,19 @@
     };
 
     InventoryWindow.prototype.populateSlotNode = function(div, itemPile, isSelected) {
-      var newImage, src, text;
-      if ((itemPile != null) && itemPile.count > 0) {
-        src = this.getTexture(itemPile);
+      var maxDamage, newImage, progress, progressColor, progressNode, src, text, _ref;
+      src = void 0;
+      text = '';
+      progress = void 0;
+      progressColor = void 0;
+      if (itemPile != null) {
+        if (this.registry != null) {
+          src = this.registry.getItemPileTexture(itemPile);
+        } else if (this.getTexture != null) {
+          src = this.getTexture(itemPile);
+        } else {
+          throw 'inventory-window textures not specified, set InventoryWindow.defaultGetTexture or pass "getTexture" or "registry" option';
+        }
         text = itemPile.count;
         if (text === 1) {
           text = '';
@@ -129,9 +142,17 @@
         if (text === Infinity) {
           text = '\u221e';
         }
-      } else {
-        src = void 0;
-        text = '';
+        if (((_ref = itemPile.tags) != null ? _ref.damage : void 0) != null) {
+          if (this.registry != null) {
+            maxDamage = this.registry.getItemProps(itemPile.item).maxDamage;
+          } else if (this.getMaxDamage != null) {
+            maxDamage = this.getMaxDamage(itemPile);
+          } else {
+            maxDamage = 100;
+          }
+          progress = (maxDamage - itemPile.tags.damage) / maxDamage;
+          progressColor = this.getProgressBarColor(progress);
+        }
       }
       newImage = src != null ? 'url(' + src + ')' : '';
       if (InventoryWindow.resolvedImageURLs[newImage] !== div.style.backgroundImage) {
@@ -139,8 +160,33 @@
         InventoryWindow.resolvedImageURLs[newImage] = div.style.backgroundImage;
       }
       if (div.textContent !== text) {
-        return div.textContent = text;
+        div.textContent = text;
       }
+      progressNode = div.children[0];
+      if (progressNode == null) {
+        progressNode = document.createElement('div');
+        progressNode.setAttribute('style', "width: 0%;top: " + (this.textureSize - this.borderSize * 2) + "px;position: relative;visibility: hidden;");
+        div.appendChild(progressNode);
+      }
+      if (progressColor != null) {
+        progressNode.style.borderTop = "" + this.progressThickness + "px solid " + progressColor;
+      }
+      if (progress != null) {
+        progressNode.style.width = (progress * 100) + '%';
+      }
+      return progressNode.style.visibility = progress != null ? '' : 'hidden';
+    };
+
+    InventoryWindow.prototype.getProgressBarColor = function(progress) {
+      var i, threshold, _i, _len, _ref;
+      _ref = this.progressColorsThresholds;
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        threshold = _ref[i];
+        if (progress <= threshold) {
+          return this.progressColors[i];
+        }
+      }
+      return this.progressColors.slice(-1)[0];
     };
 
     InventoryWindow.prototype.setBorderStyle = function(node, index) {
@@ -224,10 +270,11 @@
     };
 
     InventoryWindow.prototype.clickSlot = function(index, ev) {
-      var itemPile, tmp, _ref;
+      var itemPile, shiftDown, tmp, _ref;
       itemPile = this.inventory.get(index);
       console.log('clickSlot', index, itemPile);
       InventoryWindow.mouseButtonDown = ev.button;
+      shiftDown = ev.shiftKey;
       if (ev.button !== this.secondaryMouseButton) {
         if (!InventoryWindow.heldItemPile || !this.allowDrop) {
           if (!this.allowPickup) {
@@ -235,11 +282,22 @@
           }
           if (InventoryWindow.heldItemPile != null) {
             if (this.inventory.get(index) != null) {
+              if (!InventoryWindow.heldItemPile.canPileWith(this.inventory.get(index))) {
+                return;
+              }
               InventoryWindow.heldItemPile.mergePile(this.inventory.get(index));
             }
           } else {
-            InventoryWindow.heldItemPile = this.inventory.get(index);
-            this.inventory.set(index, void 0);
+            if (!shiftDown) {
+              InventoryWindow.heldItemPile = this.inventory.get(index);
+              this.inventory.set(index, void 0);
+            } else if (this.linkedInventory && (this.inventory.get(index) != null)) {
+              this.linkedInventory.give(this.inventory.get(index));
+              if (this.inventory.get(index).count === 0) {
+                this.inventory.set(index, void 0);
+              }
+              this.inventory.changed();
+            }
           }
           this.emit('pickup');
         } else {

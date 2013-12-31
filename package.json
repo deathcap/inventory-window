@@ -1,15 +1,23 @@
 {
   "name": "inventory-window",
-  "description": "",
+  "description": "a GUI window for interactively manipulating an inventory of itempiles",
   "version": "0.0.1",
   "repository": {
     "type": "git",
     "url": "git@github.com:deathcap/inventory-window.git"
   },
+  "keywords": [
+    "game",
+    "items",
+    "itempile",
+    "itemstack",
+    "inventory",
+    "widget"
+  ],
   "dependencies": {
     "ever": "0.0.3",
-    "itempile": "git://github.com/deathcap/itempile.git",
-    "inventory": "git://github.com/deathcap/inventory.git"
+    "itempile": "~0.1.0",
+    "inventory": "~0.1.0"
   },
   "devDependencies": {
     "coffee-script": "1.6.3",
@@ -19,5 +27,6 @@
   },
   "scripts": {
     "start": "beefy demo.coffee:bundle.js 8888 -- -t coffeeify"
-  }
+  },
+  "license": "MIT"
 }
