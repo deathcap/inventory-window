@@ -305,6 +305,7 @@ z-index: 10;
         # pickup half
         return if not @allowPickup
         InventoryWindow.heldItemPile = @inventory.get(index)?.splitPile(0.5)
+        @inventory.set index, undefined if @inventory.get(index)?.count == 0
         @inventory.changed()
         @emit 'pickup' # TODO: event data? index, item? cancelable?
       else
