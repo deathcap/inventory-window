@@ -112,17 +112,15 @@
     };
 
     InventoryWindow.prototype.createSlotNode = function(itemPile) {
-      var div, textNode;
+      var div;
       div = document.createElement('div');
       div.setAttribute('style', "display: block;float: inherit;margin: 0;padding: 0;width: " + this.textureSize + "px;height: " + this.textureSize + "px;font-size: 20pt;background-size: 100% auto;image-rendering: -moz-crisp-edges;image-rendering: -o-crisp-edges;image-rendering: -webkit-optimize-contrast;image-rendering: crisp-edges;-ms-interpolation-mode: nearest-neighbor;");
-      textNode = document.createTextNode('');
-      div.appendChild(textNode);
       this.populateSlotNode(div, itemPile);
       return div;
     };
 
     InventoryWindow.prototype.populateSlotNode = function(div, itemPile, isSelected) {
-      var maxDamage, newImage, progress, progressColor, progressNode, src, text, _ref;
+      var maxDamage, newImage, progress, progressColor, progressNode, src, text, textBox, _ref;
       src = void 0;
       text = '';
       progress = void 0;
@@ -159,10 +157,16 @@
         div.style.backgroundImage = newImage;
         InventoryWindow.resolvedImageURLs[newImage] = div.style.backgroundImage;
       }
-      if (div.textContent !== text) {
-        div.textContent = text;
+      textBox = div.children[0];
+      if (textBox == null) {
+        textBox = document.createElement('div');
+        textBox.setAttribute('style', 'position: absolute');
+        div.appendChild(textBox);
       }
-      progressNode = div.children[0];
+      if (textBox.textContent !== text) {
+        textBox.textContent = text;
+      }
+      progressNode = div.children[1];
       if (progressNode == null) {
         progressNode = document.createElement('div');
         progressNode.setAttribute('style', "width: 0%;top: " + (this.textureSize - this.borderSize * 2) + "px;position: relative;visibility: hidden;");

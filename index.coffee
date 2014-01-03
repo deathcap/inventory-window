@@ -108,9 +108,6 @@ image-rendering: -webkit-optimize-contrast;
 image-rendering: crisp-edges;
 -ms-interpolation-mode: nearest-neighbor;
 "
-    textNode = document.createTextNode('')
-    div.appendChild textNode
-
     # set image and text
     @populateSlotNode div, itemPile
 
@@ -155,11 +152,19 @@ image-rendering: crisp-edges;
       # but setting backgroundImage resolves it, so it won't always match what we
       # set it to -- to fix this, cache the result for comparison next time
       InventoryWindow.resolvedImageURLs[newImage] = div.style.backgroundImage
-   
-    if div.textContent != text
-      div.textContent = text
 
-    progressNode = div.children[0]
+    # textual count
+    textBox = div.children[0]
+    if not textBox?
+      textBox = document.createElement('div')
+      textBox.setAttribute 'style', 'position: absolute'
+      div.appendChild textBox
+
+    if textBox.textContent != text
+      textBox.textContent = text
+
+    # progress bar
+    progressNode = div.children[1]
     if not progressNode?
       progressNode = document.createElement('div')
       progressNode.setAttribute 'style', "
