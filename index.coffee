@@ -94,7 +94,7 @@ user-select: none;
   createSlotNode: (itemPile) ->
     div = document.createElement 'div'
     div.setAttribute 'style', "
-display: block;
+display: inline-block;
 float: inherit;
 margin: 0;
 padding: 0;
