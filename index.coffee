@@ -20,7 +20,8 @@ class InventoryWindow extends EventEmitter
       throw 'inventory-window: required "getTexture" or "registry" option missing'
     @getMaxDamage = opts.getMaxDamage ? InventoryWindow.defaultGetMaxDamage
     @inventorySize = opts.inventorySize ? @inventory.size()
-    @width = opts.width ? @inventory.width
+    @width = opts.width ? @inventory.width      # number of columns
+    @height = opts.height ? @inventory.height   # number of rows
     @textureSize = opts.textureSize ? (16 * 5)
     @borderSize = opts.borderSize ? 4
     @progressThickness = opts.progressThickness ? 10
@@ -62,11 +63,13 @@ class InventoryWindow extends EventEmitter
       container.appendChild node
 
     widthpx = @width * (@textureSize + @borderSize * 2)
+    heightpx = @height * (@textureSize + @borderSize)
     container.setAttribute 'style', "
 border: #{@borderSize}px solid black;
 display: block;
 float: left;
 width: #{widthpx}px;
+height: #{heightpx}px;
 user-select: none;
 -moz-user-select: none;
 -webkit-user-select: none;
