@@ -67,9 +67,9 @@ border: #{@borderSize}px solid black;
 display: block;
 float: left;
 width: #{widthpx}px;
-user-select: none;
 -moz-user-select: none;
 -webkit-user-select: none;
+-ms-user-select: none;
 "
 
     @container = container
