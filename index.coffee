@@ -38,17 +38,20 @@ class InventoryWindow extends EventEmitter
     @enable()
 
   enable: () ->
-    ever(document).on 'mousemove', (ev) =>
-      return if not InventoryWindow.heldNode
-      @positionAtMouse InventoryWindow.heldNode, ev
+    if document?
+      ever(document).on 'mousemove', (ev) =>
+        return if not InventoryWindow.heldNode
+        @positionAtMouse InventoryWindow.heldNode, ev
 
-    ever(document).on 'mouseup', (ev) =>
-      InventoryWindow.mouseButtonDown = undefined
+      ever(document).on 'mouseup', (ev) =>
+        InventoryWindow.mouseButtonDown = undefined
 
     @inventory.on 'changed', () =>
       @refresh()
 
   createContainer: () ->
+    return if not document?
+
     container = document.createElement 'div'
     #container.setAttribute 'class', 'inventory-window'  # .inventory-window { border: 1px dotted black; display: inline; float: left; }
     for i in [0...@inventorySize]

@@ -57,15 +57,17 @@
 
     InventoryWindow.prototype.enable = function() {
       var _this = this;
-      ever(document).on('mousemove', function(ev) {
-        if (!InventoryWindow.heldNode) {
-          return;
-        }
-        return _this.positionAtMouse(InventoryWindow.heldNode, ev);
-      });
-      ever(document).on('mouseup', function(ev) {
-        return InventoryWindow.mouseButtonDown = void 0;
-      });
+      if (typeof document !== "undefined" && document !== null) {
+        ever(document).on('mousemove', function(ev) {
+          if (!InventoryWindow.heldNode) {
+            return;
+          }
+          return _this.positionAtMouse(InventoryWindow.heldNode, ev);
+        });
+        ever(document).on('mouseup', function(ev) {
+          return InventoryWindow.mouseButtonDown = void 0;
+        });
+      }
       return this.inventory.on('changed', function() {
         return _this.refresh();
       });
@@ -73,6 +75,9 @@
 
     InventoryWindow.prototype.createContainer = function() {
       var container, i, node, slotItem, widthpx, _i, _ref;
+      if (typeof document === "undefined" || document === null) {
+        return;
+      }
       container = document.createElement('div');
       for (i = _i = 0, _ref = this.inventorySize; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
         slotItem = this.inventory.get(i);
