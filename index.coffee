@@ -130,6 +130,9 @@ image-rendering: crisp-edges;
       else
         throw 'inventory-window textures not specified, set InventoryWindow.defaultGetTexture or pass "getTexture" or "registry" option'
 
+      if typeof src != 'string'
+        src = src.top
+
       #text = @getTextOverlay @inventory.slot
       text = itemPile.count
       text = '' if text == 1

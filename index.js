@@ -138,6 +138,9 @@
         } else {
           throw 'inventory-window textures not specified, set InventoryWindow.defaultGetTexture or pass "getTexture" or "registry" option';
         }
+        if (typeof src !== 'string') {
+          src = src.top;
+        }
         text = itemPile.count;
         if (text === 1) {
           text = '';

@@ -10,6 +10,7 @@ inv.give new ItemPile 'emerald', 32
 inv.give new ItemPile 'emerald', 32
 for i in [0...10]
   inv.give new ItemPile 'stick', 64
+inv.array[15] = new ItemPile 'grass'  # block
 inv.array[17] = new ItemPile 'pick', 2, {damage:20}
 inv.array[18] = new ItemPile 'stick', 0
 inv.array[19] = new ItemPile 'pick', 1, {damage:50}
@@ -25,10 +26,20 @@ images = {
 diamond: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAKUlEQVQ4y2NgGAX4wf///8GYIs1kG0KRAeiaqWIASYYMAwOoEo1DBgAANn6AgLPwDSsAAAAASUVORK5CYII=',
 emerald: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAJ0lEQVQ4y2NgGAX4wX8opEgz2YZQZMB/LJBiA0gyZBgYQJVoHDIAAHr/Vaux9NNYAAAAAElFTkSuQmCC',
 stick: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAI0lEQVQ4y2NgGFlgb73j/0Jv9f8UaQbRo5pHNeMEFGkeUAAAmkJGZ284PasAAAAASUVORK5CYII=',
-pick: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAATUlEQVQ4y2NgGMzgPxZMvOb//zExyYagY3IMAYO99Y7/C73VyTMEphlEk2wAmmYGkgzAopl4A3BoJs4APJqRY4dszQy00QwCFGkeUAAAq91xekLx2vsAAAAASUVORK5CYII'
+pick: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAATUlEQVQ4y2NgGMzgPxZMvOb//zExyYagY3IMAYO99Y7/C73VyTMEphlEk2wAmmYGkgzAopl4A3BoJs4APJqRY4dszQy00QwCFGkeUAAAq91xekLx2vsAAAAASUVORK5CYII',
+grass_top: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAYElEQVQ4y61TwREAIAiy/cdyGqao3qWIXQ8flgGimfmYhh1OAuQsvahAPQOoFCACUFkR5K2+wxbQMMyZApXxrJUZ8TIFBoRoCl8UdL2QHpSLpBanf+F1hJcCNP2AugckXwA2yZhbyqZNAAAAAElFTkSuQmCC',
+grass_side: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAdElEQVQ4y2NgOMz4n+ElEB/Gg1/iEcMpQchQGJ6ZZvyfEL4zxRsrG4QZkAXRJfEZBOMzEKsYF2bAZiqxhqG4gFgb0dUyEGsjLgsYSAk0bAHOgCt0yXYBqWHBQIwGggmJWMXY1DFQEoUYLiAmMIkKA0IGIfMBkw04/LuclggAAAAASUVORK5CYII='
 }
 
-InventoryWindow.defaultGetTexture = (pile) -> images[pile?.item]
+item_images = {
+  diamond: images.diamond,
+  emerald: images.emerald,
+  stick: images.stick,
+  pick: images.pick,
+  grass: {top:images.grass_top, left:images.grass_side, front:images.grass_side}
+}
+
+InventoryWindow.defaultGetTexture = (pile) -> item_images[pile?.item]
 InventoryWindow.defaultGetMaxDamage = (pile) -> 80
 
 w = new InventoryWindow {
