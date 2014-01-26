@@ -2,6 +2,7 @@
 
 EventEmitter = (require 'events').EventEmitter
 ever = require 'ever'
+CubeIcon = require 'cube-icon'
 
 module.exports =
 class InventoryWindow extends EventEmitter
@@ -131,7 +132,10 @@ image-rendering: crisp-edges;
         throw 'inventory-window textures not specified, set InventoryWindow.defaultGetTexture or pass "getTexture" or "registry" option'
 
       if typeof src != 'string'
-        src = src.top
+        cube = new CubeIcon(src)
+        div.removeChild(div.firstChild) while div.firstChild
+        div.appendChild cube.container
+        #src = src.top
 
       #text = @getTextOverlay @inventory.slot
       text = itemPile.count

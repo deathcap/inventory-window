@@ -17,7 +17,8 @@
   "dependencies": {
     "ever": "0.0.3",
     "itempile": "~0.1.1",
-    "inventory": "~0.1.0"
+    "inventory": "~0.1.0",
+    "cube-icon": "git://github.com/deathcap/cube-icon.git#174ce8762b7accd6ad3b52e72ad3ed78a9f0ce18"
   },
   "devDependencies": {
     "coffee-script": "1.6.3",
