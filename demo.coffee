@@ -36,7 +36,7 @@ item_images = {
   emerald: images.emerald,
   stick: images.stick,
   pick: images.pick,
-  grass: {top:images.grass_top, left:images.grass_side, front:images.grass_side}
+  grass: [images.grass_top, null, images.grass_side, images.grass_side]
 }
 
 InventoryWindow.defaultGetTexture = (pile) -> item_images[pile?.item]

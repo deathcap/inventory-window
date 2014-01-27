@@ -177,8 +177,10 @@
       while (cubeNode.firstChild) {
         cubeNode.removeChild(cubeNode.firstChild);
       }
-      if (typeof src === 'object') {
-        cube = new CubeIcon(src);
+      if (Array.isArray(src)) {
+        cube = new CubeIcon({
+          images: src
+        });
         cubeNode.appendChild(cube.container);
       }
       textBox = div.children[1];
