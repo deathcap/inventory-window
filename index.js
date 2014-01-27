@@ -168,29 +168,7 @@
         div.style.backgroundImage = newImage;
         InventoryWindow.resolvedImageURLs[newImage] = div.style.backgroundImage;
       }
-      textBox = div.children[0];
-      if (textBox == null) {
-        textBox = document.createElement('div');
-        textBox.setAttribute('style', 'position: absolute');
-        div.appendChild(textBox);
-      }
-      if (textBox.textContent !== text) {
-        textBox.textContent = text;
-      }
-      progressNode = div.children[1];
-      if (progressNode == null) {
-        progressNode = document.createElement('div');
-        progressNode.setAttribute('style', "width: 0%;top: " + (this.textureSize - this.borderSize * 2) + "px;position: relative;visibility: hidden;");
-        div.appendChild(progressNode);
-      }
-      if (progressColor != null) {
-        progressNode.style.borderTop = "" + this.progressThickness + "px solid " + progressColor;
-      }
-      if (progress != null) {
-        progressNode.style.width = (progress * 100) + '%';
-      }
-      progressNode.style.visibility = progress != null ? '' : 'hidden';
-      cubeNode = div.children[2];
+      cubeNode = div.children[0];
       if (cubeNode == null) {
         cubeNode = document.createElement('div');
         cubeNode.setAttribute('style', 'position: relative;');
@@ -202,10 +180,32 @@
       if (typeof src === 'object') {
         cube = new CubeIcon(src);
         cubeNode.appendChild(cube.container);
-        return cubeNode.style.border = '1px dashed black';
+        cubeNode.style.border = '1px dashed black';
       } else {
-        return cubeNode.style.border = '';
+        cubeNode.style.border = '';
       }
+      textBox = div.children[1];
+      if (textBox == null) {
+        textBox = document.createElement('div');
+        textBox.setAttribute('style', 'position: absolute');
+        div.appendChild(textBox);
+      }
+      if (textBox.textContent !== text) {
+        textBox.textContent = text;
+      }
+      progressNode = div.children[2];
+      if (progressNode == null) {
+        progressNode = document.createElement('div');
+        progressNode.setAttribute('style', "width: 0%;top: " + (this.textureSize - this.borderSize * 2) + "px;position: relative;visibility: hidden;");
+        div.appendChild(progressNode);
+      }
+      if (progressColor != null) {
+        progressNode.style.borderTop = "" + this.progressThickness + "px solid " + progressColor;
+      }
+      if (progress != null) {
+        progressNode.style.width = (progress * 100) + '%';
+      }
+      return progressNode.style.visibility = progress != null ? '' : 'hidden';
     };
 
     InventoryWindow.prototype.getProgressBarColor = function(progress) {

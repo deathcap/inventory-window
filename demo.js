@@ -24,7 +24,7 @@
     inv.give(new ItemPile('stick', 64));
   }
 
-  inv.array[15] = new ItemPile('grass');
+  inv.array[15] = new ItemPile('grass', 3);
 
   inv.array[17] = new ItemPile('pick', 2, {
     damage: 20

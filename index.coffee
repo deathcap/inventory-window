@@ -161,8 +161,24 @@ image-rendering: crisp-edges;
       # set it to -- to fix this, cache the result for comparison next time
       InventoryWindow.resolvedImageURLs[newImage] = div.style.backgroundImage
 
+    # 3D cube node (for blocks)
+    cubeNode = div.children[0]
+    if not cubeNode?
+      cubeNode = document.createElement('div')
+      cubeNode.setAttribute 'style', 'position: relative;'
+      div.appendChild cubeNode
+
+    cubeNode.removeChild(cubeNode.firstChild) while cubeNode.firstChild
+
+    if typeof src == 'object'  # 3d cube
+      cube = new CubeIcon(src)
+      cubeNode.appendChild cube.container
+      cubeNode.style.border = '1px dashed black'
+    else
+      cubeNode.style.border = ''
+
     # textual count
-    textBox = div.children[0]
+    textBox = div.children[1]
     if not textBox?
       textBox = document.createElement('div')
       textBox.setAttribute 'style', 'position: absolute'
@@ -172,7 +188,7 @@ image-rendering: crisp-edges;
       textBox.textContent = text
 
     # progress bar
-    progressNode = div.children[1]
+    progressNode = div.children[2]
     if not progressNode?
       progressNode = document.createElement('div')
       progressNode.setAttribute 'style', "
@@ -187,21 +203,6 @@ visibility: hidden;
     progressNode.style.width = (progress * 100) + '%' if progress?
     progressNode.style.visibility = if progress? then '' else 'hidden'
 
-    # 3D cube node (for blocks)
-    cubeNode = div.children[2]
-    if not cubeNode?
-      cubeNode = document.createElement('div')
-      cubeNode.setAttribute 'style', 'position: relative;'
-      div.appendChild cubeNode
-
-    cubeNode.removeChild(cubeNode.firstChild) while cubeNode.firstChild
-
-    if typeof src == 'object'  # 3d cube
-      cube = new CubeIcon(src)
-      cubeNode.appendChild cube.container
-      cubeNode.style.border = '1px dashed black'
-    else
-      cubeNode.style.border = ''
 
 
   getProgressBarColor: (progress) ->
