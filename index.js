@@ -180,9 +180,6 @@
       if (typeof src === 'object') {
         cube = new CubeIcon(src);
         cubeNode.appendChild(cube.container);
-        cubeNode.style.border = '1px dashed black';
-      } else {
-        cubeNode.style.border = '';
       }
       textBox = div.children[1];
       if (textBox == null) {

@@ -173,9 +173,6 @@ image-rendering: crisp-edges;
     if typeof src == 'object'  # 3d cube
       cube = new CubeIcon(src)
       cubeNode.appendChild cube.container
-      cubeNode.style.border = '1px dashed black'
-    else
-      cubeNode.style.border = ''
 
     # textual count
     textBox = div.children[1]
