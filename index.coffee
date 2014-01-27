@@ -131,12 +131,6 @@ image-rendering: crisp-edges;
       else
         throw 'inventory-window textures not specified, set InventoryWindow.defaultGetTexture or pass "getTexture" or "registry" option'
 
-      if typeof src != 'string'
-        cube = new CubeIcon(src)
-        div.removeChild(div.firstChild) while div.firstChild
-        div.appendChild cube.container
-        #src = src.top
-
       #text = @getTextOverlay @inventory.slot
       text = itemPile.count
       text = '' if text == 1
@@ -153,7 +147,11 @@ image-rendering: crisp-edges;
         progress = (maxDamage - itemPile.tags.damage) / maxDamage
         progressColor = @getProgressBarColor(progress)
 
-    newImage = if src? then 'url(' + src + ')' else ''
+    if typeof src == 'string'  # simple image
+      newImage = 'url(' + src + ')'
+    else
+      newImage = ''  # clear
+      # note: might be 3d cube set below
 
     # update image, but only if changed to prevent flickering
     if InventoryWindow.resolvedImageURLs[newImage] != div.style.backgroundImage
@@ -188,6 +186,19 @@ visibility: hidden;
     progressNode.style.borderTop = "#{@progressThickness}px solid #{progressColor}" if progressColor?
     progressNode.style.width = (progress * 100) + '%' if progress?
     progressNode.style.visibility = if progress? then '' else 'hidden'
+
+    # 3D cube node (for blocks)
+    cubeNode = div.children[2]
+    if not cubeNode?
+      cubeNode = document.createElement('div')
+      div.appendChild cubeNode
+
+    cubeNode.removeChild(cubeNode.firstChild) while cubeNode.firstChild
+
+    if typeof src == 'object'  # 3d cube
+      cube = new CubeIcon(src)
+      cubeNode.appendChild cube.container
+
 
   getProgressBarColor: (progress) ->
     for threshold, i in @progressColorsThresholds

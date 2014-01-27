@@ -127,7 +127,7 @@
     };
 
     InventoryWindow.prototype.populateSlotNode = function(div, itemPile, isSelected) {
-      var cube, maxDamage, newImage, progress, progressColor, progressNode, src, text, textBox, _ref;
+      var cube, cubeNode, maxDamage, newImage, progress, progressColor, progressNode, src, text, textBox, _ref;
       src = void 0;
       text = '';
       progress = void 0;
@@ -139,13 +139,6 @@
           src = this.getTexture(itemPile);
         } else {
           throw 'inventory-window textures not specified, set InventoryWindow.defaultGetTexture or pass "getTexture" or "registry" option';
-        }
-        if (typeof src !== 'string') {
-          cube = new CubeIcon(src);
-          while (div.firstChild) {
-            div.removeChild(div.firstChild);
-          }
-          div.appendChild(cube.container);
         }
         text = itemPile.count;
         if (text === 1) {
@@ -166,7 +159,11 @@
           progressColor = this.getProgressBarColor(progress);
         }
       }
-      newImage = src != null ? 'url(' + src + ')' : '';
+      if (typeof src === 'string') {
+        newImage = 'url(' + src + ')';
+      } else {
+        newImage = '';
+      }
       if (InventoryWindow.resolvedImageURLs[newImage] !== div.style.backgroundImage) {
         div.style.backgroundImage = newImage;
         InventoryWindow.resolvedImageURLs[newImage] = div.style.backgroundImage;
@@ -192,7 +189,19 @@
       if (progress != null) {
         progressNode.style.width = (progress * 100) + '%';
       }
-      return progressNode.style.visibility = progress != null ? '' : 'hidden';
+      progressNode.style.visibility = progress != null ? '' : 'hidden';
+      cubeNode = div.children[2];
+      if (cubeNode == null) {
+        cubeNode = document.createElement('div');
+        div.appendChild(cubeNode);
+      }
+      while (cubeNode.firstChild) {
+        cubeNode.removeChild(cubeNode.firstChild);
+      }
+      if (typeof src === 'object') {
+        cube = new CubeIcon(src);
+        return cubeNode.appendChild(cube.container);
+      }
     };
 
     InventoryWindow.prototype.getProgressBarColor = function(progress) {
