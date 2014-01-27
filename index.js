@@ -171,7 +171,7 @@
       cubeNode = div.children[0];
       if (cubeNode == null) {
         cubeNode = document.createElement('div');
-        cubeNode.setAttribute('style', 'position: relative;');
+        cubeNode.setAttribute('style', 'position: relative; z-index: 0;');
         div.appendChild(cubeNode);
       }
       while (cubeNode.firstChild) {
@@ -184,7 +184,7 @@
       textBox = div.children[1];
       if (textBox == null) {
         textBox = document.createElement('div');
-        textBox.setAttribute('style', 'position: absolute');
+        textBox.setAttribute('style', 'position: absolute;');
         div.appendChild(textBox);
       }
       if (textBox.textContent !== text) {

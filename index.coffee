@@ -165,7 +165,7 @@ image-rendering: crisp-edges;
     cubeNode = div.children[0]
     if not cubeNode?
       cubeNode = document.createElement('div')
-      cubeNode.setAttribute 'style', 'position: relative;'
+      cubeNode.setAttribute 'style', 'position: relative; z-index: 0;'
       div.appendChild cubeNode
 
     cubeNode.removeChild(cubeNode.firstChild) while cubeNode.firstChild
@@ -178,7 +178,7 @@ image-rendering: crisp-edges;
     textBox = div.children[1]
     if not textBox?
       textBox = document.createElement('div')
-      textBox.setAttribute 'style', 'position: absolute'
+      textBox.setAttribute 'style', 'position: absolute;'
       div.appendChild textBox
 
     if textBox.textContent != text
