@@ -191,6 +191,7 @@ visibility: hidden;
     cubeNode = div.children[2]
     if not cubeNode?
       cubeNode = document.createElement('div')
+      cubeNode.setAttribute 'style', 'position: relative;'
       div.appendChild cubeNode
 
     cubeNode.removeChild(cubeNode.firstChild) while cubeNode.firstChild
@@ -198,6 +199,9 @@ visibility: hidden;
     if typeof src == 'object'  # 3d cube
       cube = new CubeIcon(src)
       cubeNode.appendChild cube.container
+      cubeNode.style.border = '1px dashed black'
+    else
+      cubeNode.style.border = ''
 
 
   getProgressBarColor: (progress) ->

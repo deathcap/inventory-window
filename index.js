@@ -193,6 +193,7 @@
       cubeNode = div.children[2];
       if (cubeNode == null) {
         cubeNode = document.createElement('div');
+        cubeNode.setAttribute('style', 'position: relative;');
         div.appendChild(cubeNode);
       }
       while (cubeNode.firstChild) {
@@ -200,7 +201,10 @@
       }
       if (typeof src === 'object') {
         cube = new CubeIcon(src);
-        return cubeNode.appendChild(cube.container);
+        cubeNode.appendChild(cube.container);
+        return cubeNode.style.border = '1px dashed black';
+      } else {
+        return cubeNode.style.border = '';
       }
     };
 
