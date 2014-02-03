@@ -23,8 +23,8 @@ class InventoryWindow extends EventEmitter
     @inventorySize = opts.inventorySize ? @inventory.size()
     @width = opts.width ? @inventory.width
     @textureSize = opts.textureSize ? (16 * 5)
-    @borderSize = opts.borderSize ? 4
-    @progressThickness = opts.progressThickness ? 10
+    @borderSize = opts.borderSize ? 2
+    @progressThickness = opts.progressThickness ? 5
     @secondaryMouseButton = opts.secondaryMouseButton ? 2
     @allowDrop = opts.allowDrop ? true
     @allowPickup = opts.allowPickup ? true
