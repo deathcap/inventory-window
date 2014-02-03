@@ -95,7 +95,7 @@
         this.slotNodes.push(node);
         container.appendChild(node);
       }
-      widthpx = this.width * (this.textureSize + this.borderSize * 3);
+      widthpx = this.width * (this.textureSize + this.borderSize * 2) + 2 * this.borderSize;
       container.setAttribute('style', "display: block; float: left; width: " + widthpx + "px; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none;");
       return this.container = container;
     };

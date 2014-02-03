@@ -64,7 +64,7 @@ class InventoryWindow extends EventEmitter
       @slotNodes.push node
       container.appendChild node
 
-    widthpx = @width * (@textureSize + @borderSize * 3)
+    widthpx = @width * (@textureSize + @borderSize * 2) + 2 * @borderSize
     container.setAttribute 'style', "
 display: block;
 float: left;
