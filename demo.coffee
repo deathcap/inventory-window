@@ -47,6 +47,7 @@ w = new InventoryWindow {
   }
 
 container = w.createContainer()
+container.style.float = 'left'
 console.log container
 document.body.appendChild(container)
 
@@ -60,10 +61,19 @@ w2 = new InventoryWindow {
   inventory: inv
   allowDrop: false
   }
-document.body.appendChild(w2.createContainer())
+w2c = w2.createContainer()
+w2c.style.float = 'right'
+document.body.appendChild(w2c)
+
+clear = document.createElement 'div'
+clear.style.clear = 'both'
+clear.style.height = '10px'
+document.body.appendChild(clear)
 
 inv3 = new Inventory(4, 4)
 w3 = new InventoryWindow {inventory: inv3, linkedInventory:inv} 
+w3c = w3.createContainer()
+w3c.style.float = 'left'
 w.linkedInventory = inv3  # go both ways
-document.body.appendChild(w3.createContainer())
+document.body.appendChild(w3c)
 

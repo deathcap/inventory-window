@@ -67,9 +67,6 @@ class InventoryWindow extends EventEmitter
 
     widthpx = @width * (@textureSize + @borderSize * 2)
     container.setAttribute 'style', "
-border: #{@borderSize}px solid black;
-display: block;
-float: left;
 width: #{widthpx}px;
 -moz-user-select: none;
 -webkit-user-select: none;

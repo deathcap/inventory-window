@@ -95,7 +95,7 @@
         container.appendChild(node);
       }
       widthpx = this.width * (this.textureSize + this.borderSize * 2);
-      container.setAttribute('style', "border: " + this.borderSize + "px solid black; display: block; float: left; width: " + widthpx + "px; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none;");
+      container.setAttribute('style', "width: " + widthpx + "px; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none;");
       return this.container = container;
     };
 
