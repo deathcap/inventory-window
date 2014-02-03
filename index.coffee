@@ -54,7 +54,6 @@ class InventoryWindow extends EventEmitter
     return if not document?
 
     container = document.createElement 'div'
-    #container.setAttribute 'class', 'inventory-window'  # .inventory-window { border: 1px dotted black; display: inline; float: left; }
     for i in [0...@inventorySize]
       slotItem = @inventory.get(i)
 
@@ -65,9 +64,8 @@ class InventoryWindow extends EventEmitter
       @slotNodes.push node
       container.appendChild node
 
-    widthpx = @width * (@textureSize + @borderSize * 2)
+    widthpx = @width * (@textureSize + @borderSize * 3)
     container.setAttribute 'style', "
-border: #{@borderSize}px solid black;
 display: block;
 float: left;
 width: #{widthpx}px;
@@ -209,10 +207,19 @@ visibility: hidden;
     return @progressColors.slice(-1)[0]  # default to last
 
   setBorderStyle: (node, index) ->
+    x = index %% @width
+    y = index // @width
+    height = @inventorySize / @width
     if index == @selectedIndex
-      node.style.border = "#{@borderSize}px dotted black"
+      kind = 'dotted'
     else
-      node.style.border = "#{@borderSize}px solid black"
+      kind = 'solid'
+
+    node.style.border = "#{@borderSize}px #{kind} black"
+    node.style.borderTop = "#{@borderSize * 2}px #{kind} black" if y == 0
+    node.style.borderBottom = "#{@borderSize * 2}px #{kind} black" if y == height - 1
+    node.style.borderLeft = "#{@borderSize * 2}px #{kind} black" if x == 0
+    node.style.borderRight = "#{@borderSize * 2}px #{kind} black" if x == @width - 1
  
   setSelected: (index) ->
     @selectedIndex = index
