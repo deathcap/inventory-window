@@ -44,8 +44,8 @@
       this.inventorySize = (_ref3 = opts.inventorySize) != null ? _ref3 : this.inventory.size();
       this.width = (_ref4 = opts.width) != null ? _ref4 : this.inventory.width;
       this.textureSize = (_ref5 = opts.textureSize) != null ? _ref5 : 16 * 5;
-      this.borderSize = (_ref6 = opts.borderSize) != null ? _ref6 : 2;
-      this.progressThickness = (_ref7 = opts.progressThickness) != null ? _ref7 : 5;
+      this.borderSize = (_ref6 = opts.borderSize) != null ? _ref6 : 4;
+      this.progressThickness = (_ref7 = opts.progressThickness) != null ? _ref7 : 10;
       this.secondaryMouseButton = (_ref8 = opts.secondaryMouseButton) != null ? _ref8 : 2;
       this.allowDrop = (_ref9 = opts.allowDrop) != null ? _ref9 : true;
       this.allowPickup = (_ref10 = opts.allowPickup) != null ? _ref10 : true;
