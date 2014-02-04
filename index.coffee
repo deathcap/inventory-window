@@ -2,6 +2,7 @@
 
 EventEmitter = (require 'events').EventEmitter
 ever = require 'ever'
+CubeIcon = require 'cube-icon'
 
 module.exports =
 class InventoryWindow extends EventEmitter
@@ -38,19 +39,21 @@ class InventoryWindow extends EventEmitter
     @enable()
 
   enable: () ->
-    ever(document).on 'mousemove', (ev) =>
-      return if not InventoryWindow.heldNode
-      @positionAtMouse InventoryWindow.heldNode, ev
+    if document?
+      ever(document).on 'mousemove', (ev) =>
+        return if not InventoryWindow.heldNode
+        @positionAtMouse InventoryWindow.heldNode, ev
 
-    ever(document).on 'mouseup', (ev) =>
-      InventoryWindow.mouseButtonDown = undefined
+      ever(document).on 'mouseup', (ev) =>
+        InventoryWindow.mouseButtonDown = undefined
 
     @inventory.on 'changed', () =>
       @refresh()
 
   createContainer: () ->
+    return if not document?
+
     container = document.createElement 'div'
-    #container.setAttribute 'class', 'inventory-window'  # .inventory-window { border: 1px dotted black; display: inline; float: left; }
     for i in [0...@inventorySize]
       slotItem = @inventory.get(i)
 
@@ -61,15 +64,14 @@ class InventoryWindow extends EventEmitter
       @slotNodes.push node
       container.appendChild node
 
-    widthpx = @width * (@textureSize + @borderSize * 2)
+    widthpx = @width * (@textureSize + @borderSize * 2) + 2 * @borderSize
     container.setAttribute 'style', "
-border: #{@borderSize}px solid black;
 display: block;
 float: left;
 width: #{widthpx}px;
-user-select: none;
 -moz-user-select: none;
 -webkit-user-select: none;
+-ms-user-select: none;
 "
 
     @container = container
@@ -94,7 +96,7 @@ user-select: none;
   createSlotNode: (itemPile) ->
     div = document.createElement 'div'
     div.setAttribute 'style', "
-display: block;
+display: inline-block;
 float: inherit;
 margin: 0;
 padding: 0;
@@ -108,9 +110,6 @@ image-rendering: -webkit-optimize-contrast;
 image-rendering: crisp-edges;
 -ms-interpolation-mode: nearest-neighbor;
 "
-    textNode = document.createTextNode('')
-    div.appendChild textNode
-
     # set image and text
     @populateSlotNode div, itemPile
 
@@ -146,7 +145,11 @@ image-rendering: crisp-edges;
         progress = (maxDamage - itemPile.tags.damage) / maxDamage
         progressColor = @getProgressBarColor(progress)
 
-    newImage = if src? then 'url(' + src + ')' else ''
+    if typeof src == 'string'  # simple image
+      newImage = 'url(' + src + ')'
+    else
+      newImage = ''  # clear
+      # note: might be 3d cube set below
 
     # update image, but only if changed to prevent flickering
     if InventoryWindow.resolvedImageURLs[newImage] != div.style.backgroundImage
@@ -155,11 +158,32 @@ image-rendering: crisp-edges;
       # but setting backgroundImage resolves it, so it won't always match what we
       # set it to -- to fix this, cache the result for comparison next time
       InventoryWindow.resolvedImageURLs[newImage] = div.style.backgroundImage
-   
-    if div.textContent != text
-      div.textContent = text
 
-    progressNode = div.children[0]
+    # 3D cube node (for blocks)
+    cubeNode = div.children[0]
+    if not cubeNode?
+      cubeNode = document.createElement('div')
+      cubeNode.setAttribute 'style', 'position: relative; z-index: 0;'
+      div.appendChild cubeNode
+
+    cubeNode.removeChild(cubeNode.firstChild) while cubeNode.firstChild
+
+    if Array.isArray(src)  # 3d cube
+      cube = new CubeIcon(images:src)
+      cubeNode.appendChild cube.container
+
+    # textual count
+    textBox = div.children[1]
+    if not textBox?
+      textBox = document.createElement('div')
+      textBox.setAttribute 'style', 'position: absolute;'
+      div.appendChild textBox
+
+    if textBox.textContent != text
+      textBox.textContent = text
+
+    # progress bar
+    progressNode = div.children[2]
     if not progressNode?
       progressNode = document.createElement('div')
       progressNode.setAttribute 'style', "
@@ -174,6 +198,8 @@ visibility: hidden;
     progressNode.style.width = (progress * 100) + '%' if progress?
     progressNode.style.visibility = if progress? then '' else 'hidden'
 
+
+
   getProgressBarColor: (progress) ->
     for threshold, i in @progressColorsThresholds
       if progress <= threshold
@@ -181,10 +207,19 @@ visibility: hidden;
     return @progressColors.slice(-1)[0]  # default to last
 
   setBorderStyle: (node, index) ->
+    x = index %% @width
+    y = index // @width
+    height = @inventorySize / @width
     if index == @selectedIndex
-      node.style.border = "#{@borderSize}px dotted black"
+      kind = 'dotted'
     else
-      node.style.border = "#{@borderSize}px solid black"
+      kind = 'solid'
+
+    node.style.border = "#{@borderSize}px #{kind} black"
+    node.style.borderTop = "#{@borderSize * 2}px #{kind} black" if y == 0
+    node.style.borderBottom = "#{@borderSize * 2}px #{kind} black" if y == height - 1
+    node.style.borderLeft = "#{@borderSize * 2}px #{kind} black" if x == 0
+    node.style.borderRight = "#{@borderSize * 2}px #{kind} black" if x == @width - 1
  
   setSelected: (index) ->
     @selectedIndex = index
