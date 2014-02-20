@@ -14,16 +14,8 @@
   module.exports = InventoryWindow = (function(_super) {
     __extends(InventoryWindow, _super);
 
-    InventoryWindow.heldItemPile = void 0;
-
-    InventoryWindow.heldNode = void 0;
-
-    InventoryWindow.mouseButtonDown = void 0;
-
-    InventoryWindow.resolvedImageURLs = {};
-
     function InventoryWindow(opts) {
-      var _ref, _ref1, _ref10, _ref11, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+      var _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
       if (opts == null) {
         opts = {};
       }
@@ -35,21 +27,21 @@
         }
       })();
       this.linkedInventory = opts.linkedInventory;
-      this.getTexture = (_ref1 = opts.getTexture) != null ? _ref1 : InventoryWindow.defaultGetTexture;
+      this.getTexture = (_ref1 = (_ref2 = opts.getTexture) != null ? _ref2 : InventoryWindow.defaultGetTexture) != null ? _ref1 : global.InventoryWindow_defaultGetTexture;
       this.registry = opts.registry;
       if ((this.getTexture == null) && (this.registry == null)) {
         throw 'inventory-window: required "getTexture" or "registry" option missing';
       }
-      this.getMaxDamage = (_ref2 = opts.getMaxDamage) != null ? _ref2 : InventoryWindow.defaultGetMaxDamage;
-      this.inventorySize = (_ref3 = opts.inventorySize) != null ? _ref3 : this.inventory.size();
-      this.width = (_ref4 = opts.width) != null ? _ref4 : this.inventory.width;
-      this.textureSize = (_ref5 = opts.textureSize) != null ? _ref5 : 16 * 5;
-      this.borderSize = (_ref6 = opts.borderSize) != null ? _ref6 : 4;
-      this.progressThickness = (_ref7 = opts.progressThickness) != null ? _ref7 : 10;
-      this.secondaryMouseButton = (_ref8 = opts.secondaryMouseButton) != null ? _ref8 : 2;
-      this.allowDrop = (_ref9 = opts.allowDrop) != null ? _ref9 : true;
-      this.allowPickup = (_ref10 = opts.allowPickup) != null ? _ref10 : true;
-      this.allowDragPaint = (_ref11 = opts.allowDragPaint) != null ? _ref11 : true;
+      this.getMaxDamage = (_ref3 = (_ref4 = opts.getMaxDamage) != null ? _ref4 : InventoryWindow.defaultGetMaxDamage) != null ? _ref3 : global.InventoryWindow_defaultGetMaxDamage;
+      this.inventorySize = (_ref5 = opts.inventorySize) != null ? _ref5 : this.inventory.size();
+      this.width = (_ref6 = opts.width) != null ? _ref6 : this.inventory.width;
+      this.textureSize = (_ref7 = opts.textureSize) != null ? _ref7 : 16 * 5;
+      this.borderSize = (_ref8 = opts.borderSize) != null ? _ref8 : 4;
+      this.progressThickness = (_ref9 = opts.progressThickness) != null ? _ref9 : 10;
+      this.secondaryMouseButton = (_ref10 = opts.secondaryMouseButton) != null ? _ref10 : 2;
+      this.allowDrop = (_ref11 = opts.allowDrop) != null ? _ref11 : true;
+      this.allowPickup = (_ref12 = opts.allowPickup) != null ? _ref12 : true;
+      this.allowDragPaint = (_ref13 = opts.allowDragPaint) != null ? _ref13 : true;
       this.progressColorsThresholds = opts.progressColorsThresholds != null ? opts.progressColorsThresholds : opts.progressColorsThresholds = [0.20, 0.40, Infinity];
       this.progressColors = opts.progressColors != null ? opts.progressColors : opts.progressColors = ['red', 'orange', 'green'];
       this.slotNodes = [];
@@ -62,15 +54,15 @@
       if (typeof document !== "undefined" && document !== null) {
         ever(document).on('mousemove', (function(_this) {
           return function(ev) {
-            if (!InventoryWindow.heldNode) {
+            if (!global.InventoryWindow_heldNode) {
               return;
             }
-            return _this.positionAtMouse(InventoryWindow.heldNode, ev);
+            return _this.positionAtMouse(global.InventoryWindow_heldNode, ev);
           };
         })(this));
         ever(document).on('mouseup', (function(_this) {
           return function(ev) {
-            return InventoryWindow.mouseButtonDown = void 0;
+            return global.InventoryWindow_mouseButtonDown = void 0;
           };
         })(this));
       }
@@ -114,14 +106,14 @@
           if (!_this.allowDrop) {
             return;
           }
-          if (InventoryWindow.heldItemPile == null) {
+          if (global.InventoryWindow_heldItemPile == null) {
             return;
           }
-          if (InventoryWindow.mouseButtonDown !== _this.secondaryMouseButton) {
+          if (global.InventoryWindow_mouseButtonDown !== _this.secondaryMouseButton) {
             return;
           }
           _this.dropOneHeld(index);
-          _this.createHeldNode(InventoryWindow.heldItemPile, ev);
+          _this.createHeldNode(global.InventoryWindow_heldItemPile, ev);
           return _this.refreshSlotNode(index);
         };
       })(this));
@@ -147,7 +139,7 @@
         } else if (this.getTexture != null) {
           src = this.getTexture(itemPile);
         } else {
-          throw 'inventory-window textures not specified, set InventoryWindow.defaultGetTexture or pass "getTexture" or "registry" option';
+          throw 'inventory-window textures not specified, set global.InventoryWindow_defaultGetTexture or pass "getTexture" or "registry" option';
         }
         text = itemPile.count;
         if (text === 1) {
@@ -173,9 +165,12 @@
       } else {
         newImage = '';
       }
-      if (InventoryWindow.resolvedImageURLs[newImage] !== div.style.backgroundImage) {
+      if (global.InventoryWindow_resolvedImageURLs == null) {
+        global.InventoryWindow_resolvedImageURLs = {};
+      }
+      if (global.InventoryWindow_resolvedImageURLs[newImage] !== div.style.backgroundImage) {
         div.style.backgroundImage = newImage;
-        InventoryWindow.resolvedImageURLs[newImage] = div.style.backgroundImage;
+        global.InventoryWindow_resolvedImageURLs[newImage] = div.style.backgroundImage;
       }
       cubeNode = div.children[0];
       if (cubeNode == null) {
@@ -288,40 +283,40 @@
 
     InventoryWindow.prototype.createHeldNode = function(itemPile, ev) {
       var style;
-      if (InventoryWindow.heldNode) {
+      if (global.InventoryWindow_heldNode) {
         this.removeHeldNode();
       }
       if (!itemPile || itemPile.count === 0) {
-        InventoryWindow.heldItemPile = void 0;
+        global.InventoryWindow_heldItemPile = void 0;
         return;
       }
-      InventoryWindow.heldItemPile = itemPile;
-      InventoryWindow.heldNode = this.createSlotNode(InventoryWindow.heldItemPile);
-      InventoryWindow.heldNode.setAttribute('style', style = InventoryWindow.heldNode.getAttribute('style') + "position: absolute; user-select: none; -moz-user-select: none; -webkit-user-select: none; pointer-events: none; z-index: 10;");
-      this.positionAtMouse(InventoryWindow.heldNode, ev);
-      return document.body.appendChild(InventoryWindow.heldNode);
+      global.InventoryWindow_heldItemPile = itemPile;
+      global.InventoryWindow_heldNode = this.createSlotNode(global.InventoryWindow_heldItemPile);
+      global.InventoryWindow_heldNode.setAttribute('style', style = global.InventoryWindow_heldNode.getAttribute('style') + "position: absolute; user-select: none; -moz-user-select: none; -webkit-user-select: none; pointer-events: none; z-index: 10;");
+      this.positionAtMouse(global.InventoryWindow_heldNode, ev);
+      return document.body.appendChild(global.InventoryWindow_heldNode);
     };
 
     InventoryWindow.prototype.removeHeldNode = function() {
-      InventoryWindow.heldNode.parentNode.removeChild(InventoryWindow.heldNode);
-      InventoryWindow.heldNode = void 0;
-      return InventoryWindow.heldItemPile = void 0;
+      global.InventoryWindow_heldNode.parentNode.removeChild(global.InventoryWindow_heldNode);
+      global.InventoryWindow_heldNode = void 0;
+      return global.InventoryWindow_heldItemPile = void 0;
     };
 
     InventoryWindow.prototype.dropOneHeld = function(index) {
       var oneHeld, tmp;
       if (this.inventory.get(index)) {
-        oneHeld = InventoryWindow.heldItemPile.splitPile(1);
+        oneHeld = global.InventoryWindow_heldItemPile.splitPile(1);
         if (this.inventory.get(index).mergePile(oneHeld) === false) {
-          InventoryWindow.heldItemPile.increase(1);
-          tmp = InventoryWindow.heldItemPile;
-          InventoryWindow.heldItemPile = this.inventory.get(index);
+          global.InventoryWindow_heldItemPile.increase(1);
+          tmp = global.InventoryWindow_heldItemPile;
+          global.InventoryWindow_heldItemPile = this.inventory.get(index);
           return this.inventory.set(index, tmp);
         } else {
           return this.inventory.changed();
         }
       } else {
-        return this.inventory.set(index, InventoryWindow.heldItemPile.splitPile(1));
+        return this.inventory.set(index, global.InventoryWindow_heldItemPile.splitPile(1));
       }
     };
 
@@ -329,23 +324,23 @@
       var itemPile, shiftDown, tmp, _ref, _ref1;
       itemPile = this.inventory.get(index);
       console.log('clickSlot', index, itemPile);
-      InventoryWindow.mouseButtonDown = ev.button;
+      global.InventoryWindow_mouseButtonDown = ev.button;
       shiftDown = ev.shiftKey;
       if (ev.button !== this.secondaryMouseButton) {
-        if (!InventoryWindow.heldItemPile || !this.allowDrop) {
+        if (!global.InventoryWindow_heldItemPile || !this.allowDrop) {
           if (!this.allowPickup) {
             return;
           }
-          if (InventoryWindow.heldItemPile != null) {
+          if (global.InventoryWindow_heldItemPile != null) {
             if (this.inventory.get(index) != null) {
-              if (!InventoryWindow.heldItemPile.canPileWith(this.inventory.get(index))) {
+              if (!global.InventoryWindow_heldItemPile.canPileWith(this.inventory.get(index))) {
                 return;
               }
-              InventoryWindow.heldItemPile.mergePile(this.inventory.get(index));
+              global.InventoryWindow_heldItemPile.mergePile(this.inventory.get(index));
             }
           } else {
             if (!shiftDown) {
-              InventoryWindow.heldItemPile = this.inventory.get(index);
+              global.InventoryWindow_heldItemPile = this.inventory.get(index);
               this.inventory.set(index, void 0);
             } else if (this.linkedInventory && (this.inventory.get(index) != null)) {
               this.linkedInventory.give(this.inventory.get(index));
@@ -358,24 +353,24 @@
           this.emit('pickup');
         } else {
           if (this.inventory.get(index)) {
-            if (this.inventory.get(index).mergePile(InventoryWindow.heldItemPile) === false) {
-              tmp = InventoryWindow.heldItemPile;
-              InventoryWindow.heldItemPile = this.inventory.get(index);
+            if (this.inventory.get(index).mergePile(global.InventoryWindow_heldItemPile) === false) {
+              tmp = global.InventoryWindow_heldItemPile;
+              global.InventoryWindow_heldItemPile = this.inventory.get(index);
               this.inventory.set(index, tmp);
             } else {
               this.inventory.changed();
             }
           } else {
-            this.inventory.set(index, InventoryWindow.heldItemPile);
-            InventoryWindow.heldItemPile = void 0;
+            this.inventory.set(index, global.InventoryWindow_heldItemPile);
+            global.InventoryWindow_heldItemPile = void 0;
           }
         }
       } else {
-        if (!InventoryWindow.heldItemPile) {
+        if (!global.InventoryWindow_heldItemPile) {
           if (!this.allowPickup) {
             return;
           }
-          InventoryWindow.heldItemPile = (_ref = this.inventory.get(index)) != null ? _ref.splitPile(0.5) : void 0;
+          global.InventoryWindow_heldItemPile = (_ref = this.inventory.get(index)) != null ? _ref.splitPile(0.5) : void 0;
           if (((_ref1 = this.inventory.get(index)) != null ? _ref1.count : void 0) === 0) {
             this.inventory.set(index, void 0);
           }
@@ -388,7 +383,7 @@
           this.dropOneHeld(index);
         }
       }
-      this.createHeldNode(InventoryWindow.heldItemPile, ev);
+      this.createHeldNode(global.InventoryWindow_heldItemPile, ev);
       return this.refreshSlotNode(index);
     };
 

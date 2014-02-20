@@ -1,4 +1,3 @@
-# vim: set shiftwidth=2 tabstop=2 softtabstop=2 expandtab:
 
 EventEmitter = (require 'events').EventEmitter
 ever = require 'ever'
@@ -6,20 +5,24 @@ CubeIcon = require 'cube-icon'
 
 module.exports =
 class InventoryWindow extends EventEmitter
-  @heldItemPile = undefined
-  @heldNode = undefined
-  @mouseButtonDown = undefined
-  @resolvedImageURLs = {}
+  # moved to global.InventoryWindow_ instead of class variable, since this module
+  # might be included multiple times, creating multiple class variables, but we
+  # want them to be shared across _all_ instances, so you can drop between any
+  # inventory-window.
+  #@heldItemPile = undefined
+  #@heldNode = undefined
+  #@mouseButtonDown = undefined
+  #@resolvedImageURLs = {}
 
   constructor: (opts) ->
     opts ?= {}
     @inventory = opts.inventory ? throw 'inventory-window requires "inventory" option set to Inventory instance'
     @linkedInventory = opts.linkedInventory
-    @getTexture = opts.getTexture ? InventoryWindow.defaultGetTexture
+    @getTexture = opts.getTexture ? InventoryWindow.defaultGetTexture ? global.InventoryWindow_defaultGetTexture
     @registry = opts.registry
     if (!@getTexture? && !@registry?)
       throw 'inventory-window: required "getTexture" or "registry" option missing'
-    @getMaxDamage = opts.getMaxDamage ? InventoryWindow.defaultGetMaxDamage
+    @getMaxDamage = opts.getMaxDamage ? InventoryWindow.defaultGetMaxDamage ? global.InventoryWindow_defaultGetMaxDamage
     @inventorySize = opts.inventorySize ? @inventory.size()
     @width = opts.width ? @inventory.width
     @textureSize = opts.textureSize ? (16 * 5)
@@ -41,11 +44,11 @@ class InventoryWindow extends EventEmitter
   enable: () ->
     if document?
       ever(document).on 'mousemove', (ev) =>
-        return if not InventoryWindow.heldNode
-        @positionAtMouse InventoryWindow.heldNode, ev
+        return if not global.InventoryWindow_heldNode
+        @positionAtMouse global.InventoryWindow_heldNode, ev
 
       ever(document).on 'mouseup', (ev) =>
-        InventoryWindow.mouseButtonDown = undefined
+        global.InventoryWindow_mouseButtonDown = undefined
 
     @inventory.on 'changed', () =>
       @refresh()
@@ -82,12 +85,12 @@ width: #{widthpx}px;
     ever(node).on 'mouseover', (ev) =>
       return if not @allowDragPaint
       return if not @allowDrop
-      return if not InventoryWindow.heldItemPile?
-      return if InventoryWindow.mouseButtonDown != @secondaryMouseButton
+      return if not global.InventoryWindow_heldItemPile?
+      return if global.InventoryWindow_mouseButtonDown != @secondaryMouseButton
 
       # 'drag paint' mode, distributing items as mouseover without clicking
       @dropOneHeld(index)
-      @createHeldNode InventoryWindow.heldItemPile, ev
+      @createHeldNode global.InventoryWindow_heldItemPile, ev
       @refreshSlotNode index
 
       # TODO: support left-click drag paint = evenly redistribute 
@@ -127,7 +130,7 @@ image-rendering: crisp-edges;
       else if @getTexture?
         src = @getTexture itemPile
       else
-        throw 'inventory-window textures not specified, set InventoryWindow.defaultGetTexture or pass "getTexture" or "registry" option'
+        throw 'inventory-window textures not specified, set global.InventoryWindow_defaultGetTexture or pass "getTexture" or "registry" option'
 
       #text = @getTextOverlay @inventory.slot
       text = itemPile.count
@@ -152,12 +155,13 @@ image-rendering: crisp-edges;
       # note: might be 3d cube set below
 
     # update image, but only if changed to prevent flickering
-    if InventoryWindow.resolvedImageURLs[newImage] != div.style.backgroundImage
+    global.InventoryWindow_resolvedImageURLs ?= {}
+    if global.InventoryWindow_resolvedImageURLs[newImage] != div.style.backgroundImage
       div.style.backgroundImage = newImage
       # wrinkle: if the URL may not be fully resolved (relative path, ../, etc.),
       # but setting backgroundImage resolves it, so it won't always match what we
       # set it to -- to fix this, cache the result for comparison next time
-      InventoryWindow.resolvedImageURLs[newImage] = div.style.backgroundImage
+      global.InventoryWindow_resolvedImageURLs[newImage] = div.style.backgroundImage
 
     # 3D cube node (for blocks)
     cubeNode = div.children[0]
@@ -247,14 +251,14 @@ visibility: hidden;
     node.style.top = y + 'px'
 
   createHeldNode: (itemPile, ev) ->
-    @removeHeldNode() if InventoryWindow.heldNode
+    @removeHeldNode() if global.InventoryWindow_heldNode
     if !itemPile or itemPile.count == 0
-      InventoryWindow.heldItemPile = undefined
+      global.InventoryWindow_heldItemPile = undefined
       return
 
-    InventoryWindow.heldItemPile = itemPile
-    InventoryWindow.heldNode = @createSlotNode(InventoryWindow.heldItemPile)
-    InventoryWindow.heldNode.setAttribute 'style', style = InventoryWindow.heldNode.getAttribute('style') + "
+    global.InventoryWindow_heldItemPile = itemPile
+    global.InventoryWindow_heldNode = @createSlotNode(global.InventoryWindow_heldItemPile)
+    global.InventoryWindow_heldNode.setAttribute 'style', style = global.InventoryWindow_heldNode.getAttribute('style') + "
 position: absolute;
 user-select: none;
 -moz-user-select: none;
@@ -263,54 +267,54 @@ pointer-events: none;
 z-index: 10;
 "
 
-    @positionAtMouse InventoryWindow.heldNode, ev
+    @positionAtMouse global.InventoryWindow_heldNode, ev
 
-    document.body.appendChild InventoryWindow.heldNode
+    document.body.appendChild global.InventoryWindow_heldNode
 
   removeHeldNode: () ->
-    InventoryWindow.heldNode.parentNode.removeChild(InventoryWindow.heldNode)
-    InventoryWindow.heldNode = undefined
-    InventoryWindow.heldItemPile = undefined
+    global.InventoryWindow_heldNode.parentNode.removeChild(global.InventoryWindow_heldNode)
+    global.InventoryWindow_heldNode = undefined
+    global.InventoryWindow_heldItemPile = undefined
 
   dropOneHeld: (index) ->
     if @inventory.get(index)
       # drop one, but try to merge with existing
-      oneHeld = InventoryWindow.heldItemPile.splitPile(1)
+      oneHeld = global.InventoryWindow_heldItemPile.splitPile(1)
       if @inventory.get(index).mergePile(oneHeld) == false
         # could not merge, so swap 
-        InventoryWindow.heldItemPile.increase(1)
-        tmp = InventoryWindow.heldItemPile
-        InventoryWindow.heldItemPile = @inventory.get(index)
+        global.InventoryWindow_heldItemPile.increase(1)
+        tmp = global.InventoryWindow_heldItemPile
+        global.InventoryWindow_heldItemPile = @inventory.get(index)
         @inventory.set(index, tmp)
       else
         @inventory.changed()
     else
       # drop on empty slot
-      @inventory.set(index, InventoryWindow.heldItemPile.splitPile(1))
+      @inventory.set(index, global.InventoryWindow_heldItemPile.splitPile(1))
 
   clickSlot: (index, ev) ->
     itemPile = @inventory.get(index)
     console.log 'clickSlot',index,itemPile
 
-    InventoryWindow.mouseButtonDown = ev.button
+    global.InventoryWindow_mouseButtonDown = ev.button
 
     shiftDown = ev.shiftKey
 
     if ev.button != @secondaryMouseButton
       # left click: whole pile
-      if not InventoryWindow.heldItemPile or not @allowDrop
+      if not global.InventoryWindow_heldItemPile or not @allowDrop
         # pickup whole pile
         return if not @allowPickup
 
-        if InventoryWindow.heldItemPile?
+        if global.InventoryWindow_heldItemPile?
           # tried to drop on pickup-only inventory, so merge into held inventory instead
           if @inventory.get(index)?
-            return if not InventoryWindow.heldItemPile.canPileWith @inventory.get(index)
-            InventoryWindow.heldItemPile.mergePile @inventory.get(index)
+            return if not global.InventoryWindow_heldItemPile.canPileWith @inventory.get(index)
+            global.InventoryWindow_heldItemPile.mergePile @inventory.get(index)
         else
           if not shiftDown
             # simply picking up the whole pile
-            InventoryWindow.heldItemPile = @inventory.get(index)
+            global.InventoryWindow_heldItemPile = @inventory.get(index)
             @inventory.set(index, undefined)
           else if @linkedInventory and @inventory.get(index)?
             # shift-click: transfer to linked inventory
@@ -323,29 +327,29 @@ z-index: 10;
         # drop whole pile
         if @inventory.get(index)
           # try to merge piles dropped on each other
-          if @inventory.get(index).mergePile(InventoryWindow.heldItemPile) == false
+          if @inventory.get(index).mergePile(global.InventoryWindow_heldItemPile) == false
             # cannot pile together; swap dropped/held
-            tmp = InventoryWindow.heldItemPile
-            InventoryWindow.heldItemPile = @inventory.get(index)
+            tmp = global.InventoryWindow_heldItemPile
+            global.InventoryWindow_heldItemPile = @inventory.get(index)
             @inventory.set(index, tmp)
           else
             @inventory.changed()
         else
           # fill entire slot
-          @inventory.set(index, InventoryWindow.heldItemPile)
-          InventoryWindow.heldItemPile = undefined
+          @inventory.set(index, global.InventoryWindow_heldItemPile)
+          global.InventoryWindow_heldItemPile = undefined
     else
       # right-click: half/one
-      if not InventoryWindow.heldItemPile
+      if not global.InventoryWindow_heldItemPile
         # pickup half
         return if not @allowPickup
-        InventoryWindow.heldItemPile = @inventory.get(index)?.splitPile(0.5)
+        global.InventoryWindow_heldItemPile = @inventory.get(index)?.splitPile(0.5)
         @inventory.set index, undefined if @inventory.get(index)?.count == 0
         @inventory.changed()
         @emit 'pickup' # TODO: event data? index, item? cancelable?
       else
         return if not @allowDrop
         @dropOneHeld(index)
-    @createHeldNode InventoryWindow.heldItemPile, ev
+    @createHeldNode global.InventoryWindow_heldItemPile, ev
     @refreshSlotNode index
 
