@@ -18,8 +18,8 @@
     "ever": "0.0.3",
     "itempile": "~0.1.1",
     "inventory": "~0.1.0",
-    "cube-icon": "~0.1.0",
-    "touchup": "git://github.com/deathcap/touchup.git#5f94a22c1e99ec6bfdc6d385ea5e8352d6d8737f"
+    "cube-icon": "~0.1.1",
+    "touchup": "~0.1.1"
   },
   "devDependencies": {
     "coffee-script": "1.6.3",
