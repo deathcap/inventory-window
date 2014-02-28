@@ -18,7 +18,8 @@
     "ever": "0.0.3",
     "itempile": "~0.1.1",
     "inventory": "~0.1.0",
-    "cube-icon": "~0.1.0"
+    "cube-icon": "~0.1.0",
+    "touchup": "~0.1.0"
   },
   "devDependencies": {
     "coffee-script": "1.6.3",

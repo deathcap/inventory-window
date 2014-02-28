@@ -2,6 +2,7 @@
 EventEmitter = (require 'events').EventEmitter
 ever = require 'ever'
 CubeIcon = require 'cube-icon'
+touchup = require 'touchup'
 
 module.exports =
 class InventoryWindow extends EventEmitter
@@ -25,7 +26,10 @@ class InventoryWindow extends EventEmitter
     @getMaxDamage = opts.getMaxDamage ? InventoryWindow.defaultGetMaxDamage ? global.InventoryWindow_defaultGetMaxDamage
     @inventorySize = opts.inventorySize ? @inventory.size()
     @width = opts.width ? @inventory.width
-    @textureSize = opts.textureSize ? (16 * 5)
+    @textureScale = opts.textureScale ? 5
+    @textureScaleAlgorithm = 'nearest-neighbor'
+    @textureSrcPx = opts.textureSrcPx ? 16
+    @textureSize = opts.textureSize ? (@textureSrcPx * @textureScale)
     @borderSize = opts.borderSize ? 4
     @progressThickness = opts.progressThickness ? 10
     @secondaryMouseButton = opts.secondaryMouseButton ? 2
@@ -148,20 +152,32 @@ image-rendering: crisp-edges;
         progress = (maxDamage - itemPile.tags.damage) / maxDamage
         progressColor = @getProgressBarColor(progress)
 
-    if typeof src == 'string'  # simple image
-      newImage = 'url(' + src + ')'
-    else
-      newImage = ''  # clear
-      # note: might be 3d cube set below
+    setImage = (src) ->
+      if typeof src == 'string'  # simple image
+        newImage = 'url(' + src + ')'
+      else
+        newImage = ''  # clear
+        # note: might be 3d cube set below
 
-    # update image, but only if changed to prevent flickering
-    global.InventoryWindow_resolvedImageURLs ?= {}
-    if global.InventoryWindow_resolvedImageURLs[newImage] != div.style.backgroundImage
-      div.style.backgroundImage = newImage
-      # wrinkle: if the URL may not be fully resolved (relative path, ../, etc.),
-      # but setting backgroundImage resolves it, so it won't always match what we
-      # set it to -- to fix this, cache the result for comparison next time
-      global.InventoryWindow_resolvedImageURLs[newImage] = div.style.backgroundImage
+      # update image, but only if changed to prevent flickering
+      global.InventoryWindow_resolvedImageURLs ?= {}
+      if global.InventoryWindow_resolvedImageURLs[newImage] != div.style.backgroundImage
+        div.style.backgroundImage = newImage
+        # wrinkle: if the URL may not be fully resolved (relative path, ../, etc.),
+        # but setting backgroundImage resolves it, so it won't always match what we
+        # set it to -- to fix this, cache the result for comparison next time
+        global.InventoryWindow_resolvedImageURLs[newImage] = div.style.backgroundImage
+
+    if @textureScaleAlgorithm? and typeof src == 'string'
+      # use scaled image, requires async callback
+      img = new Image()
+      img.onload = () =>
+        setImage touchup.scale(img, @textureScale, @textureScale, @textureScaleAlgorithm)
+      img.src = src
+    else
+      # unscaled image
+      setImage src
+
 
     # 3D cube node (for blocks)
     cubeNode = div.children[0]
