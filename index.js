@@ -181,13 +181,23 @@
         }
       };
       if ((this.textureScaleAlgorithm != null) && typeof src === 'string') {
-        img = new Image();
-        img.onload = (function(_this) {
-          return function() {
-            return setImage(touchup.scale(img, _this.textureScale, _this.textureScale, _this.textureScaleAlgorithm));
-          };
-        })(this);
-        img.src = src;
+        if (global.InventoryWindow_cachedScaledImages == null) {
+          global.InventoryWindow_cachedScaledImages = {};
+        }
+        if (global.InventoryWindow_cachedScaledImages[src]) {
+          setImage(global.InventoryWindow_cachedScaledImages[src]);
+        } else {
+          img = new Image();
+          img.onload = (function(_this) {
+            return function() {
+              var scaled;
+              scaled = touchup.scale(img, _this.textureScale, _this.textureScale, _this.textureScaleAlgorithm);
+              global.InventoryWindow_cachedScaledImages[src] = scaled;
+              return setImage(scaled);
+            };
+          })(this);
+          img.src = src;
+        }
       } else {
         setImage(src);
       }

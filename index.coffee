@@ -169,11 +169,18 @@ image-rendering: crisp-edges;
         global.InventoryWindow_resolvedImageURLs[newImage] = div.style.backgroundImage
 
     if @textureScaleAlgorithm? and typeof src == 'string'
-      # use scaled image, requires async callback
-      img = new Image()
-      img.onload = () =>
-        setImage touchup.scale(img, @textureScale, @textureScale, @textureScaleAlgorithm)
-      img.src = src
+      # cache scaled images
+      global.InventoryWindow_cachedScaledImages ?= {}
+      if global.InventoryWindow_cachedScaledImages[src]
+        setImage global.InventoryWindow_cachedScaledImages[src]
+      else
+        # generate scaled image, requires async callback
+        img = new Image()
+        img.onload = () =>
+          scaled = touchup.scale(img, @textureScale, @textureScale, @textureScaleAlgorithm)
+          global.InventoryWindow_cachedScaledImages[src] = scaled
+          setImage scaled
+        img.src = src
     else
       # unscaled image
       setImage src
