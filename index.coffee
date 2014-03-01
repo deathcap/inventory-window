@@ -1,6 +1,7 @@
 
 EventEmitter = (require 'events').EventEmitter
 ever = require 'ever'
+ftooltip = require 'ftooltip'
 CubeIcon = require 'cube-icon'
 touchup = require 'touchup'
 
@@ -30,6 +31,8 @@ class InventoryWindow extends EventEmitter
     @textureScaleAlgorithm = 'nearest-neighbor'
     @textureSrcPx = opts.textureSrcPx ? 16
     @textureSize = opts.textureSize ? (@textureSrcPx * @textureScale)
+    @getTooltip = opts.getTooltip ? InventoryWindow.defaultGetTooltip ? global.InventoryWindow_defaultGetTooltip
+    @tooltips = opts.tooltips ? true
     @borderSize = opts.borderSize ? 4
     @progressThickness = opts.progressThickness ? 10
     @secondaryMouseButton = opts.secondaryMouseButton ? 2
@@ -225,7 +228,15 @@ visibility: hidden;
     progressNode.style.width = (progress * 100) + '%' if progress?
     progressNode.style.visibility = if progress? then '' else 'hidden'
 
+    # tooltip text
+    if itemPile? and @tooltips
+      if @registry?
+        tooltip = @registry.getItemDisplayName itemPile.item
+      else if @getTooltip?
+        tooltip = @getTooltip?
 
+      if tooltip
+        ftooltip div, tooltip
 
   getProgressBarColor: (progress) ->
     for threshold, i in @progressColorsThresholds

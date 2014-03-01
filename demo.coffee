@@ -39,8 +39,11 @@ item_images = {
   grass: [images.grass_top, null, images.grass_side, images.grass_side]
 }
 
+ucfirst = (s) -> s.substr(0, 1).toUpperCase() + s.substring(1)
+
 InventoryWindow.defaultGetTexture = (pile) -> item_images[pile?.item]
 InventoryWindow.defaultGetMaxDamage = (pile) -> 80
+InventoryWindow.defaultGetTooltip = (pile) -> ucfirst pile?.item
 
 w = new InventoryWindow {
   inventory: inv
