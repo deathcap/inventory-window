@@ -44,7 +44,7 @@
       this.textureSrcPx = (_ref8 = opts.textureSrcPx) != null ? _ref8 : 16;
       this.textureSize = (_ref9 = opts.textureSize) != null ? _ref9 : this.textureSrcPx * this.textureScale;
       this.getTooltip = (_ref10 = (_ref11 = opts.getTooltip) != null ? _ref11 : InventoryWindow.defaultGetTooltip) != null ? _ref10 : global.InventoryWindow_defaultGetTooltip;
-      this.tooltips = (_ref12 = opts.tooltips) != null ? _ref12 : true;
+      this.tooltips = (_ref12 = opts.tooltips) != null ? _ref12 : false;
       this.borderSize = (_ref13 = opts.borderSize) != null ? _ref13 : 4;
       this.progressThickness = (_ref14 = opts.progressThickness) != null ? _ref14 : 10;
       this.secondaryMouseButton = (_ref15 = opts.secondaryMouseButton) != null ? _ref15 : 2;
