@@ -137,7 +137,7 @@
     };
 
     InventoryWindow.prototype.populateSlotNode = function(div, itemPile, isSelected) {
-      var cube, cubeNode, img, maxDamage, progress, progressColor, progressNode, setImage, src, text, textBox, tooltip, _ref;
+      var cube, cubeNode, img, maxDamage, progress, progressColor, progressNode, setImage, src, text, textBox, tooltipNode, tooltipText, _ref;
       src = void 0;
       text = '';
       progress = void 0;
@@ -242,15 +242,22 @@
         progressNode.style.width = (progress * 100) + '%';
       }
       progressNode.style.visibility = progress != null ? '' : 'hidden';
-      if ((itemPile != null) && this.tooltips) {
-        if (this.registry != null) {
-          tooltip = this.registry.getItemDisplayName(itemPile.item);
-        } else if (this.getTooltip != null) {
-          tooltip = this.getTooltip != null;
+      if (this.tooltips) {
+        tooltipNode = div.children[3];
+        if (tooltipNode == null) {
+          tooltipNode = document.createTextNode('not set');
+          ftooltip(div, tooltipNode);
         }
-        if (tooltip) {
-          return ftooltip(div, tooltip);
+        if (itemPile != null) {
+          if (this.registry != null) {
+            tooltipText = this.registry.getItemDisplayName(itemPile.item);
+          } else if (this.getTooltip != null) {
+            tooltipText = this.getTooltip(itemPile);
+          }
+        } else {
+          tooltipText = '';
         }
+        return tooltipNode.textContent = tooltipText;
       }
     };
 

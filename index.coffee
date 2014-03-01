@@ -228,15 +228,24 @@ visibility: hidden;
     progressNode.style.width = (progress * 100) + '%' if progress?
     progressNode.style.visibility = if progress? then '' else 'hidden'
 
-    # tooltip text
-    if itemPile? and @tooltips
-      if @registry?
-        tooltip = @registry.getItemDisplayName itemPile.item
-      else if @getTooltip?
-        tooltip = @getTooltip?
+    # tooltip
+    if @tooltips
+      tooltipNode = div.children[3]
+      if not tooltipNode?
+        tooltipNode = document.createTextNode('not set')
 
-      if tooltip
-        ftooltip div, tooltip
+        ftooltip div, tooltipNode
+
+      if itemPile?
+        if @registry?
+          tooltipText = @registry.getItemDisplayName itemPile.item
+        else if @getTooltip?
+          tooltipText = @getTooltip itemPile
+      else
+        tooltipText = ''
+
+      tooltipNode.textContent = tooltipText
+
 
   getProgressBarColor: (progress) ->
     for threshold, i in @progressColorsThresholds
