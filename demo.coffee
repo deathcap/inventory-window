@@ -45,6 +45,7 @@ InventoryWindow.defaultGetTooltip = (pile) -> ucfirst pile?.item
 
 w = new InventoryWindow
   inventory: inv
+  tooltips: true
 
 container = w.createContainer()
 console.log container

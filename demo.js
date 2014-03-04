@@ -82,7 +82,8 @@
   };
 
   w = new InventoryWindow({
-    inventory: inv
+    inventory: inv,
+    tooltips: true
   });
 
   container = w.createContainer();
