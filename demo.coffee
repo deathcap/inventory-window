@@ -22,22 +22,20 @@ console.log inv+''
 console.log inv.size()
 
 # a few simple images for testing
-images = {
-diamond: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAKUlEQVQ4y2NgGAX4wf///8GYIs1kG0KRAeiaqWIASYYMAwOoEo1DBgAANn6AgLPwDSsAAAAASUVORK5CYII=',
-emerald: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAJ0lEQVQ4y2NgGAX4wX8opEgz2YZQZMB/LJBiA0gyZBgYQJVoHDIAAHr/Vaux9NNYAAAAAElFTkSuQmCC',
-stick: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAI0lEQVQ4y2NgGFlgb73j/0Jv9f8UaQbRo5pHNeMEFGkeUAAAmkJGZ284PasAAAAASUVORK5CYII=',
-pick: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAATUlEQVQ4y2NgGMzgPxZMvOb//zExyYagY3IMAYO99Y7/C73VyTMEphlEk2wAmmYGkgzAopl4A3BoJs4APJqRY4dszQy00QwCFGkeUAAAq91xekLx2vsAAAAASUVORK5CYII',
-grass_top: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAYElEQVQ4y61TwREAIAiy/cdyGqao3qWIXQ8flgGimfmYhh1OAuQsvahAPQOoFCACUFkR5K2+wxbQMMyZApXxrJUZ8TIFBoRoCl8UdL2QHpSLpBanf+F1hJcCNP2AugckXwA2yZhbyqZNAAAAAElFTkSuQmCC',
-grass_side: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAdElEQVQ4y2NgOMz4n+ElEB/Gg1/iEcMpQchQGJ6ZZvyfEL4zxRsrG4QZkAXRJfEZBOMzEKsYF2bAZiqxhqG4gFgb0dUyEGsjLgsYSAk0bAHOgCt0yXYBqWHBQIwGggmJWMXY1DFQEoUYLiAmMIkKA0IGIfMBkw04/LuclggAAAAASUVORK5CYII='
-}
+images =
+  diamond: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAKUlEQVQ4y2NgGAX4wf///8GYIs1kG0KRAeiaqWIASYYMAwOoEo1DBgAANn6AgLPwDSsAAAAASUVORK5CYII=',
+  emerald: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAJ0lEQVQ4y2NgGAX4wX8opEgz2YZQZMB/LJBiA0gyZBgYQJVoHDIAAHr/Vaux9NNYAAAAAElFTkSuQmCC',
+  stick: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAI0lEQVQ4y2NgGFlgb73j/0Jv9f8UaQbRo5pHNeMEFGkeUAAAmkJGZ284PasAAAAASUVORK5CYII=',
+  pick: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAATUlEQVQ4y2NgGMzgPxZMvOb//zExyYagY3IMAYO99Y7/C73VyTMEphlEk2wAmmYGkgzAopl4A3BoJs4APJqRY4dszQy00QwCFGkeUAAAq91xekLx2vsAAAAASUVORK5CYII',
+  grass_top: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAYElEQVQ4y61TwREAIAiy/cdyGqao3qWIXQ8flgGimfmYhh1OAuQsvahAPQOoFCACUFkR5K2+wxbQMMyZApXxrJUZ8TIFBoRoCl8UdL2QHpSLpBanf+F1hJcCNP2AugckXwA2yZhbyqZNAAAAAElFTkSuQmCC',
+  grass_side: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAdElEQVQ4y2NgOMz4n+ElEB/Gg1/iEcMpQchQGJ6ZZvyfEL4zxRsrG4QZkAXRJfEZBOMzEKsYF2bAZiqxhqG4gFgb0dUyEGsjLgsYSAk0bAHOgCt0yXYBqWHBQIwGggmJWMXY1DFQEoUYLiAmMIkKA0IGIfMBkw04/LuclggAAAAASUVORK5CYII='
 
-item_images = {
+item_images =
   diamond: images.diamond,
   emerald: images.emerald,
   stick: images.stick,
   pick: images.pick,
   grass: [images.grass_top, null, images.grass_side, images.grass_side]
-}
 
 ucfirst = (s) -> s.substr(0, 1).toUpperCase() + s.substring(1)
 
@@ -45,9 +43,8 @@ InventoryWindow.defaultGetTexture = (pile) -> item_images[pile?.item]
 InventoryWindow.defaultGetMaxDamage = (pile) -> 80
 InventoryWindow.defaultGetTooltip = (pile) -> ucfirst pile?.item
 
-w = new InventoryWindow {
+w = new InventoryWindow
   inventory: inv
-  }
 
 container = w.createContainer()
 console.log container
@@ -59,14 +56,14 @@ w.setSelected 7
 
 window.w = w
 
-w2 = new InventoryWindow {
+w2 = new InventoryWindow
   inventory: inv
   allowDrop: false
-  }
+
 document.body.appendChild(w2.createContainer())
 
 inv3 = new Inventory(4, 4)
-w3 = new InventoryWindow {inventory: inv3, linkedInventory:inv} 
+w3 = new InventoryWindow {inventory: inv3, linkedInventory:inv}
 w.linkedInventory = inv3  # go both ways
 document.body.appendChild(w3.createContainer())
 
