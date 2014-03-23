@@ -32,7 +32,7 @@ class InventoryWindow extends EventEmitter
     @textureSrcPx = opts.textureSrcPx ? 16
     @textureSize = opts.textureSize ? (@textureSrcPx * @textureScale)
     @getTooltip = opts.getTooltip ? InventoryWindow.defaultGetTooltip ? global.InventoryWindow_defaultGetTooltip
-    @tooltips = opts.tooltips ? false
+    @tooltips = opts.tooltips ? true
     @borderSize = opts.borderSize ? 4
     @progressThickness = opts.progressThickness ? 10
     @secondaryMouseButton = opts.secondaryMouseButton ? 2
