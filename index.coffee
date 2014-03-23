@@ -1,7 +1,7 @@
 
 EventEmitter = (require 'events').EventEmitter
 ever = require 'ever'
-ftooltip = require 'ftooltip'
+createTooltip = require 'ftooltip'
 CubeIcon = require 'cube-icon'
 touchup = require 'touchup'
 
@@ -233,8 +233,8 @@ visibility: hidden;
       tooltipNode = div.children[3]
       if not tooltipNode?
         tooltipNode = document.createTextNode('not set')
-
-        ftooltip div, tooltipNode
+        tooltip = createTooltip div, tooltipNode
+        div.appendChild tooltip.div
 
       if itemPile?
         if @registry?
