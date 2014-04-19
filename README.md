@@ -2,7 +2,7 @@
 
 A GUI window for interactively manipulating an [inventory](https://github.com/deathcap/inventory):
 
-![screenshot](http://i.imgur.com/esk1cuB.png "Screenshot")
+![screenshot](http://i.imgur.com/McqVr4O.png "Screenshot")
 
 For an interactive demo run `npm start` or see [http://deathcap.github.io/inventory-window](http://deathcap.github.io/inventory-window).
 
