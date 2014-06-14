@@ -2,6 +2,7 @@
   "name": "inventory-window",
   "description": "a GUI window for interactively manipulating an inventory of itempiles",
   "version": "0.3.0",
+  "main": "inventory-window.coffee",
   "repository": {
     "type": "git",
     "url": "git@github.com:deathcap/inventory-window.git"
@@ -15,6 +16,7 @@
     "widget"
   ],
   "dependencies": {
+    "coffeeify": "^0.6.0",
     "ever": "0.0.3",
     "itempile": "~0.1.1",
     "inventory": "~0.1.0",
@@ -23,13 +25,14 @@
     "touchup": "~0.1.1"
   },
   "devDependencies": {
-    "coffee-script": "1.6.3",
-    "coffeeify": "0.5.2",
     "browserify": "2.35.1",
     "beefy": "0.4.5"
   },
   "scripts": {
-    "start": "beefy demo.coffee:bundle.js 8888 -- -t coffeeify"
+    "start": "beefy demo.coffee:bundle.js 8888"
+  },
+  "browserify": {
+    "transform": [ "coffeeify" ]
   },
   "license": "MIT"
 }
