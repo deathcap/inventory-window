@@ -1,7 +1,7 @@
 {
   "name": "inventory-window",
   "description": "a GUI window for interactively manipulating an inventory of itempiles",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "main": "inventory-window.coffee",
   "repository": {
     "type": "git",
@@ -32,7 +32,9 @@
     "start": "beefy demo.coffee:bundle.js 8888"
   },
   "browserify": {
-    "transform": [ "coffeeify" ]
+    "transform": [
+      "coffeeify"
+    ]
   },
   "license": "MIT"
 }
