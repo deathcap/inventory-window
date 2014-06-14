@@ -35,7 +35,8 @@ item_images =
   emerald: images.emerald,
   stick: images.stick,
   pick: images.pick,
-  grass: [images.grass_top, null, images.grass_side, images.grass_side]
+  grass: {top:images.grass_top, front:images.grass_side, left:images.grass_side}
+  #grass: [images.grass_top, null, images.grass_side, images.grass_side] # arrays work too
 
 ucfirst = (s) -> s.substr(0, 1).toUpperCase() + s.substring(1)
 

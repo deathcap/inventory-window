@@ -198,7 +198,7 @@ image-rendering: crisp-edges;
 
     cubeNode.removeChild(cubeNode.firstChild) while cubeNode.firstChild
 
-    if Array.isArray(src)  # 3d cube
+    if Array.isArray(src) || typeof(src) == 'object'  # 3d cube
       cube = new CubeIcon(images:src)
       cubeNode.appendChild cube.container
 

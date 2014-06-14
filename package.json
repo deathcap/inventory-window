@@ -18,11 +18,11 @@
   "dependencies": {
     "coffeeify": "^0.6.0",
     "ever": "0.0.3",
-    "itempile": "~0.1.1",
-    "inventory": "~0.1.0",
-    "cube-icon": "~0.1.1",
-    "ftooltip": "~0.2.2",
-    "touchup": "~0.1.1"
+    "itempile": "^0.2.2",
+    "inventory": "^0.1.2",
+    "cube-icon": "^0.2.0",
+    "ftooltip": "^0.2.2",
+    "touchup": "^0.1.2"
   },
   "devDependencies": {
     "browserify": "2.35.1",
