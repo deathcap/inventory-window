@@ -18,7 +18,7 @@
   "dependencies": {
     "coffeeify": "^0.6.0",
     "ever": "0.0.3",
-    "itempile": "^0.2.2",
+    "itempile": "^0.2.3",
     "inventory": "^0.1.2",
     "cube-icon": "^0.2.0",
     "ftooltip": "^0.2.2",
