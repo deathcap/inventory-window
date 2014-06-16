@@ -206,7 +206,7 @@ image-rendering: crisp-edges;
     textBox = div.children[1]
     if not textBox?
       textBox = document.createElement('div')
-      textBox.setAttribute 'style', 'position: absolute;'
+      textBox.setAttribute 'style', 'position: absolute; text-shadow: 1px 1px #eee, -1px -1px #333;'
       div.appendChild textBox
 
     if textBox.textContent != text
