@@ -29,7 +29,7 @@
     "browserify": "^9.0.3"
   },
   "scripts": {
-    "start": "beefy demo.coffee:bundle.js 8888"
+    "start": "beefy demo.js:bundle.js 8888"
   },
   "browserify": {
     "transform": [
