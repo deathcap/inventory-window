@@ -24,11 +24,11 @@
     "touchup": "^0.1.2"
   },
   "devDependencies": {
-    "beefy": "^2.1.3",
-    "browserify": "^9.0.3"
+    "browserify": "^13.0.0",
+    "wzrd": "^1.3.1"
   },
   "scripts": {
-    "start": "beefy demo.js:bundle.js 8888"
+    "start": "wzrd demo.js:bundle.js --port 8888"
   },
   "license": "MIT"
 }
