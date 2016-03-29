@@ -1,7 +1,7 @@
 {
   "name": "inventory-window",
   "description": "a GUI window for interactively manipulating an inventory of itempiles",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "main": "inventory-window.js",
   "repository": {
     "type": "git",
