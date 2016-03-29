@@ -2,7 +2,7 @@
   "name": "inventory-window",
   "description": "a GUI window for interactively manipulating an inventory of itempiles",
   "version": "1.0.0",
-  "main": "inventory-window.coffee",
+  "main": "inventory-window.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:deathcap/inventory-window.git"
