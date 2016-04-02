@@ -241,7 +241,7 @@ image-rendering: crisp-edges;
     }
 
     if (Array.isArray(src) || typeof(src) === 'object') {   //  3d cube
-      const cube = new CubeIcon({images:src});
+      const cube = CubeIcon({images:src});
       cubeNode.appendChild(cube.container);
     }
 
