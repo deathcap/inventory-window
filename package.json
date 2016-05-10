@@ -21,7 +21,7 @@
     "inventory": "^2.0.0",
     "cube-icon": "^2.0.0",
     "ftooltip": "^0.2.2",
-    "touchup": "^0.1.2"
+    "touchup": "^1.0.0"
   },
   "devDependencies": {
     "browserify": "^13.0.0",
